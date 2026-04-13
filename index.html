@@ -23,9 +23,9 @@ const CFG = {
   middagStart:    '19:30',
 
   /* Priser */
-  prisGolf:       800,
-  prisFest:       1000,
-  prisFull:       1800,
+  prisGolf:       500,
+  prisFest:       400,
+  prisFull:       900,
   prisBetPerSpel: 20,
 
   /* Swish */
@@ -44,29 +44,68 @@ const CFG = {
   maxFest:        60,
 
   /* Google Apps Script URL */
-  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbxZHBIGNsai7MHsyc2tITcKVLB-3PtxEmSHV55ge2EfHxjw8NWQ5bGTrIN5IegJa5hV6w/exec',
+  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbxGTaR0NW_Fyjo3GCHIf41R2-PpM_aPI6Pctk3y7iP37rsvjNOfV6-NJr39RmUQElgAdQ/exec',
 
   /* Google Drive — folder-ID för spelarfoton */
-  /* Hitta folder-ID i Drive-URL: drive.google.com/drive/folders/1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9 */  
-  drivePhotoFolderId: 'https://drive.google.com/drive/folders/1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
+  /* Hitta folder-ID i Drive-URL: drive.google.com/drive/folders/1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9 */
+  drivePhotoFolderId: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
 
   /* Google Drive — folder-ID för sponsorlogotyper */
   /* Filer ska namnges: 1_sponsornamn.png, 2_sponsornamn.png ... 10_sponsornamn.png */
-  driveSponsorFolderId: 'https://drive.google.com/drive/folders/19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
+  driveSponsorFolderId: '',
 
-  /* Sponsorer — fallback om Drive ej konfigurerat */
-  /* Byt ut URL:erna mot dina sponsorers webbadresser och logotyp-URL:er */
+  /* Sponsorer — direktlänkar som fallback (används om Drive ej konfigurerat) */
+  /* Byt URL:erna mot dina sponsorers publika logotyp-URL:er och webbadresser */
   sponsorer: [
-    /* { namn: 'Sponsor AB', logoUrl: 'https://...', webbUrl: 'https://...' }, */
+    { namn: 'Rya GK', logoUrl: 'https://rya.nu/wp-content/uploads/2022/11/Rya_golf_Logo.svg', webbUrl: 'https://rya.nu'}, 
+    {namn: 'Brewski', logoUrl: 'https://lh3.googleusercontent.com/oFIpz8SHaKiSjXa6XYbAi3hCAny_-J9Sji6Dmb0rWBVuK3Ct7G4yNMGlBYBe5D21DTAdpF-JPlXdSLbhoUowsrYuaWORbc4=s750', webbUrl: 'https://www.brewski.se' },
+    {namn: 'HAEGERSTRANDS', logoUrl: 'https://usercontent.one/wp/haegerstrands.se/wp-content/uploads/2023/11/logga2.png', webbUrl: 'https://haegerstrands.se/eng/' }
   ],
+
+  /* Om-sidan — klistra in din historia här (eller lämna tom för att dölja sidan) */
+  omHistoria: `<b>Från vardagsrummet på Lindögatan till sommarfest på Rya</b>
+​Det är svårt att förstå att det redan har gått fem år sedan idén om en egen golftävling föddes. Nu, med bara två månader kvar till vårt sjätte år, ser jag tillbaka på en resa som vuxit från en liten vänskapskrets till en fantastisk gemenskap som jag är otroligt stolt över.
+
+​<b>Där allt började: Lindögatan 9</b>
+​De första två åren var Lindögatan 9 vårt självklara högkvarter. Jag och min fru Maria lade ner hela vår själ i förberedelserna för att skapa något speciellt. Medan vi var en liten skara på åtta spelare som gjorde upp på Rya GK, pågick ett annat sorts maraton hemma i huset.
+​Maria och jag slet sida vid sida; att rodda en fest för tjugo vänner samtidigt som midsommaraftonens firande pågick krävde sin logistik. Jag minns stressen med att få allt perfekt dagen innan utslaget, men jag minns framför allt den varma stämningen när vi väl satt där tillsammans. Det var i vårt hem som traditionen slog rot.
+
+​<b>Vi växer och hittar nya former</b>
+​I takt med att intresset växte insåg vi att trädgården på Lindögatan inte längre räckte till. För att kunna välkomna fler flyttade vi kvällens festligheter till Tegel. Det var ett viktigt steg som gav oss utrymmet att låta tävlingen växa och bli den institution den är idag.
+
+​<b>2024: Cirkeln sluts på Rya</b>
+​År 2024 fattade vi ett beslut som kändes helt rätt: vi valde att stanna på Rya GK under hela dagen. Att låta tävlingen och festen smälta samman på en och samma plats, från morgonens första sving till kvällens sista skål, gav en helt ny dimension av helhet och lugn. Rya har verkligen blivit tävlingens naturliga hem.
+
+​<b>2025: En tävling för alla</b>
+​En av de roligaste milstolparna nådde vi förra året, 2025, när vi äntligen öppnade upp tävlingen för damer. Det gav nytt liv och en fantastisk dynamik till startfältet – ett beslut som verkligen berikade gemenskapen. Vid den senaste upplagan var vi 24 laddade spelare på banan och hela 60 gäster som firade tillsammans under kvällen, tillsammans med Gubbzone.
+
+​<b>Hall of Fame – Våra vinnare</b>
+​Ingen tävling utan sina mästare! Här är de som lyckats bemästra Ryas vindar och greener bäst genom åren:
+• ​2021: <b>Johan Cheander</b>
+• ​2022: <b>Johan Cheander</b>
+• ​2023: <b>Markus Lindberg</b>
+• ​2024: <b>Jonas Jonsson</b>
+• ​2025: <b>Patrik Adler</b>
+
+​<b>Mot framtiden</b>
+​Nu ser vi fram emot många fler midsommardagar tillsammans med er alla på Rya GK. För mig handlar det här om så mycket mer än bara golf – det handlar om tradition, vänskap och glädjen i att fira sommaren när den är som allra vackrast.
+​Välkomna till vårt sjätte år – nu gör vi det till det bästa hittills! I år med en VM twist!
+
+​<b>Fredrik Nordh Hansson​</b> - Founder of Midsommardagsgolfen`,
 
   /* Startlista — sätt visaStartlista: true för att visa */
   visaStartlista: false,
+
+  /* Betting — sätt visaBetting: false för att dölja hela betting-sidan */
+  visaBetting: true,
   startlista: [
     /* Grupper hämtas automatiskt från Spelare-fliken i Google Sheet */
     /* Dessa används som fallback om Sheet ej är konfigurerat */
     { grupp:'Grupp 1', teeStart:'10:00', teeHal:'1', spelare:['Spelare A','Spelare B','Spelare C','Spelare D'] },
   ],
+
+  /* Info-sida — tävlingsregler, priser mm. Stöder HTML-taggar precis som omHistoria */
+  infoInnehall: ``,
 
   /* Admin-lösenord */
   adminLosenord: 'golf2026',
@@ -84,7 +123,7 @@ const CFG = {
   --bg:#f5f2ec;--surface:#fff;--danger:#c0392b;--danger-bg:#fdecea;
   --serif:'Cormorant Garamond',Georgia,serif;
   --sans:'Inter',system-ui,sans-serif;
-  --nav:60px;--sponsor:44px;--top:calc(60px + 44px);--max:1380px;
+  --nav:60px;--sponsor:56px;--top:calc(60px + 56px);--max:1380px;
   --r:12px;--rlg:18px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
 }
 html,body{min-height:100%;overflow-x:hidden}
@@ -93,27 +132,29 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 /* ─── SPONSOR BANNER ─────────────────────────────────────────── */
 .sponsor-bar{
   position:fixed;top:0;left:0;right:0;z-index:400;
-  height:var(--sponsor);background:#fff;
-  border-bottom:1px solid var(--border);
+  height:var(--sponsor);background:var(--gold-bg);
+  border-bottom:1px solid rgba(201,168,76,.3);
   display:flex;align-items:center;
-  padding:0 1.25rem;gap:0;overflow:hidden;
+  padding:0 1.5rem;gap:0;overflow:hidden;
 }
 .sponsor-bar-label{
-  font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);white-space:nowrap;margin-right:1rem;flex-shrink:0;
+  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold-dk);white-space:nowrap;margin-right:1rem;flex-shrink:0;
+  padding-right:1rem;border-right:1px solid rgba(201,168,76,.4);
 }
 .sponsor-track{
-  display:flex;align-items:center;gap:1.5rem;flex:1;overflow:hidden;
+  display:flex;align-items:center;gap:2rem;flex:1;overflow:hidden;
 }
 .sponsor-logo{
-  height:28px;width:auto;max-width:80px;object-fit:contain;
-  opacity:.75;transition:opacity .2s;flex-shrink:0;filter:grayscale(30%);
+  height:34px;width:auto;max-width:100px;object-fit:contain;
+  opacity:1;transition:opacity .2s;flex-shrink:0;filter:none;
 }
-.sponsor-logo:hover{opacity:1;filter:none}
+.sponsor-logo:hover{opacity:.75}
 .sponsor-placeholder{
-  height:24px;min-width:60px;background:var(--border);border-radius:4px;
+  height:28px;min-width:70px;background:rgba(201,168,76,.15);border-radius:4px;
+  border:1px dashed rgba(201,168,76,.4);
   display:flex;align-items:center;justify-content:center;
-  font-size:9px;color:var(--muted);letter-spacing:.08em;flex-shrink:0;padding:0 8px;
+  font-size:9px;color:var(--gold-dk);letter-spacing:.08em;flex-shrink:0;padding:0 10px;
 }
 .sponsor-bar.hidden{display:none}
 
@@ -456,7 +497,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   .section,.list-layout,.bet-layout,.admin-layout{padding-left:2rem;padding-right:2rem;padding-top:3rem;padding-bottom:3rem}
 }
 @media(max-width:640px){
-  :root{--nav:56px;--sponsor:40px;--top:calc(56px + 40px)}
+  :root{--nav:56px;--sponsor:50px;--top:calc(56px + 50px)}
   .nav{padding:0 1rem;gap:.75rem}
   .nav-links,.nav-cta{display:none}
   .ham{display:block}
@@ -497,7 +538,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 
 <!-- ── TOP NAV ──────────────────────────────────────────────── -->
 <header class="nav">
-  <div class="nav-brand" onclick="show('home')">
+  <div class="nav-brand" id="nav-brand">
     <img class="nav-logo" id="nav-logo" src="" alt="Logo">
     <div>
       <div class="nav-name" id="nav-name"></div>
@@ -506,9 +547,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   </div>
   <nav class="nav-links">
     <button class="nav-link on" onclick="show('home')">Hem</button>
+    <button class="nav-link" onclick="show('om')">Om</button>
+    <button class="nav-link" onclick="show('info')">Info</button>
     <button class="nav-link" onclick="show('reg')">Anmälan</button>
     <button class="nav-link" onclick="show('list')">Deltagare</button>
-    <button class="nav-link" onclick="show('bet')">Betting</button>
+    <button class="nav-link" id="nav-bet-btn" onclick="show('bet')">Betting</button>
   </nav>
   <button class="nav-cta" onclick="show('reg')">Anmäl dig →</button>
   <button class="ham" onclick="mmOpen()">☰</button>
@@ -519,9 +562,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   <div class="mm-panel">
     <div class="mm-handle"></div>
     <button class="mm-btn on" onclick="show('home');mmClose()"><span class="mm-ic">🏠</span>Hem</button>
+    <button class="mm-btn" onclick="show('om');mmClose()"><span class="mm-ic">📖</span>Om</button>
+    <button class="mm-btn" onclick="show('info');mmClose()"><span class="mm-ic">📋</span>Info</button>
     <button class="mm-btn" onclick="show('reg');mmClose()"><span class="mm-ic">📋</span>Anmälan</button>
     <button class="mm-btn" onclick="show('list');mmClose()"><span class="mm-ic">👥</span>Deltagare</button>
-    <button class="mm-btn" onclick="show('bet');mmClose()"><span class="mm-ic">🎲</span>Betting</button>
+    <button class="mm-btn" id="mm-bet-btn" onclick="show('bet');mmClose()"><span class="mm-ic">🎲</span>Betting</button>
   </div>
 </div>
 
@@ -541,7 +586,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
         </div>
         <div class="hero-actions">
           <button class="btn-p" onclick="show('reg')">Anmäl dig nu</button>
-          <button class="btn-o" onclick="show('bet')">Betting — Vem vinner?</button>
+          <button class="btn-o" id="hero-bet-btn" onclick="show('bet')">Betting — Vem vinner?</button>
         </div>
       </div>
       <!-- iOS fix: logo card first in DOM on mobile, appears first visually -->
@@ -551,8 +596,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
           <div class="hf-row"><span class="hf-lbl">Tävlingsform</span><span class="hf-val">Poängbogey</span></div>
           <div class="hf-row"><span class="hf-lbl">Handicap</span><span class="hf-val">Fullt HCP</span></div>
           <div class="hf-row"><span class="hf-lbl">Slagstart</span><span class="hf-val" id="hf-slag"></span></div>
-          <div class="hf-row"><span class="hf-lbl">Golfplatser</span><span class="hf-val" id="hf-avail"></span></div>
-          <div class="cap-bar-wrap"><div class="cap-bar" id="hf-cap-bar" style="width:0%"></div></div>
+          <div class="hf-row" id="hf-avail-row" style="display:none"><span class="hf-lbl">Golfplatser</span><span class="hf-val" id="hf-avail"></span></div>
+          <div class="cap-bar-wrap" id="hf-cap-wrap" style="display:none"><div class="cap-bar" id="hf-cap-bar" style="width:0%"></div></div>
         </div>
         <button class="btn-p" style="width:100%;text-align:center" onclick="show('reg')">Anmäl dig nu</button>
       </div>
@@ -564,12 +609,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
       <div class="sec-lbl">Dagens program</div>
       <div class="sec-title">Schema 20 Juni</div>
       <div class="tl-grid">
-        <div class="tl-card"><div class="tl-time">09:00</div><div class="tl-icon">☕</div><div class="tl-name">Registrering & Kaffe</div><div class="tl-desc">Välkommen till Rya GK. Hämta scorekort och tee-tider i klubbhuset.</div><div class="tl-tag golf">Golf</div></div>
+       <div class="tl-card"><div class="tl-time">09:00</div><div class="tl-icon">☕</div><div class="tl-name">Registrering & Kaffe</div><div class="tl-desc">Välkommen till Rya GK. Hämta scorekort och tee-tider i klubbhuset.</div><div class="tl-tag golf">Golf</div></div>
         <div class="tl-card"><div class="tl-time">10:00</div><div class="tl-icon">🏌️</div><div class="tl-name">Slagstart — Poängbogey</div><div class="tl-desc">Shotgun-start alla 18 hål. Poängbogey med fullt handicap för alla nivåer.</div><div class="tl-tag golf">Golf</div></div>
         <div class="tl-card"><div class="tl-time">15:00</div><div class="tl-icon">🏆</div><div class="tl-name">19:e hålet</div><div class="tl-desc">Drinkar i baren. Preliminär scoring och avkoppling med kollegor.</div><div class="tl-tag golf">Golf</div></div>
-        <div class="tl-card"><div class="tl-time">18:30</div><div class="tl-icon">🌿</div><div class="tl-name">Cocktailmottagning</div><div class="tl-desc">Välkomstkväll med midsommarkänsla. Dress code: somrig smart casual.</div><div class="tl-tag party">Kväll</div></div>
-        <div class="tl-card"><div class="tl-time">19:30</div><div class="tl-icon">🍽️</div><div class="tl-name">Galamiddag & Prisutdelning</div><div class="tl-desc">Trerättersmiddag. Årets poängbogey-mästare kröns!</div><div class="tl-tag party">Kväll</div></div>
-        <div class="tl-card"><div class="tl-time">22:00</div><div class="tl-icon">🎉</div><div class="tl-name">Midsommarfest!</div><div class="tl-desc">Musik, dans och midsommarkänsla. Natten är lång och ljus.</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">18:00</div><div class="tl-icon">🍻 🍔</div><div class="tl-name">Pre Game Party</div><div class="tl-desc">Välkomstkväll med midsommarkänsla. Dress code: somrig smart casual.</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">19:00</div><div class="tl-icon">⚽ 🇸🇪 vs 🇳🇱 🏆</div><div class="tl-name">Sverige - Holland & Prisutdelning</div><div class="tl-desc">Trerättersmiddag. Årets poängbogey-mästare kröns!</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">22:00</div><div class="tl-icon">💃 🕺 🍹</div><div class="tl-name">Midsommarfest!</div><div class="tl-desc">Musik, dans och midsommarkänsla. Natten är lång och ljus.</div><div class="tl-tag party">Kväll</div></div>
       </div>
     </div>
   </section>
@@ -610,11 +655,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
           <div class="field"><label>För- och efternamn</label><input type="text" id="f-name" placeholder="Anna Lindqvist" oninput="clearE('reg-err')"></div>
           <div class="two-col">
             <div class="field"><label>E-post</label><input type="email" id="f-email" placeholder="anna@exempel.se" oninput="clearE('reg-err')"></div>
-            <div class="field"><label>Telefon</label><input type="tel" id="f-tel" placeholder="07X-XXX XX XX"></div>
+            <div class="field"><label>Telefon</label><input type="tel" id="f-tel" placeholder="07X-XXXXXXX" onblur="this.value=formatTel(this.value.trim())"></div>
           </div>
           <div class="field golf-wrap" id="golfid-wrap">
             <label>Golf-ID <em>(krävs vid tävlingsdeltagande)</em></label>
-            <input type="text" id="f-golfid" placeholder="t.ex. 731021-013" oninput="clearE('reg-err')">
+            <input type="text" id="f-golfid" placeholder="t.ex. 760828-016" oninput="clearE('reg-err')">
+          </div>
+          <div class="field golf-wrap two-col" id="hcp-wrap">
+            <div class="field">
+              <label>Handicap <em>(exakt, t.ex. 12.4)</em></label>
+              <input type="number" id="f-hcp" placeholder="12.4" min="0" max="54" step="0.1">
+            </div>
           </div>
         </div>
         <div class="f-sec">
@@ -661,7 +712,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
     </div>
     <div id="c-pays"></div>
     <div class="confirm-btns">
-      <button class="btn-sec" onclick="show('bet')">Gå till Betting 🎲</button>
+      <button class="btn-sec" id="confirm-bet-btn" onclick="show('bet')">Gå till Betting 🎲</button>
       <button class="btn-sec" onclick="show('list')">Se deltagarlistan 👥</button>
       <button class="full-btn" onclick="show('home')">Tillbaka till startsidan</button>
     </div>
@@ -673,7 +724,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   <div class="list-layout">
     <div class="sec-lbl">Anmälda</div>
     <div class="sec-title">Golfspelare</div>
-    <div style="margin-bottom:.75rem;font-size:13px;color:var(--muted)"><strong id="golf-cnt">0</strong> golfspelare anmälda</div>
+    <div id="golf-cnt-wrap" style="margin-bottom:.75rem;font-size:13px;color:var(--muted);display:none"><strong id="golf-cnt">0</strong> golfspelare anmälda</div>
     <div class="golf-grid" id="golf-grid">
       <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">Laddar...</div>
     </div>
@@ -720,6 +771,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
           <div class="err-box" id="bet-err" style="margin-bottom:.65rem"><span style="font-size:16px;flex-shrink:0">⚠️</span><div class="err-text" id="bet-err-txt"></div></div>
           <div class="bet-inp"><label>Ditt namn</label><input type="text" id="bet-name" placeholder="Anna Lindqvist" oninput="clearE('bet-err')"></div>
           <div class="bet-inp"><label>Din e-post</label><input type="email" id="bet-email" placeholder="anna@exempel.se" oninput="clearE('bet-err')"></div>
+          <div class="bet-inp"><label>Telefon</label><input type="tel" id="bet-tel" placeholder="07X-XXXXXXX" onblur="this.value=formatTel(this.value.trim())"></div>
           <button class="bet-sub-btn" id="bet-sub-btn" onclick="submitBet()" disabled>Bekräfta & visa betalning</button>
         </div>
       </div>
@@ -777,24 +829,54 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
     <div class="admin-table-wrap">
       <div id="admin-anm-view">
         <table class="admin-table" id="admin-anm-table">
-          <thead><tr><th>Namn</th><th>E-post</th><th>Paket</th><th>Belopp</th><th>Betalstatus</th><th>Bekräftelse</th></tr></thead>
-          <tbody id="admin-anm-body"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody>
+          <thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Paket</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead>
+          <tbody id="admin-anm-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody>
         </table>
       </div>
       <div id="admin-bet-view" style="display:none">
         <table class="admin-table" id="admin-bet-table">
-          <thead><tr><th>Namn</th><th>E-post</th><th>Spelare</th><th>Belopp</th><th>Betalstatus</th><th>Bekräftelse</th></tr></thead>
-          <tbody id="admin-bet-body"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody>
+          <thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Spelare</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead>
+          <tbody id="admin-bet-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ══ OM PAGE ════════════════════════════════════════════════ -->
+<div id="page-om" class="page page-body">
+  <section class="section">
+    <div class="sec-in" style="max-width:780px">
+      <div class="sec-lbl">Bakgrund</div>
+      <div class="sec-title">Om Midsommardagsgolfen</div>
+      <div id="om-content" style="font-size:15px;color:var(--body);line-height:1.8;white-space:pre-wrap"></div>
+      <div id="om-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
+        Lägg till din beskrivning i CFG.omHistoria i HTML-filen.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══ INFO PAGE ══════════════════════════════════════════════ -->
+<div id="page-info" class="page page-body">
+  <section class="section">
+    <div class="sec-in" style="max-width:780px">
+      <div class="sec-lbl">Tävling</div>
+      <div class="sec-title">Regler & Information</div>
+      <div id="info-content" style="font-size:15px;color:var(--body);line-height:1.8;white-space:pre-wrap"></div>
+      <div id="info-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
+        Lägg till tävlingsregler och information i CFG.infoInnehall i HTML-filen.
+      </div>
+    </div>
+  </section>
+</div>
+
 <!-- ── BOTTOM NAV ──────────────────────────────────────────── -->
 <div class="bnav">
   <div class="bnav-inner">
     <button class="bn-btn on" id="bn-home" onclick="show('home')"><div class="bn-ic">🏠</div>Hem</button>
+    <button class="bn-btn" id="bn-om" onclick="show('om')"><div class="bn-ic">📖</div>Om</button>
+    <button class="bn-btn" id="bn-info" onclick="show('info')"><div class="bn-ic">📋</div>Info</button>
     <button class="bn-btn" id="bn-reg" onclick="show('reg')"><div class="bn-ic">📋</div>Anmälan</button>
     <button class="bn-btn" id="bn-list" onclick="show('list')"><div class="bn-ic">👥</div>Lista</button>
     <button class="bn-btn" id="bn-bet" onclick="show('bet')"><div class="bn-ic">🎲</div>Betting</button>
@@ -829,34 +911,38 @@ async function loadSponsors() {
   const track = document.getElementById('sponsor-track');
   let sponsors = CFG.sponsorer || [];
 
-  // Try Drive if configured
+  // Try Drive via Apps Script — Apps Script returns base64 image data to avoid CORS
   if (CFG.driveSponsorFolderId && CFG.appsScriptUrl !== 'DIN_APPS_SCRIPT_URL_HÄR') {
     try {
-      const r = await fetch(CFG.appsScriptUrl + '?action=sponsorbilder&folderId=' + CFG.driveSponsorFolderId);
+      const r = await fetch(CFG.appsScriptUrl + '?action=sponsorbilder&folderId=' + encodeURIComponent(CFG.driveSponsorFolderId));
       const d = await r.json();
       if (d && d.length) {
-        track.innerHTML = d.map((s,i) =>
-          `<a href="${s.webb||'#'}" target="_blank" rel="noopener">
-            <img class="sponsor-logo" src="${s.url}" alt="Sponsor ${i+1}" onerror="this.parentElement.remove()">
-          </a>`
-        ).join('');
+        track.innerHTML = d.map((s, i) => {
+          // Apps Script returns either base64 data (s.base64 + s.mimeType) or a public URL (s.url)
+          const imgSrc = s.base64 ? `data:${s.mimeType||'image/png'};base64,${s.base64}` : s.url;
+          return `<a href="${s.webb||'#'}" target="_blank" rel="noopener" title="${s.namn||'Sponsor'}">
+            <img class="sponsor-logo" src="${imgSrc}" alt="${s.namn||'Sponsor '+(i+1)}" onerror="this.closest('a').remove()">
+          </a>`;
+        }).join('');
         return;
       }
-    } catch(e) {}
+    } catch(e) { /* Drive fetch failed, fall through to CFG.sponsorer */ }
   }
 
-  if (!sponsors.length) {
-    // Show placeholder slots
-    track.innerHTML = Array.from({length:5},(_,i) =>
-      `<div class="sponsor-placeholder">Sponsor ${i+1}</div>`
+  // Fallback: direktlänkar från CFG.sponsorer
+  // Varje objekt: { namn, logoUrl (publik https URL), webbUrl }
+  if (sponsors.length) {
+    track.innerHTML = sponsors.map(s =>
+      `<a href="${s.webbUrl||'#'}" target="_blank" rel="noopener" title="${s.namn||''}">
+        <img class="sponsor-logo" src="${s.logoUrl}" alt="${s.namn||'Sponsor'}" onerror="this.closest('a').remove()">
+      </a>`
     ).join('');
     return;
   }
 
-  track.innerHTML = sponsors.map(s =>
-    `<a href="${s.webbUrl||'#'}" target="_blank" rel="noopener">
-      <img class="sponsor-logo" src="${s.logoUrl}" alt="${s.namn}" onerror="this.parentElement.remove()">
-    </a>`
+  // Ingen konfiguration — visa platshållare
+  track.innerHTML = Array.from({length:4},(_,i) =>
+    `<div class="sponsor-placeholder">Sponsor ${i+1}</div>`
   ).join('');
 }
 
@@ -905,7 +991,9 @@ async function buildStartlista() {
       <div class="sg-head"><span class="sg-name">${g.grupp}</span><span class="sg-time">⏱ Hål ${g.teeHal||1} · ${g.teeStart||''}</span></div>
       <div class="sg-body">${g.spelare.filter(n=>n).map(n=>{
         const init = n.split(' ').map(w=>w[0]).join('').slice(0,2);
-        const ph = photos[n.toLowerCase()] || '';
+        const match = (betPlayers||[]).find(p=>p.name===n) || (allParts||[]).find(p=>p.name===n);
+        const key = match ? photoKey(match) : n.toLowerCase();
+        const ph = photos[key] || '';
         return `<div class="sg-player"><div class="sg-av">${ph?`<img src="${ph}">`:'<span>'+init+'</span>'}</div><div class="sg-pname">${n}</div></div>`;
       }).join('')}</div>
     </div>`
@@ -921,13 +1009,22 @@ function updateCap(parts) {
   const gP = Math.min(golfCnt/CFG.maxGolf*100,100);
   const fP = Math.min(festCnt/CFG.maxFest*100,100);
 
-  // Hero
+  // Hero — dölj kapacitetsraden helt om inga är anmälda
+  const avRow  = document.getElementById('hf-avail-row');
+  const capWrap = document.getElementById('hf-cap-wrap');
   const av = document.getElementById('hf-avail');
   const cb = document.getElementById('hf-cap-bar');
-  cb.style.width = gP + '%';
-  if(gL>5){av.textContent=gL+' kvar';av.className='hf-val av';}
-  else if(gL>0){av.textContent=gL+' kvar!';av.className='hf-val warn';}
-  else{av.textContent='Fullbokad';av.className='hf-val full';}
+  if (golfCnt === 0) {
+    avRow.style.display  = 'none';
+    capWrap.style.display = 'none';
+  } else {
+    avRow.style.display  = '';
+    capWrap.style.display = '';
+    cb.style.width = gP + '%';
+    if(gL>5){av.textContent=gL+' kvar';av.className='hf-val av';}
+    else if(gL>0){av.textContent=gL+' kvar!';av.className='hf-val warn';}
+    else{av.textContent='Fullbokad';av.className='hf-val full';}
+  }
 
   // Form pills
   setCapPill('cp-golf-bar','cp-golf-num',golfCnt,CFG.maxGolf,gL,gP);
@@ -952,14 +1049,24 @@ const SAMPLE = [
   {name:'Lisa Karlsson',hcp:null,golfid:null,bets:0,pkg:'party'},
 ];
 
-let allParts = [...SAMPLE];
-let betPlayers = SAMPLE.filter(p=>p.pkg!=='party');
+// Starta tomt — SAMPLE används bara som fallback om Apps Script ej är konfigurerat
+let allParts = [];
+let betPlayers = [];
 let selectedPlayers = new Set();
 let adminData = { anm:[], bet:[] };
 let adminAuthed = false;
 
 async function fetchData() {
-  if (CFG.appsScriptUrl === 'DIN_APPS_SCRIPT_URL_HÄR') return;
+  if (CFG.appsScriptUrl === 'DIN_APPS_SCRIPT_URL_HÄR') {
+    // Ingen Apps Script konfigurerad — använd SAMPLE-data som demo
+    allParts   = [...SAMPLE];
+    betPlayers = SAMPLE.filter(p=>p.pkg!=='party');
+    updateCap(allParts);
+    renderGolfGrid();
+    renderPlayers();
+    renderOdds();
+    return;
+  }
   try {
     const [rP, rD] = await Promise.all([
       fetch(CFG.appsScriptUrl+'?action=spelare'),
@@ -968,7 +1075,7 @@ async function fetchData() {
     const dP = await rP.json();
     const dD = await rD.json();
     if (dP && dP.length) betPlayers = dP;
-    if (dD && dD.length) allParts = dD;
+    if (dD && dD.length) allParts   = dD;
   } catch(e) {}
   updateCap(allParts);
   renderGolfGrid();
@@ -980,25 +1087,50 @@ async function fetchData() {
 function getLocalPhotos() {
   try { return JSON.parse(localStorage.getItem('golf_photos')||'{}'); } catch { return {}; }
 }
-function saveLocalPhoto(name, dataUrl) {
-  const p = getLocalPhotos(); p[name.toLowerCase()] = dataUrl;
+function photoKey(p) {
+  // Använd spelarid om det finns, annars golfid, annars namn — alltid unikt per individ
+  if (p.spelarid) return p.spelarid;
+  if (p.golfid && p.golfid !== '—') return p.golfid;
+  return p.name.toLowerCase();
+}
+function saveLocalPhoto(key, dataUrl) {
+  const p = getLocalPhotos(); p[key] = dataUrl;
   localStorage.setItem('golf_photos', JSON.stringify(p));
 }
 
-async function uploadPhotoToDrive(name, file) {
+async function uploadPhotoToDrive(key, file) {
   if (!CFG.drivePhotoFolderId || CFG.appsScriptUrl === 'DIN_APPS_SCRIPT_URL_HÄR') return null;
+  try {
+    // Komprimera till max 300px bred och JPEG 50% — håller URL under 8000 tecken
+    const b64 = await compressImage(file, 300, 0.50);
+    const url = CFG.appsScriptUrl
+      + '?action=uploadPhoto'
+      + '&namn=' + encodeURIComponent(key)
+      + '&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
+      + '&mimeType=image/jpeg'
+      + '&base64=' + encodeURIComponent(b64);
+    const r = await fetch(url);
+    const d = await r.json();
+    return d.url || null;
+  } catch(e) { return null; }
+}
+
+function compressImage(file, maxWidth, quality) {
   return new Promise(res => {
+    const img = new Image();
     const reader = new FileReader();
-    reader.onload = async ev => {
-      try {
-        const b64 = ev.target.result.split(',')[1];
-        const r = await fetch(CFG.appsScriptUrl, {
-          method:'POST',
-          body: JSON.stringify({ action:'uploadPhoto', namn:name, folderId:CFG.drivePhotoFolderId, base64:b64, mimeType:file.type })
-        });
-        const d = await r.json();
-        res(d.url || null);
-      } catch { res(null); }
+    reader.onload = ev => {
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        // Returnera bara base64-data (utan data:image/jpeg;base64,-prefixet)
+        res(canvas.toDataURL('image/jpeg', quality).split(',')[1]);
+      };
+      img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   });
@@ -1007,15 +1139,25 @@ async function uploadPhotoToDrive(name, file) {
 // ── GOLF GRID ─────────────────────────────────────────────────
 function renderGolfGrid() {
   const golfers = allParts.filter(p=>p.pkg==='full'||p.pkg==='golf');
-  document.getElementById('golf-cnt').textContent = golfers.length;
-  const photos = getLocalPhotos();
+  const cntWrap = document.getElementById('golf-cnt-wrap');
+  const grid    = document.getElementById('golf-grid');
+
   if (!golfers.length) {
-    document.getElementById('golf-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)"><div style="font-size:36px">⛳</div><div>Inga golfspelare anmälda ännu</div></div>';
+    // Ingen deltagare ännu — dölj räknaren och visa ingenting i grid
+    cntWrap.style.display = 'none';
+    grid.innerHTML = '';
     return;
   }
-  document.getElementById('golf-grid').innerHTML = golfers.map(p => {
+
+  // Visa räknare
+  document.getElementById('golf-cnt').textContent = golfers.length;
+  cntWrap.style.display = 'block';
+
+  const photos = getLocalPhotos();
+  grid.innerHTML = golfers.map(p => {
     const init = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
-    const ph = photos[p.name.toLowerCase()] || '';
+    const key  = photoKey(p);
+    const ph   = photos[key] || '';
     return `<div class="golf-card">
       <div class="golf-photo">${ph?`<img src="${ph}" alt="${p.name}">`:`<span>${init}</span>`}</div>
       <div class="golf-card-body">
@@ -1023,33 +1165,55 @@ function renderGolfGrid() {
         ${p.hcp&&p.hcp!=='—'?`<div class="golf-card-hcp">HCP ${p.hcp}</div>`:''}
         ${p.golfid&&p.golfid!=='—'?`<div class="golf-card-gid">Golf-ID: ${p.golfid}</div>`:''}
         <div class="photo-up"><label class="photo-up-label">
-          <input type="file" accept="image/*" onchange="handlePhoto(event,'${p.name.replace(/'/g,"\\'")}')">📷 Ladda upp foto
+          <input type="file" accept="image/*" onchange="handlePhoto(event,'${key}')">📷 Ladda upp foto
         </label></div>
       </div>
     </div>`;
   }).join('');
 }
 
-async function handlePhoto(e, name) {
+async function handlePhoto(e, key) {
   const file = e.target.files[0];
   if (!file) return;
-  // Try Drive upload
-  const driveUrl = await uploadPhotoToDrive(name, file);
-  // Always save locally too
+  // Visa lokal förhandsgranskning omedelbart
   const reader = new FileReader();
-  reader.onload = ev => {
-    saveLocalPhoto(name, ev.target.result);
+  reader.onload = async ev => {
+    saveLocalPhoto(key, ev.target.result);
     renderGolfGrid();
     renderPlayers();
     buildStartlista();
+    // Ladda sedan upp till Drive — om det lyckas, spara Drive-URL lokalt istället
+    const driveUrl = await uploadPhotoToDrive(key, file);
+    if (driveUrl) {
+      saveLocalPhoto(key, driveUrl);
+      renderGolfGrid();
+      renderPlayers();
+      buildStartlista();
+    }
   };
   reader.readAsDataURL(file);
 }
 
-// ── FORM ──────────────────────────────────────────────────────
+// ── TELEFON-FORMATERING ────────────────────────────────────────
+// Normaliserar till 0XX-XXXXXXX (t.ex. 070-1234567)
+// Accepterar: 0701234567 / 070 123 45 67 / 070-123 45 67 / +46701234567 etc.
+function formatTel(raw) {
+  if (!raw) return '';
+  // Ta bort allt utom siffror, hantera +46-prefix
+  let digits = raw.replace(/\D/g,'');
+  if (digits.startsWith('46') && digits.length >= 11) digits = '0' + digits.slice(2);
+  // Måste börja med 0 och ha 9-10 siffror
+  if (!digits.startsWith('0') || digits.length < 9 || digits.length > 10) return raw; // returnera oformaterat om ogiltigt
+  // Format: 0XX-XXXXXXX  (3 siffror bindestreck resten)
+  return digits.slice(0,3) + '-' + digits.slice(3);
+}
+
+
 function pkgChange() {
   const v = document.querySelector('input[name=pkg]:checked')?.value;
-  document.getElementById('golfid-wrap').classList.toggle('show', v !== 'party');
+  const isGolf = v !== 'party';
+  document.getElementById('golfid-wrap').classList.toggle('show', isGolf);
+  document.getElementById('hcp-wrap').classList.toggle('show', isGolf);
 }
 pkgChange();
 function clearE(id) { document.getElementById(id).classList.remove('show'); }
@@ -1064,12 +1228,14 @@ function showErr(id, msg) {
 async function submitReg() {
   const name  = document.getElementById('f-name').value.trim();
   const email = document.getElementById('f-email').value.trim();
-  const tel   = document.getElementById('f-tel').value.trim();
+  const tel   = formatTel(document.getElementById('f-tel').value.trim());
   const gid   = document.getElementById('f-golfid').value.trim();
+  const hcp   = document.getElementById('f-hcp').value.trim();
   const allergy = document.getElementById('f-allergy').value.trim();
   if (!name||!email) { showErr('reg-err','Fyll i namn och e-post.'); return; }
   const pkg = document.querySelector('input[name=pkg]:checked')?.value;
   if ((pkg==='full'||pkg==='golf') && !gid) { showErr('reg-err','Golf-ID krävs för att delta i tävlingen.'); return; }
+  if (gid && !/^\d{6}-\d{3}$/.test(gid)) { showErr('reg-err','Golf-ID ska ha formatet YYMMDD-NNN (t.ex. 760828-016).'); return; }
 
   const btn = document.getElementById('reg-btn');
   btn.textContent='Kontrollerar...'; btn.disabled=true;
@@ -1083,10 +1249,10 @@ async function submitReg() {
   }
 
   btn.textContent='Skickar...';
-  const payload = {action:'anmalan',namn:name,email:email,telefon:tel,golfid:gid,paket:pkg,allergier:allergy,tidpunkt:new Date().toLocaleString('sv-SE')};
+  const payload = {action:'anmalan',namn:name,email:email,telefon:tel,golfid:gid,handicap:hcp||'—',paket:pkg,allergier:allergy,tidpunkt:new Date().toLocaleString('sv-SE')};
   try { if (CFG.appsScriptUrl !== 'DIN_APPS_SCRIPT_URL_HÄR') await fetch(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify(payload)}); } catch(e) {}
 
-  allParts.push({name,hcp:'—',golfid:gid||'—',bets:0,pkg});
+  allParts.push({name,hcp:hcp||'—',golfid:gid||'—',bets:0,pkg});
   updateCap(allParts);
   document.getElementById('c-name').textContent = name.split(' ')[0];
   buildRegConfirm(name, pkg);
@@ -1116,14 +1282,15 @@ function buildRegConfirm(name, pkg) {
 }
 
 // ── BETTING ───────────────────────────────────────────────────
+// selectedPlayers lagrar INDEX (ej namn) för att hantera spelare med samma namn
 function renderPlayers() {
   const photos = getLocalPhotos();
   document.getElementById('players-grid').innerHTML = betPlayers.map((p,i) => {
     const init = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
-    const isSel = selectedPlayers.has(p.name);
+    const isSel = selectedPlayers.has(i);
     const isDis = !isSel && selectedPlayers.size >= 5;
-    const ph = photos[p.name.toLowerCase()]||'';
-    return `<div class="p-card ${isSel?'sel':''} ${isDis?'dis':''}" onclick="toggleP('${p.name.replace(/'/g,"\\'")}')">
+    const ph = photos[photoKey(p)]||'';
+    return `<div class="p-card ${isSel?'sel':''} ${isDis?'dis':''}" onclick="toggleP(${i})">
       <div class="p-av">${ph?`<img src="${ph}">`:'<span>'+init+'</span>'}</div>
       <div><div class="p-name">${p.name}</div><div class="p-hcp">HCP ${p.hcp||'—'}</div></div>
       <div class="p-chk">${isSel?'✓':''}</div>
@@ -1132,9 +1299,9 @@ function renderPlayers() {
   updateBetPanel();
 }
 
-function toggleP(name) {
-  if (selectedPlayers.has(name)) selectedPlayers.delete(name);
-  else { if (selectedPlayers.size>=5){alert('Max 5 spelare.');return;} selectedPlayers.add(name); }
+function toggleP(idx) {
+  if (selectedPlayers.has(idx)) selectedPlayers.delete(idx);
+  else { if (selectedPlayers.size>=5){alert('Max 5 spelare.');return;} selectedPlayers.add(idx); }
   renderPlayers();
 }
 
@@ -1148,28 +1315,35 @@ function updateBetPanel() {
   document.getElementById('bet-sub-btn').disabled = cnt===0;
   const listEl = document.getElementById('bet-sel-list');
   if (!cnt) { listEl.innerHTML='<div class="bet-empty"><div class="bet-empty-ic">🎯</div>Ingen spelare vald</div>'; return; }
-  listEl.innerHTML = Array.from(selectedPlayers).map(n =>
-    `<div class="bet-sel-row"><span class="bet-sel-nm">${n}</span><button class="bet-sel-rm" onclick="toggleP('${n.replace(/'/g,"\\'")}')">✕</button></div>`
-  ).join('');
+  listEl.innerHTML = Array.from(selectedPlayers).map(idx => {
+    const n = betPlayers[idx]?.name || '';
+    return `<div class="bet-sel-row"><span class="bet-sel-nm">${n}</span><button class="bet-sel-rm" onclick="toggleP(${idx})">✕</button></div>`;
+  }).join('');
 }
 
 function renderOdds() {
-  const total = betPlayers.reduce((s,p)=>s+(p.bets||0),0);
-  const totalBets = total;
+  // Bygg entries baserat på spelarid (om det finns) eller fallback på index
+  // Varje post är unik — inga namnkrockar möjliga
+  const entries = betPlayers
+    .map((p, i) => ({idx: i, id: p.spelarid || ('idx_'+i), bets: p.bets||0}))
+    .filter(e => e.bets > 0);
+
+  const totalBets = entries.reduce((s, e) => s + e.bets, 0);
+
   if (totalBets === 0) {
     document.getElementById('odds-list').innerHTML = '<div class="odds-empty">Inga bet har lagts ännu — var den första! 🎯</div>';
     return;
   }
-  const sorted = [...betPlayers].sort((a,b)=>(b.bets||0)-(a.bets||0));
-  document.getElementById('odds-list').innerHTML = sorted.map((p,i) => {
-    const b = p.bets||0;
-    if (!b) return '';
-    const pct = Math.round(b/totalBets*100);
+
+  const sorted = [...entries].sort((a,b) => b.bets - a.bets);
+
+  document.getElementById('odds-list').innerHTML = sorted.map((e, rank) => {
+    const pct = Math.round(e.bets / totalBets * 100);
     return `<div class="odds-row">
-      <div class="odds-name">Spelare ${i+1}</div>
+      <div class="odds-name">${rank + 1}.</div>
       <div class="odds-bw"><div class="odds-b" style="width:${pct}%"></div></div>
       <div class="odds-pct">${pct}%</div>
-      <div class="odds-cnt">${b} bet</div>
+      <div class="odds-cnt">${e.bets} bet</div>
     </div>`;
   }).join('');
 }
@@ -1177,6 +1351,7 @@ function renderOdds() {
 async function submitBet() {
   const name  = document.getElementById('bet-name').value.trim();
   const email = document.getElementById('bet-email').value.trim();
+  const tel   = formatTel(document.getElementById('bet-tel').value.trim());
   if (!name||!email) { showErr('bet-err','Fyll i ditt namn och e-post.'); return; }
   if (!selectedPlayers.size) { showErr('bet-err','Välj minst 1 spelare.'); return; }
 
@@ -1191,10 +1366,11 @@ async function submitBet() {
     } catch(e) {}
   }
 
-  const players = Array.from(selectedPlayers);
+  const players   = Array.from(selectedPlayers).map(idx => betPlayers[idx]?.name).filter(Boolean);
+  const spelarids = Array.from(selectedPlayers).map(idx => betPlayers[idx]?.spelarid).filter(Boolean);
   const total = players.length * CFG.prisBetPerSpel;
   btn.textContent='Skickar...';
-  try { if (CFG.appsScriptUrl !== 'DIN_APPS_SCRIPT_URL_HÄR') await fetch(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify({action:'bet',namn:name,email:email,spelare:players,totalbelopp:total,tidpunkt:new Date().toLocaleString('sv-SE')})}); } catch(e) {}
+  try { if (CFG.appsScriptUrl !== 'DIN_APPS_SCRIPT_URL_HÄR') await fetch(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify({action:'bet',namn:name,email:email,telefon:tel,spelare:players,spelarid:spelarids,totalbelopp:total,tidpunkt:new Date().toLocaleString('sv-SE')})}); } catch(e) {}
 
   document.getElementById('bc-name').textContent = name.split(' ')[0];
   const swishBetLank = CFG.swishLankBet;
@@ -1258,16 +1434,24 @@ function renderAdminSample() {
 }
 
 function renderAdminAnm() {
-  const obetalda = adminData.anm.filter(r=>r.status==='Obetald');
-  document.getElementById('adm-anm-cnt').textContent = obetalda.length;
-  if (!obetalda.length) {
-    document.getElementById('admin-anm-body').innerHTML = `<tr><td colspan="6" class="admin-empty">Inga obetalda anmälningar 🎉</td></tr>`;
+  const alla = adminData.anm || [];
+  document.getElementById('adm-anm-cnt').textContent = alla.filter(r=>r.status==='Obetald').length;
+  if (!alla.length) {
+    document.getElementById('admin-anm-body').innerHTML = `<tr><td colspan="7" class="admin-empty">Inga anmälningar ännu</td></tr>`;
     return;
   }
-  document.getElementById('admin-anm-body').innerHTML = obetalda.map(r => `
-    <tr>
+  document.getElementById('admin-anm-body').innerHTML = alla.map(r => {
+    const rowBg   = r.status==='Betald' ? 'background:#f0faf0' : r.status==='Återbetald' ? 'background:#fffde7' : '';
+    const badgeCls = r.status==='Betald' ? 's-be' : r.status==='Återbetald' ? 's-at' : 's-ob';
+    const mailBtn  = r.status !== 'Obetald'
+      ? `<button class="admin-mail-btn" onclick="sendConfirmMail('anm',${r.id},'${r.email}','${r.namn}','${r.status}')">
+           ✉ ${r.status==='Betald' ? 'Kvitto' : 'Återbet.'}
+         </button>`
+      : `<span style="font-size:11px;color:var(--muted)">—</span>`;
+    return `<tr style="${rowBg}">
       <td><strong>${r.namn}</strong></td>
-      <td>${r.email}</td>
+      <td style="font-size:12px">${r.telefon||'—'}</td>
+      <td style="font-size:12px">${r.email}</td>
       <td>${r.paket}</td>
       <td>${r.belopp}</td>
       <td>
@@ -1277,22 +1461,29 @@ function renderAdminAnm() {
           <option ${r.status==='Återbetald'?'selected':''}>Återbetald</option>
         </select>
       </td>
-      <td><button class="admin-mail-btn" onclick="sendConfirmMail('anm',${r.id},'${r.email}','${r.namn}')">✉ Skicka bekräftelse</button></td>
-    </tr>`
-  ).join('');
+      <td>${mailBtn}</td>
+    </tr>`;
+  }).join('');
 }
 
 function renderAdminBet() {
-  const obetalda = adminData.bet.filter(r=>r.status==='Obetald');
-  document.getElementById('adm-bet-cnt').textContent = obetalda.length;
-  if (!obetalda.length) {
-    document.getElementById('admin-bet-body').innerHTML = `<tr><td colspan="6" class="admin-empty">Inga obetalda bets 🎉</td></tr>`;
+  const alla = adminData.bet || [];
+  document.getElementById('adm-bet-cnt').textContent = alla.filter(r=>r.status==='Obetald').length;
+  if (!alla.length) {
+    document.getElementById('admin-bet-body').innerHTML = `<tr><td colspan="7" class="admin-empty">Inga bets ännu</td></tr>`;
     return;
   }
-  document.getElementById('admin-bet-body').innerHTML = obetalda.map(r => `
-    <tr>
+  document.getElementById('admin-bet-body').innerHTML = alla.map(r => {
+    const rowBg   = r.status==='Betald' ? 'background:#f0faf0' : r.status==='Återbetald' ? 'background:#fffde7' : '';
+    const mailBtn  = r.status !== 'Obetald'
+      ? `<button class="admin-mail-btn" onclick="sendConfirmMail('bet',${r.id},'${r.email}','${r.namn}','${r.status}')">
+           ✉ ${r.status==='Betald' ? 'Kvitto' : 'Återbet.'}
+         </button>`
+      : `<span style="font-size:11px;color:var(--muted)">—</span>`;
+    return `<tr style="${rowBg}">
       <td><strong>${r.namn}</strong></td>
-      <td>${r.email}</td>
+      <td style="font-size:12px">${r.telefon||'—'}</td>
+      <td style="font-size:12px">${r.email}</td>
       <td style="font-size:12px">${r.spelare}</td>
       <td>${r.belopp}</td>
       <td>
@@ -1302,9 +1493,9 @@ function renderAdminBet() {
           <option ${r.status==='Återbetald'?'selected':''}>Återbetald</option>
         </select>
       </td>
-      <td><button class="admin-mail-btn" onclick="sendConfirmMail('bet',${r.id},'${r.email}','${r.namn}')">✉ Skicka bekräftelse</button></td>
-    </tr>`
-  ).join('');
+      <td>${mailBtn}</td>
+    </tr>`;
+  }).join('');
 }
 
 async function updateStatus(type, id, status) {
@@ -1315,15 +1506,16 @@ async function updateStatus(type, id, status) {
   } catch(e) { alert('Kunde inte uppdatera status.'); }
 }
 
-async function sendConfirmMail(type, id, email, namn) {
+async function sendConfirmMail(type, id, email, namn, status) {
   if (CFG.appsScriptUrl === 'DIN_APPS_SCRIPT_URL_HÄR') { alert('Konfigurera Apps Script URL först.'); return; }
   const btn = event.target;
+  const origText = btn.textContent;
   btn.textContent='Skickar...'; btn.disabled=true;
   try {
-    await fetch(CFG.appsScriptUrl, {method:'POST', body:JSON.stringify({action:'sendMail',type,id,email,namn})});
+    await fetch(CFG.appsScriptUrl, {method:'POST', body:JSON.stringify({action:'sendMail',type,id,email,namn,status:status||'Obetald'})});
     btn.textContent='✓ Skickat!';
-    setTimeout(()=>{btn.textContent='✉ Skicka bekräftelse';btn.disabled=false;},3000);
-  } catch(e) { btn.textContent='✉ Skicka bekräftelse'; btn.disabled=false; alert('Kunde inte skicka mail.'); }
+    setTimeout(()=>{btn.textContent=origText;btn.disabled=false;},3000);
+  } catch(e) { btn.textContent=origText; btn.disabled=false; alert('Kunde inte skicka mail.'); }
 }
 
 function adminTab(tab, btn) {
@@ -1336,8 +1528,8 @@ function adminTab(tab, btn) {
 function adminRefresh() { adminLoadData(); }
 
 // ── NAVIGATION ────────────────────────────────────────────────
-const PAGE_IDX = {home:0,reg:1,list:2,bet:3,'bet-confirm':3,confirm:1,'admin-login':null,admin:null};
-const BN_IDS = ['bn-home','bn-reg','bn-list','bn-bet'];
+const PAGE_IDX = {home:0,om:1,info:2,reg:3,list:4,bet:5,'bet-confirm':5,confirm:3,'admin-login':null,admin:null};
+const BN_IDS = ['bn-home','bn-om','bn-info','bn-reg','bn-list','bn-bet'];
 
 function show(id) {
   if (id === 'admin' && !adminAuthed) { show('admin-login'); return; }
@@ -1352,6 +1544,8 @@ function show(id) {
   }
   if (id==='list') { renderGolfGrid(); }
   if (id==='bet')  { renderPlayers(); renderOdds(); }
+  if (id==='om')   { renderOmPage(); }
+  if (id==='info') { renderInfoPage(); }
   if (id==='admin') { adminLoadData(); }
   window.scrollTo(0,0);
 }
@@ -1359,14 +1553,50 @@ function show(id) {
 function mmOpen()  { document.getElementById('mm-ov').classList.add('open'); }
 function mmClose(e){ if(!e||e.target===document.getElementById('mm-ov')) document.getElementById('mm-ov').classList.remove('open'); }
 
-// Secret admin access: triple-tap on logo
+// ── ADMIN SECRET ACCESS: triple-tap on logo brand area ─────────
+// NOTE: nav-brand has NO onclick — the tap counter here handles navigation
 let logoTapCount = 0, logoTapTimer;
-document.getElementById('nav-logo').addEventListener('click', () => {
+document.getElementById('nav-brand').addEventListener('click', (e) => {
+  // Single/double tap = go home; triple tap = open admin
   logoTapCount++;
   clearTimeout(logoTapTimer);
-  logoTapTimer = setTimeout(()=>logoTapCount=0, 800);
-  if (logoTapCount >= 3) { logoTapCount=0; show('admin'); }
+  logoTapTimer = setTimeout(() => {
+    if (logoTapCount === 1 || logoTapCount === 2) show('home');
+    logoTapCount = 0;
+  }, 400);
+  if (logoTapCount >= 3) {
+    clearTimeout(logoTapTimer);
+    logoTapCount = 0;
+    show('admin');
+  }
 });
+
+// ── OM-SIDA ──────────────────────────────────────────────────────
+function renderOmPage() {
+  const el = document.getElementById('om-content');
+  const fb = document.getElementById('om-fallback');
+  if (CFG.omHistoria && CFG.omHistoria.trim()) {
+    el.innerHTML = CFG.omHistoria.trim();
+    el.style.display = 'block';
+    fb.style.display = 'none';
+  } else {
+    el.style.display = 'none';
+    fb.style.display = 'block';
+  }
+}
+
+function renderInfoPage() {
+  const el = document.getElementById('info-content');
+  const fb = document.getElementById('info-fallback');
+  if (CFG.infoInnehall && CFG.infoInnehall.trim()) {
+    el.innerHTML = CFG.infoInnehall.trim();
+    el.style.display = 'block';
+    fb.style.display = 'none';
+  } else {
+    el.style.display = 'none';
+    fb.style.display = 'block';
+  }
+}
 
 // ── INIT ──────────────────────────────────────────────────────
 buildPkgs();
@@ -1377,6 +1607,22 @@ renderOdds();
 buildStartlista();
 loadSponsors();
 fetchData();
+renderOmPage();
+renderInfoPage();
+applyBettingVisibility();
+
+// ── VISA/DÖLJ BETTING ──────────────────────────────────────────
+function applyBettingVisibility() {
+  const visa = CFG.visaBetting !== false; // default true
+  const ids = ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visa ? '' : 'none';
+  });
+  // Dölj betting-sidan helt om avstängd
+  const pageBet = document.getElementById('page-bet');
+  if (pageBet && !visa) pageBet.style.display = 'none';
+}
 </script>
 </body>
 </html>
