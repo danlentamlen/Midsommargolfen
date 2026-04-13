@@ -44,7 +44,7 @@ const CFG = {
   maxFest:        60,
 
   /* Google Apps Script URL */
-  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbxGTaR0NW_Fyjo3GCHIf41R2-PpM_aPI6Pctk3y7iP37rsvjNOfV6-NJr39RmUQElgAdQ/exec',
+  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbweHQM-TOtoz_WznGcObvMf6EXVVaTZMr1J1004ftAN2Y0etcxo_V5_D_GcmZnIqUXXfw/exec',
 
   /* Google Drive — folder-ID för spelarfoton */
   /* Hitta folder-ID i Drive-URL: drive.google.com/drive/folders/1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9 */
@@ -1116,18 +1116,32 @@ function saveLocalPhoto(key, dataUrl) {
 async function uploadPhotoToDrive(key, file) {
   if (!CFG.drivePhotoFolderId || CFG.appsScriptUrl === 'DIN_APPS_SCRIPT_URL_HÄR') return null;
   try {
-    // Komprimera till max 300px bred och JPEG 50% — håller URL under 8000 tecken
     const b64 = await compressImage(file, 300, 0.50);
-    const url = CFG.appsScriptUrl
-      + '?action=uploadPhoto'
-      + '&namn=' + encodeURIComponent(key)
-      + '&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
-      + '&mimeType=image/jpeg'
-      + '&base64=' + encodeURIComponent(b64);
-    const r = await fetch(url);
-    const d = await r.json();
-    return d.url || null;
-  } catch(e) { return null; }
+    const CHUNK = 4000; // tecken per GET-anrop — säkert under URL-gränsen
+    const chunks = [];
+    for (let i = 0; i < b64.length; i += CHUNK) {
+      chunks.push(b64.slice(i, i + CHUNK));
+    }
+    const uploadId = key + '_' + Date.now(); // unikt ID för denna uppladdning
+
+    // Skicka varje chunk sekventiellt
+    for (let i = 0; i < chunks.length; i++) {
+      const url = CFG.appsScriptUrl
+        + '?action=uploadChunk'
+        + '&uploadId='  + encodeURIComponent(uploadId)
+        + '&chunk='     + encodeURIComponent(chunks[i])
+        + '&index='     + i
+        + '&total='     + chunks.length
+        + '&namn='      + encodeURIComponent(key)
+        + '&folderId='  + encodeURIComponent(CFG.drivePhotoFolderId)
+        + '&mimeType=image/jpeg';
+      const r = await fetch(url);
+      const d = await r.json();
+      // Sista chunk returnerar Drive-URL när filen är komplett
+      if (i === chunks.length - 1 && d.url) return d.url;
+    }
+    return null;
+  } catch(e) { console.error('Upload error:', e); return null; }
 }
 
 function compressImage(file, maxWidth, quality) {
