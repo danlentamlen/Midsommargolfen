@@ -1,0 +1,14 @@
+# Netlify config — stäng av HTML/JS-optimering som kan korruptera filen
+[build.processing]
+  skip_processing = true
+
+[build.processing.html]
+  pretty_url = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.css]
+  bundle = false
+  minify = false
