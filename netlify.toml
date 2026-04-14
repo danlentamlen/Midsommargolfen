@@ -1,0 +1,18 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Vite handles all bundling — disable Netlify post-processing
+[build.processing]
+  skip_processing = true
+
+[build.processing.html]
+  pretty_url = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.css]
+  bundle = false
+  minify = false

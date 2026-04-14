@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.DS_Store
+.env
+*.log
+index.original.html
+index.legacy.html
