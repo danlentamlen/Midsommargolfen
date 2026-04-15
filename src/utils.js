@@ -13,9 +13,9 @@ export function sanitizeHtml(dirty) {
 export function formatTel(raw) {
   if (!raw) return '';
   let digits = raw.replace(/\D/g, '');
-  if (digits.startsWith('46') && digits.length > 9) digits = '0' + digits.slice(2);
-  if (digits.length === 10) return digits.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1-$2 $3 $4');
-  return raw;
+  if (digits.startsWith('46') && digits.length >= 11) digits = '0' + digits.slice(2);
+  if (!digits.startsWith('0') || digits.length < 9 || digits.length > 10) return raw;
+  return digits.slice(0, 3) + '-' + digits.slice(3);
 }
 
 export function clearE(id) {
