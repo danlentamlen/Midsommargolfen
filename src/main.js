@@ -10,10 +10,8 @@ import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendCon
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
-// Logo served from public/ directory — Vite serves it at /logo.jpg
 const logoUrl = '/logo.jpg';
 
-// Wire renderPlayers into registration module (avoids circular import)
 setRenderPlayers(renderPlayers);
 
 // -- INJECT LOGO -----------------------------------------------
@@ -66,7 +64,6 @@ async function fetchData() {
   renderGolfGrid();
   renderPlayers();
   renderOdds();
-  // Load Drive photos in background and re-render with persistent URLs
   fetchDrivePhotos([...state.allParts, ...state.betPlayers]).then(() => {
     renderGolfGrid();
     renderPlayers();
@@ -115,10 +112,10 @@ function show(id) {
     document.querySelectorAll('.nav-link')[idx]?.classList.add('on');
     document.getElementById(BN_IDS[idx])?.classList.add('on');
   }
-  if (id==='list') { renderGolfGrid(); }
-  if (id==='bet')  { renderPlayers(); renderOdds(); }
-  if (id==='om')   { renderOmPage(); }
-  if (id==='info') { renderInfoPage(); }
+  if (id==='list')  { renderGolfGrid(); }
+  if (id==='bet')   { renderPlayers(); renderOdds(); }
+  if (id==='om')    { renderOmPage(); }
+  if (id==='info')  { renderInfoPage(); }
   if (id==='admin') { adminLoadData(); }
   window.scrollTo(0,0);
   const skipHash = ['admin','admin-login','confirm','bet-confirm'];
@@ -167,18 +164,17 @@ function applyBettingVisibility() {
   if (pageBet && !visa) pageBet.style.display = 'none';
 }
 
-// -- EVENT LISTENERS (replacing inline onclick) ----------------
+// -- EVENT LISTENERS ------------------------------------------
 
-// Navigation buttons
+// Navigation
 document.querySelectorAll('[data-nav]').forEach(btn => {
   btn.addEventListener('click', () => show(btn.dataset.nav));
 });
 
-// Mobile menu open/close
+// Mobile menu
 document.querySelectorAll('[data-mm-nav]').forEach(btn => {
   btn.addEventListener('click', () => { show(btn.dataset.mmNav); mmClose(); });
 });
-
 document.getElementById('ham')?.addEventListener('click', mmOpen);
 document.getElementById('mm-ov')?.addEventListener('click', (e) => mmClose(e));
 
@@ -198,17 +194,17 @@ document.getElementById('nav-brand').addEventListener('click', () => {
   }
 });
 
-// Package cards -> show registration
+// Package cards
 document.getElementById('pkg-grid')?.addEventListener('click', (e) => {
   if (e.target.closest('[data-action="show-reg"]')) show('reg');
 });
 
-// Package radio change
+// Package radio
 document.getElementById('p-opts')?.addEventListener('change', (e) => {
   if (e.target.name === 'pkg') pkgChange();
 });
 
-// Registration form
+// Registration
 document.getElementById('reg-btn')?.addEventListener('click', () => submitReg(show));
 
 // Input clearing
@@ -221,19 +217,19 @@ document.querySelectorAll('[data-format-tel]').forEach(el => {
   el.addEventListener('blur', () => { el.value = formatTel(el.value.trim()); });
 });
 
-// Golf grid photo uploads (delegated)
+// Golf grid photo uploads
 document.getElementById('golf-grid')?.addEventListener('change', (e) => {
   const input = e.target.closest('[data-photo-key]');
   if (input) handlePhoto(e, input.dataset.photoKey);
 });
 
-// Players grid (betting) — delegated click
+// Players grid (betting)
 document.getElementById('players-grid')?.addEventListener('click', (e) => {
   const card = e.target.closest('[data-player-idx]');
   if (card) toggleP(parseInt(card.dataset.playerIdx, 10));
 });
 
-// Bet selection remove buttons (delegated)
+// Bet selection remove
 document.getElementById('bet-sel-list')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-remove-idx]');
   if (btn) toggleP(parseInt(btn.dataset.removeIdx, 10));
@@ -252,27 +248,30 @@ document.querySelector('#page-admin-login .full-btn')?.addEventListener('click',
 document.querySelector('[data-action="admin-refresh"]')?.addEventListener('click', () => adminLoadData());
 document.querySelector('[data-action="admin-logout"]')?.addEventListener('click', () => adminLogout(show));
 
-// Admin tabs (delegated)
+// Admin tabs
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   const btn = e.target.closest('.admin-tab');
   if (btn) {
-  const tab = btn.dataset.adminTab;
-  if (tab) adminTab(tab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
+    const tab = btn.dataset.adminTab;
+    if (tab) adminTab(tab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
   }
 });
 
-// Admin status select & mail buttons (delegated)
+// Admin status dropdowns
 document.querySelector('.admin-table-wrap')?.addEventListener('change', (e) => {
   const sel = e.target.closest('[data-status-type]');
-  if (sel) updateStatus(sel.dataset.statusType, parseInt(sel.dataset.statusId,10), sel.value);
-});
-document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-mail-type]');
-  if (btn) sendConfirmMail(btn.dataset.mailType, parseInt(btn.dataset.mailId,10), btn.dataset.mailEmail, btn.dataset.mailNamn, btn.dataset.mailStatus, btn);
+  if (sel) updateStatus(sel.dataset.statusType, parseInt(sel.dataset.statusId, 10), sel.value);
 });
 
-// Admin delete photo buttons (delegated)
+// Admin mail buttons
 document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-mail-type]');
+  if (btn) sendConfirmMail(btn.dataset.mailType, parseInt(btn.dataset.mailId, 10), btn.dataset.mailEmail, btn.dataset.mailNamn, btn.dataset.mailStatus, btn);
+});
+
+// Admin foto-borttagning — lyssnar på admin-layout som täcker hela admin-sidan
+// inkl. admin-foto-view som ligger utanför admin-table-wrap
+document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-photo-key]');
   if (btn) {
     deletePhoto(btn.dataset.photoKey, renderGolfGrid, renderPlayers);
@@ -292,7 +291,7 @@ renderOmPage();
 renderInfoPage();
 applyBettingVisibility();
 fetchData();
-// Defer sponsor loading to idle time
+
 const loadSp = () => loadSponsors();
 if ('requestIdleCallback' in window) {
   requestIdleCallback(loadSp);
