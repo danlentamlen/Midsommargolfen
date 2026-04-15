@@ -1,0 +1,39 @@
+// Sidinnehåll för Om- och Info-sidorna.
+// Redigera direkt här — stöder HTML-taggar: <h3>, <p>, <b>, <ul>, <li>, <em> etc.
+
+export const omHistoria = `
+<h3>Från vardagsrummet på Lindögatan till sommarfest på Rya</h3>
+  <p>Det är svårt att förstå att det redan har gått fem år sedan idén om en egen golftävling föddes. Nu, med bara två månader kvar till vårt sjätte år, ser jag tillbaka på en resa som vuxit från en liten vänskapskrets till en fantastisk gemenskap som jag är otroligt stolt över.</p>
+
+  <h3>Där allt började: Lindögatan 9</h3>
+  <p>De första två åren var Lindögatan 9 vårt självklara högkvarter. Jag och min fru Maria lade ner hela vår själ i förberedelserna för att skapa något speciellt. Medan vi var en liten skara på åtta spelare som gjorde upp på Rya GK, pågick ett annat sorts maraton hemma i huset.</p>
+  <p>Maria och jag slet sida vid sida — att rodda en fest för tjugo vänner samtidigt som midsommaraftonens firande pågick krävde sin logistik. Jag minns stressen med att få allt perfekt dagen innan utslaget, men jag minns framför allt den varma stämningen när vi väl satt där tillsammans. Det var i vårt hem som traditionen slog rot.</p>
+
+  <h3>Vi växer och hittar nya former</h3>
+  <p>I takt med att intresset växte insåg vi att trädgården på Lindögatan inte längre räckte till. För att kunna välkomna fler flyttade vi kvällens festligheter till Tegel. Det var ett viktigt steg som gav oss utrymmet att låta tävlingen växa och bli den institution den är idag.</p>
+
+  <h3>2024: Cirkeln sluts på Rya</h3>
+  <p>År 2024 fattade vi ett beslut som kändes helt rätt — vi valde att stanna på Rya GK under hela dagen. Att låta tävlingen och festen smälta samman på en och samma plats, från morgonens första sving till kvällens sista skål, gav en helt ny dimension av helhet och lugn. Rya har verkligen blivit tävlingens naturliga hem.</p>
+
+  <h3>2025: En tävling för alla</h3>
+  <p>En av de roligaste milstolparna nådde vi förra året, 2025, när vi äntligen öppnade upp tävlingen för damer. Det gav nytt liv och en fantastisk dynamik till startfältet — ett beslut som verkligen berikade gemenskapen. Vid den senaste upplagan var vi 24 laddade spelare på banan och hela 60 gäster som firade tillsammans under kvällen, tillsammans med Gubbzone.</p>
+
+  <h3>Hall of Fame — Våra vinnare</h3>
+  <p>Ingen tävling utan sina mästare! Här är de som lyckats bemästra Ryas vindar och greener bäst genom åren:</p>
+  <ul>
+    <li><b>2021:</b> Johan Cheander</li>
+    <li><b>2022:</b> Johan Cheander</li>
+    <li><b>2023:</b> Markus Lindberg</li>
+    <li><b>2024:</b> Jonas Jonsson</li>
+    <li><b>2025:</b> Patrik Adler</li>
+  </ul>
+
+  <h3>Mot framtiden</h3>
+  <p>Nu ser vi fram emot många fler midsommardagar tillsammans med er alla på Rya GK. För mig handlar det här om så mycket mer än bara golf — det handlar om tradition, vänskap och glädjen i att fira sommaren när den är som allra vackrast.</p>
+  <p>Välkomna till vårt sjätte år — nu gör vi det till det bästa hittills! I år med en VM-twist!</p>
+  <p><em>Fredrik Nordh Hansson — Founder of Midsommardagsgolfen</em></p>
+`;
+
+export const infoInnehall = `
+
+`;

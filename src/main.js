@@ -2,6 +2,7 @@ import './styles.css';
 import { CFG, PAGE_IDX, BN_IDS } from './config.js';
 import { state, SAMPLE } from './state.js';
 import { formatTel, clearE, sanitizeHtml } from './utils.js';
+import { omHistoria, infoInnehall } from './content.js';
 import { loadSponsors } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
@@ -131,9 +132,8 @@ function mmClose(e){ if(!e||e.target===document.getElementById('mm-ov')) documen
 function renderOmPage() {
   const el = document.getElementById('om-content');
   const fb = document.getElementById('om-fallback');
-  const omText = document.getElementById('om-text')?.innerHTML?.trim() || '';
-  if (omText) {
-    el.innerHTML = sanitizeHtml(omText);
+  if (omHistoria?.trim()) {
+    el.innerHTML = sanitizeHtml(omHistoria);
     el.style.display = 'block';
     fb.style.display = 'none';
   } else {
@@ -145,9 +145,8 @@ function renderOmPage() {
 function renderInfoPage() {
   const el = document.getElementById('info-content');
   const fb = document.getElementById('info-fallback');
-  const infoText = document.getElementById('info-text')?.innerHTML?.trim() || '';
-  if (infoText) {
-    el.innerHTML = sanitizeHtml(infoText);
+  if (infoInnehall?.trim()) {
+    el.innerHTML = sanitizeHtml(infoInnehall);
     el.style.display = 'block';
     fb.style.display = 'none';
   } else {
