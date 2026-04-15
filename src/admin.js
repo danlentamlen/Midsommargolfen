@@ -160,11 +160,26 @@ export function renderAdminFoto(renderGolfGridFn, renderPlayersFn) {
   }).join('');
 }
 
-export function deletePhoto(key, renderGolfGridFn, renderPlayersFn) {
+export async function deletePhoto(key, renderGolfGridFn, renderPlayersFn) {
   if (!confirm('Ta bort foto? Spelaren kan sedan ladda upp ett nytt.')) return;
+  
+  // Ta bort lokalt
   const photos = getLocalPhotos();
   delete photos[key];
   try { localStorage.setItem('golf_photos', JSON.stringify(photos)); } catch { /* full */ }
+  
+  // Ta bort från Drive
+  if (CFG.appsScriptUrl && CFG.drivePhotoFolderId) {
+    try {
+      await fetchWithTimeout(
+        CFG.appsScriptUrl
+        + '?action=raderaFoto'
+        + '&namn=' + encodeURIComponent(key)
+        + '&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
+      );
+    } catch { /* ignorera nätverksfel */ }
+  }
+
   if (renderGolfGridFn) renderGolfGridFn();
   if (renderPlayersFn) renderPlayersFn();
 }
