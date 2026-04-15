@@ -35,5 +35,5 @@ export const omHistoria = `
 `;
 
 export const infoInnehall = `
-
+<h2>Texten om tävlingsregler, priser mm uppdteras snart...</h2>
 `;
