@@ -63,16 +63,23 @@ describe('fetchWithTimeout', () => {
     clearSpy.mockRestore();
   });
 
-  it('includes X-Requested-With CSRF header', async () => {
+  it('includes X-Requested-With CSRF header on POST requests', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue(new Response('ok'));
-    await fetchWithTimeout('https://example.com', {}, 5000);
+    await fetchWithTimeout('https://example.com', { method: 'POST' }, 5000);
     const callArgs = globalThis.fetch.mock.calls[0];
     expect(callArgs[1].headers['X-Requested-With']).toBe('XMLHttpRequest');
   });
 
+  it('does not add CSRF header on GET requests (avoids CORS preflight)', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue(new Response('ok'));
+    await fetchWithTimeout('https://example.com', {}, 5000);
+    const callArgs = globalThis.fetch.mock.calls[0];
+    expect(callArgs[1].headers['X-Requested-With']).toBeUndefined();
+  });
+
   it('preserves caller-supplied headers alongside CSRF header', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue(new Response('ok'));
-    await fetchWithTimeout('https://example.com', { headers: { 'Content-Type': 'application/json' } }, 5000);
+    await fetchWithTimeout('https://example.com', { method: 'POST', headers: { 'Content-Type': 'application/json' } }, 5000);
     const callArgs = globalThis.fetch.mock.calls[0];
     expect(callArgs[1].headers['X-Requested-With']).toBe('XMLHttpRequest');
     expect(callArgs[1].headers['Content-Type']).toBe('application/json');
