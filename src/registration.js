@@ -191,7 +191,7 @@ export async function submitReg(showFn) {
 
   btn.textContent='Skickar...';
   const payload = {action:'anmalan',namn:name,email:email,telefon:tel,golfid:gid,handicap:hcp||'—',paket:pkg,allergier:allergy,tidpunkt:new Date().toLocaleString('sv-SE')};
-  try { if (CFG.appsScriptUrl) await fetchWithTimeout(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify(payload)}); } catch { /* network error */ }
+  if (CFG.appsScriptUrl) await postToAppsScript(CFG.appsScriptUrl, payload);
 
   state.allParts.push({name,hcp:hcp||'—',golfid:gid||'—',bets:0,pkg});
   updateCap(state.allParts);
