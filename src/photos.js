@@ -26,27 +26,17 @@ export async function fetchDrivePhotos(players) {
   if (!CFG.drivePhotoFolderId || !CFG.appsScriptUrl) return;
   try {
     const r = await fetchWithTimeout(
-      CFG.appsScriptUrl + '?action=sponsorbilder&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
+      CFG.appsScriptUrl + '?action=spelarfoton&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
     );
     const files = await r.json();
     if (!Array.isArray(files) || !files.length) return;
 
-    const driveMap = {};
-    files.forEach(f => {
-      const fileName = (f.namn || '').toLowerCase().replace(/\s+/g, '_');
-      const url = f.base64
-        ? `data:${f.mimeType || 'image/jpeg'};base64,${f.base64}`
-        : f.url || '';
-      if (fileName && url) driveMap[fileName] = url;
-    });
-
+    // Each file: { key: 'id_s001', url: 'https://drive.google.com/uc?...' }
     const cache = getLocalPhotos();
     let updated = false;
-    players.forEach(p => {
-      const key = photoKey(p);
-      const driveFileName = key.replace(/\s+/g, '_');
-      if (driveMap[driveFileName] && !cache[key]) {
-        cache[key] = driveMap[driveFileName];
+    files.forEach(f => {
+      if (f.key && f.url && !cache[f.key]) {
+        cache[f.key] = f.url;
         updated = true;
       }
     });
