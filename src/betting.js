@@ -2,7 +2,7 @@ import { CFG } from './config.js';
 import { state } from './state.js';
 import { formatTel, showErr, escapeHtml } from './utils.js';
 import { photoKey, getLocalPhotos } from './photos.js';
-import { fetchWithTimeout } from './fetch.js';
+import { fetchWithTimeout, postToAppsScript } from './fetch.js';
 
 export function renderPlayers() {
   const photos = getLocalPhotos();
