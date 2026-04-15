@@ -115,14 +115,20 @@ export function renderGolfGrid() {
     const key  = photoKey(p);
     const ph   = photos[key] || '';
     return `<div class="golf-card">
-      <div class="golf-photo">${ph?`<img src="${ph}" alt="${sName}" loading="lazy" decoding="async">`:`<span>${escapeHtml(init)}</span>`}</div>
+      <div class="golf-photo">${ph
+        ? `<img src="${ph}" alt="${sName}" loading="lazy" decoding="async">`
+        : `<span>${escapeHtml(init)}</span>`
+      }</div>
       <div class="golf-card-body">
         <div class="golf-card-name">${sName}</div>
         ${p.hcp&&p.hcp!=='—'?`<div class="golf-card-hcp">HCP ${escapeHtml(String(p.hcp))}</div>`:''}
         ${p.golfid&&p.golfid!=='—'?`<div class="golf-card-gid">Golf-ID: ${escapeHtml(p.golfid)}</div>`:''}
-        <div class="photo-up"><label class="photo-up-label">
-          <input type="file" accept="image/*" data-photo-key="${key}">📷 Ladda upp foto
-        </label></div>
+        ${ph
+          ? `<div class="photo-exists">✓ Foto uppladdad</div>`
+          : `<div class="photo-up"><label class="photo-up-label">
+               <input type="file" accept="image/*" data-photo-key="${key}">📷 Ladda upp foto
+             </label></div>`
+        }
       </div>
     </div>`;
   }).join('');
@@ -133,12 +139,10 @@ export async function handlePhoto(e, key) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = async ev => {
-    // Cache locally for instant preview
     saveLocalPhoto(key, ev.target.result);
     renderGolfGrid();
     renderPlayers();
     buildStartlista();
-    // Upload to Drive — replace local cache with persistent URL
     const driveUrl = await uploadPhotoToDrive(key, file);
     if (driveUrl) {
       renderGolfGrid();
@@ -187,7 +191,7 @@ export async function submitReg(showFn) {
 
   btn.textContent='Skickar...';
   const payload = {action:'anmalan',namn:name,email:email,telefon:tel,golfid:gid,handicap:hcp||'—',paket:pkg,allergier:allergy,tidpunkt:new Date().toLocaleString('sv-SE')};
-  try { if (CFG.appsScriptUrl) await fetchWithTimeout(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify(payload)}); } catch { /* network error — data saved locally */ }
+  try { if (CFG.appsScriptUrl) await fetchWithTimeout(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify(payload)}); } catch { /* network error */ }
 
   state.allParts.push({name,hcp:hcp||'—',golfid:gid||'—',bets:0,pkg});
   updateCap(state.allParts);
@@ -219,7 +223,6 @@ export function buildRegConfirm(name, pkg) {
   document.getElementById('c-pays').innerHTML = h;
 }
 
-// Import renderPlayers lazily to avoid circular deps
 let _renderPlayers = null;
 export function setRenderPlayers(fn) { _renderPlayers = fn; }
 function renderPlayers() { if (_renderPlayers) _renderPlayers(); }
