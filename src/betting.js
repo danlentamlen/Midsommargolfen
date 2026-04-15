@@ -93,7 +93,7 @@ export async function submitBet(showFn) {
   const spelarids = Array.from(state.selectedPlayers).map(idx => state.betPlayers[idx]?.spelarid).filter(Boolean);
   const total = players.length * CFG.prisBetPerSpel;
   btn.textContent='Skickar...';
-  try { if (CFG.appsScriptUrl) await fetchWithTimeout(CFG.appsScriptUrl,{method:'POST',body:JSON.stringify({action:'bet',namn:name,email:email,telefon:tel,spelare:players,spelarid:spelarids,totalbelopp:total,tidpunkt:new Date().toLocaleString('sv-SE')})}); } catch { /* network error */ }
+  if (CFG.appsScriptUrl) await postToAppsScript(CFG.appsScriptUrl, {action:'bet', namn:name, email:email, telefon:tel, spelare:players, spelarid:spelarids, totalbelopp:total, tidpunkt:new Date().toLocaleString('sv-SE')});
 
   document.getElementById('bc-name').textContent = name.split(' ')[0];
   const swishBetLank = CFG.swishLankBet;
