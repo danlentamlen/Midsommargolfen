@@ -1,8 +1,8 @@
 import { CFG } from './config.js';
 import { state } from './state.js';
 import { escapeHtml } from './utils.js';
-import { fetchWithTimeout } from './fetch.js';
-import { photoKey, getLocalPhotos, saveLocalPhoto } from './photos.js';
+import { fetchWithTimeout, postToAppsScript } from './fetch.js';
+import { photoKey, getLocalPhotos } from './photos.js';
 
 async function sha256(message) {
   const data = new TextEncoder().encode(message);
@@ -136,7 +136,6 @@ export function renderAdminFoto(renderGolfGridFn, renderPlayersFn) {
     return;
   }
 
-  // Map photo keys to player names for readable labels
   const playerMap = {};
   [...(state.allParts||[]), ...(state.betPlayers||[])].forEach(p => {
     const k = photoKey(p);
@@ -181,19 +180,15 @@ export function adminTab(tab, btn, renderAdminFotoFn) {
 
 export async function updateStatus(type, id, status) {
   if (!CFG.appsScriptUrl) return;
-  try {
-    await fetchWithTimeout(CFG.appsScriptUrl, {method:'POST', body:JSON.stringify({action:'updateStatus',type,id,status})});
-    await adminLoadData();
-  } catch { alert('Kunde inte uppdatera status.'); }
+  await postToAppsScript(CFG.appsScriptUrl, {action:'updateStatus', type, id, status});
+  await adminLoadData();
 }
 
 export async function sendConfirmMail(type, id, email, namn, status, btn) {
   if (!CFG.appsScriptUrl) { alert('Konfigurera Apps Script URL först.'); return; }
   const origText = btn.textContent;
   btn.textContent='Skickar...'; btn.disabled=true;
-  try {
-    await fetchWithTimeout(CFG.appsScriptUrl, {method:'POST', body:JSON.stringify({action:'sendMail',type,id,email,namn,status:status||'Obetald'})});
-    btn.textContent='✓ Skickat!';
-    setTimeout(()=>{btn.textContent=origText;btn.disabled=false;},3000);
-  } catch { btn.textContent=origText; btn.disabled=false; alert('Kunde inte skicka mail.'); }
+  await postToAppsScript(CFG.appsScriptUrl, {action:'sendMail', type, id, email, namn, status: status||'Obetald'});
+  btn.textContent='✓ Skickat!';
+  setTimeout(()=>{ btn.textContent=origText; btn.disabled=false; }, 3000);
 }
