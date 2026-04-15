@@ -184,11 +184,13 @@ export async function deletePhoto(key, renderGolfGridFn, renderPlayersFn) {
       const r = await fetchWithTimeout(url);
       const d = await r.json();
       if (d.ok) {
-        console.log('Foto raderat från Drive:', key);
-      } else {
+        console.log('Foto raderat från Drive:', key, '— raderade:', d.raderade);
+        } else {
         console.error('Apps Script kunde inte radera foto:', d.fel);
+        console.log('Filer som faktiskt finns i Drive-mappen:', d.filerIMapp);
       }
-    } catch(e) {
+    } 
+    catch(e) {
       console.error('Nätverksfel vid radering:', e);
     }
   }
