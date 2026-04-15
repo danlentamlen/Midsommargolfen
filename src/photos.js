@@ -29,17 +29,30 @@ export async function fetchDrivePhotos(players) {
       CFG.appsScriptUrl + '?action=spelarfoton&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
     );
     const files = await r.json();
-    if (!Array.isArray(files) || !files.length) return;
+    if (!Array.isArray(files)) return;
 
-    // Each file: { key: 'id_s001', url: 'https://drive.google.com/uc?...' }
+    // Bygg en uppslagstabell med alla nycklar som finns på Drive
+    const driveKeys = new Set(files.map(f => f.key));
+
     const cache = getLocalPhotos();
     let updated = false;
+
+    // Lägg till foton som finns på Drive men saknas i cache
     files.forEach(f => {
-      if (f.key && f.url && !cache[f.key]) {
+      if (f.key && f.url && cache[f.key] !== f.url) {
         cache[f.key] = f.url;
         updated = true;
       }
     });
+
+    // Ta bort foton från cache som inte längre finns på Drive
+    Object.keys(cache).forEach(key => {
+      if (!driveKeys.has(key)) {
+        delete cache[key];
+        updated = true;
+      }
+    });
+
     if (updated) {
       try { localStorage.setItem('golf_photos', JSON.stringify(cache)); } catch { /* full */ }
     }
@@ -47,7 +60,6 @@ export async function fetchDrivePhotos(players) {
     console.warn('fetchDrivePhotos failed:', e);
   }
 }
-
 // --- Compress image ---
 export function compressImage(file, maxWidth, quality) {
   return new Promise((res, rej) => {
