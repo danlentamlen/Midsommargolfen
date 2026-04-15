@@ -44,6 +44,7 @@ export const CFG = {
 
   /* Admin password hash (SHA-256 of the password) */
   /* To change: echo -n 'yourpassword' | shasum -a 256 */
+  /* 'golf2026' */
   adminLosenordHash: 'c3d202d707368179b25dd25eead59c9dd6f45f55e65347c0e23485dfba34e403',
 };
 
