@@ -162,22 +162,35 @@ export function renderAdminFoto(renderGolfGridFn, renderPlayersFn) {
 
 export async function deletePhoto(key, renderGolfGridFn, renderPlayersFn) {
   if (!confirm('Ta bort foto? Spelaren kan sedan ladda upp ett nytt.')) return;
-  
-  // Ta bort lokalt
+
+  // Ta bort lokalt direkt
   const photos = getLocalPhotos();
   delete photos[key];
   try { localStorage.setItem('golf_photos', JSON.stringify(photos)); } catch { /* full */ }
-  
-  // Ta bort från Drive
-  if (CFG.appsScriptUrl && CFG.drivePhotoFolderId) {
+
+  // Ta bort från Drive via Apps Script
+  if (!CFG.appsScriptUrl) {
+    console.warn('deletePhoto: appsScriptUrl saknas i config');
+  } else if (!CFG.drivePhotoFolderId) {
+    console.warn('deletePhoto: drivePhotoFolderId saknas i config');
+  } else {
+    const url = CFG.appsScriptUrl
+      + '?action=raderaFoto'
+      + '&namn='     + encodeURIComponent(key)
+      + '&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId);
+
+    console.log('Raderar foto från Drive:', url);
     try {
-      await fetchWithTimeout(
-        CFG.appsScriptUrl
-        + '?action=raderaFoto'
-        + '&namn=' + encodeURIComponent(key)
-        + '&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId)
-      );
-    } catch { /* ignorera nätverksfel */ }
+      const r = await fetchWithTimeout(url);
+      const d = await r.json();
+      if (d.ok) {
+        console.log('Foto raderat från Drive:', key);
+      } else {
+        console.error('Apps Script kunde inte radera foto:', d.fel);
+      }
+    } catch(e) {
+      console.error('Nätverksfel vid radering:', e);
+    }
   }
 
   if (renderGolfGridFn) renderGolfGridFn();
