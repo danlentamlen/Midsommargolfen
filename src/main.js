@@ -5,7 +5,7 @@ import { formatTel, clearE, sanitizeHtml } from './utils.js';
 import { loadSponsors } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
-import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendConfirmMail } from './admin.js';
+import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendConfirmMail, renderAdminFoto, deletePhoto } from './admin.js';
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
@@ -257,8 +257,8 @@ document.querySelector('[data-action="admin-logout"]')?.addEventListener('click'
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   const btn = e.target.closest('.admin-tab');
   if (btn) {
-    const tab = btn.dataset.adminTab;
-    if (tab) adminTab(tab, btn);
+  const tab = btn.dataset.adminTab;
+  if (tab) adminTab(tab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
   }
 });
 
@@ -270,6 +270,15 @@ document.querySelector('.admin-table-wrap')?.addEventListener('change', (e) => {
 document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-mail-type]');
   if (btn) sendConfirmMail(btn.dataset.mailType, parseInt(btn.dataset.mailId,10), btn.dataset.mailEmail, btn.dataset.mailNamn, btn.dataset.mailStatus, btn);
+});
+
+// Admin delete photo buttons (delegated)
+document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-photo-key]');
+  if (btn) {
+    deletePhoto(btn.dataset.photoKey, renderGolfGrid, renderPlayers);
+    renderAdminFoto(renderGolfGrid, renderPlayers);
+  }
 });
 
 // -- INIT ------------------------------------------------------
