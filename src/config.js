@@ -34,7 +34,16 @@ export const CFG = {
 
   omHistoria: '',
   visaStartlista: false,
+
+  // -- Teaser-läge --
+  // Sätt till false för att dölja sidan helt (nav, bottom nav, knappar försvinner).
+  // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
+  visaAnmalan: true,
+  visaDeltagare: true,
   visaBetting: true,
+
+  // Meddelandet som visas i popup när en dold sida klickas
+  teaserMeddelande: 'Vi öppnar snart — håll utkik! 🏌️',
 
   startlista: [
     { grupp: 'Grupp 1', teeStart: '10:00', teeHal: '1', spelare: ['Spelare A', 'Spelare B', 'Spelare C', 'Spelare D'] },
