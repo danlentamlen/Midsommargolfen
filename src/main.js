@@ -35,6 +35,19 @@ document.getElementById('as-slag').textContent  = CFG.slagstart;
 document.getElementById('as-middag').textContent= CFG.middagStart;
 document.getElementById('bet-rule-pris').textContent = `💰 ${CFG.prisBetPerSpel} kr per vald spelare`;
 
+// -- TEASER MODAL ---------------------------------------------
+function showTeaser() {
+  const modal = document.getElementById('teaser-modal');
+  document.getElementById('teaser-msg').textContent = CFG.teaserMeddelande || 'Vi öppnar snart!';
+  modal.classList.add('open');
+}
+
+document.getElementById('teaser-modal')?.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('teaser-modal') || e.target.closest('[data-close-teaser]')) {
+    document.getElementById('teaser-modal').classList.remove('open');
+  }
+});
+
 // -- DATA FETCH ------------------------------------------------
 async function fetchData() {
   if (!CFG.appsScriptUrl) {
@@ -122,6 +135,15 @@ function show(id) {
   if (!skipHash.includes(id)) history.replaceState(null,'','#'+id);
 }
 
+// Navigera med teaser-kontroll
+function navTo(id) {
+  if (id === 'reg'  && !CFG.visaAnmalan)   { showTeaser(); return false; }
+  if (id === 'list' && !CFG.visaDeltagare) { showTeaser(); return false; }
+  if (id === 'bet'  && !CFG.visaBetting)   { showTeaser(); return false; }
+  show(id);
+  return true;
+}
+
 function mmOpen()  { document.getElementById('mm-ov').classList.add('open'); }
 function mmClose(e){ if(!e||e.target===document.getElementById('mm-ov')) document.getElementById('mm-ov').classList.remove('open'); }
 
@@ -152,28 +174,44 @@ function renderInfoPage() {
   }
 }
 
-// -- BETTING VISIBILITY ----------------------------------------
-function applyBettingVisibility() {
-  const visa = CFG.visaBetting !== false;
-  const ids = ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'];
-  ids.forEach(id => {
+// -- VISIBILITY -----------------------------------------------
+function applyVisibility() {
+  // Betting
+  const visaBet = CFG.visaBetting !== false;
+  ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.style.display = visa ? '' : 'none';
+    if (el) el.style.display = visaBet ? '' : 'none';
   });
   const pageBet = document.getElementById('page-bet');
-  if (pageBet && !visa) pageBet.style.display = 'none';
+  if (pageBet && !visaBet) pageBet.style.display = 'none';
+
+  // Anmälan
+  const visaReg = CFG.visaAnmalan !== false;
+  ['nav-reg-btn','mm-reg-btn','bn-reg'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visaReg ? '' : 'none';
+  });
+  const navCta = document.querySelector('.nav-cta');
+  if (navCta) navCta.style.display = visaReg ? '' : 'none';
+
+  // Deltagare
+  const visaList = CFG.visaDeltagare !== false;
+  ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visaList ? '' : 'none';
+  });
 }
 
 // -- EVENT LISTENERS ------------------------------------------
 
-// Navigation
+// Navigation — alla data-nav knappar via navTo()
 document.querySelectorAll('[data-nav]').forEach(btn => {
-  btn.addEventListener('click', () => show(btn.dataset.nav));
+  btn.addEventListener('click', () => navTo(btn.dataset.nav));
 });
 
 // Mobile menu
 document.querySelectorAll('[data-mm-nav]').forEach(btn => {
-  btn.addEventListener('click', () => { show(btn.dataset.mmNav); mmClose(); });
+  btn.addEventListener('click', () => { navTo(btn.dataset.mmNav); mmClose(); });
 });
 document.getElementById('ham')?.addEventListener('click', mmOpen);
 document.getElementById('mm-ov')?.addEventListener('click', (e) => mmClose(e));
@@ -194,9 +232,9 @@ document.getElementById('nav-brand').addEventListener('click', () => {
   }
 });
 
-// Package cards
+// Package cards på startsidan
 document.getElementById('pkg-grid')?.addEventListener('click', (e) => {
-  if (e.target.closest('[data-action="show-reg"]')) show('reg');
+  if (e.target.closest('[data-action="show-reg"]')) navTo('reg');
 });
 
 // Package radio
@@ -269,8 +307,7 @@ document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
   if (btn) sendConfirmMail(btn.dataset.mailType, parseInt(btn.dataset.mailId, 10), btn.dataset.mailEmail, btn.dataset.mailNamn, btn.dataset.mailStatus, btn);
 });
 
-// Admin foto-borttagning — lyssnar på admin-layout som täcker hela admin-sidan
-// inkl. admin-foto-view som ligger utanför admin-table-wrap
+// Admin foto-borttagning
 document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-photo-key]');
   if (btn) {
@@ -289,7 +326,7 @@ renderOdds();
 buildStartlista();
 renderOmPage();
 renderInfoPage();
-applyBettingVisibility();
+applyVisibility();
 fetchData();
 
 const loadSp = () => loadSponsors();
@@ -303,5 +340,5 @@ if ('requestIdleCallback' in window) {
 const validPages = Object.keys(PAGE_IDX).filter(k => PAGE_IDX[k] !== null && k !== 'confirm' && k !== 'bet-confirm');
 const hashPage   = window.location.hash.replace('#','');
 if (hashPage && validPages.includes(hashPage)) {
-  show(hashPage);
+  navTo(hashPage);
 }
