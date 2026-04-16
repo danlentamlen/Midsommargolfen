@@ -15,10 +15,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-<!-- Text-innehåll för Om och Info-sidor -->
-<div id="om-text" style="display:none"></div>
-<div id="info-text" style="display:none"></div>
 </head>
 <body>
 
@@ -28,13 +24,380 @@
 <!-- -- SPONSOR BANNER ----------------------------------------- -->
 <div class="sponsor-bar" id="sponsor-bar">
   <div class="sponsor-bar-label">Sponsorer</div>
-  <div class="sponsor-track" id="sponsor-track">
-    <!-- filled by JS -->
-  </div>
+  <div class="sponsor-track" id="sponsor-track"></div>
 </div>
 
 <!-- -- TOP NAV ------------------------------------------------ -->
 <header class="nav">
+  <div class="nav-brand" id="nav-brand">
+    <img class="nav-logo" id="nav-logo" src="" alt="Logo">
+    <div>
+      <div class="nav-name" id="nav-name"></div>
+      <div class="nav-sub" id="nav-sub"></div>
+    </div>
+  </div>
+  <nav class="nav-links" aria-label="Huvudnavigering">
+    <button class="nav-link on" data-nav="home">Hem</button>
+    <button class="nav-link" data-nav="om">Om</button>
+    <button class="nav-link" data-nav="info">Info</button>
+    <button class="nav-link" id="nav-reg-btn" data-nav="reg">Anmälan</button>
+    <button class="nav-link" id="nav-list-btn" data-nav="list">Deltagare</button>
+    <button class="nav-link" id="nav-bet-btn" data-nav="bet">Betting</button>
+  </nav>
+  <button class="nav-cta" data-nav="reg">Anmäl dig →</button>
+  <button class="ham" id="ham" aria-label="Öppna meny">☰</button>
+</header>
+
+<!-- -- MOBILE MENU ------------------------------------------- -->
+<div class="mm-ov" id="mm-ov">
+  <div class="mm-panel">
+    <div class="mm-handle"></div>
+    <button class="mm-btn on" data-mm-nav="home"><span class="mm-ic" aria-hidden="true">🏠</span>Hem</button>
+    <button class="mm-btn" data-mm-nav="om"><span class="mm-ic" aria-hidden="true">📖</span>Om</button>
+    <button class="mm-btn" data-mm-nav="info"><span class="mm-ic" aria-hidden="true">📋</span>Info</button>
+    <button class="mm-btn" id="mm-reg-btn" data-mm-nav="reg"><span class="mm-ic" aria-hidden="true">📋</span>Anmälan</button>
+    <button class="mm-btn" id="mm-list-btn" data-mm-nav="list"><span class="mm-ic" aria-hidden="true">👥</span>Deltagare</button>
+    <button class="mm-btn" id="mm-bet-btn" data-mm-nav="bet"><span class="mm-ic" aria-hidden="true">🎲</span>Betting</button>
+  </div>
+</div>
+
+<!-- -- TEASER MODAL ------------------------------------------ -->
+<div id="teaser-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:1.5rem">
+  <div style="background:#fff;border-radius:18px;padding:2.5rem 2rem;max-width:360px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.2);position:relative">
+    <div style="font-size:2.5rem;margin-bottom:1rem">⛳</div>
+    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;font-weight:700;color:#0c3318;margin-bottom:.5rem">Snart öppnar vi!</div>
+    <p id="teaser-msg" style="font-size:15px;color:#2a4a34;line-height:1.6;margin-bottom:1.75rem"></p>
+    <button data-close-teaser style="background:#0c3318;color:#c9a84c;border:none;border-radius:12px;padding:12px 32px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Stäng</button>
+  </div>
+</div>
+
+<!-- == HOME ================================================= -->
+<div id="page-home" class="page on page-body">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge"><div class="h-dot"></div><span id="h-plats"></span><div class="h-dot"></div></div>
+        <h1 class="hero-title" id="h-title"></h1>
+        <span class="hero-sub">2026</span>
+        <div class="hero-meta">
+          <div class="hmeta"><div class="hmeta-ic">📅</div><span id="h-datum"></span></div>
+          <div class="hmeta"><div class="hmeta-ic">⛳</div>Poängbogey med Handicap</div>
+          <div class="hmeta"><div class="hmeta-ic">🍽️</div><span id="h-middag"></span></div>
+        </div>
+        <div class="hero-actions">
+          <button class="btn-p" data-nav="reg">Anmäl dig nu</button>
+          <button class="btn-o" id="hero-bet-btn" data-nav="bet">Betting — Vem vinner?</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-logo-ring"><img id="hero-logo" src="" alt="Logo"></div>
+        <div class="hero-facts">
+          <div class="hf-row"><span class="hf-lbl">Tävlingsform</span><span class="hf-val">Poängbogey</span></div>
+          <div class="hf-row"><span class="hf-lbl">Handicap</span><span class="hf-val">Fullt HCP</span></div>
+          <div class="hf-row"><span class="hf-lbl">Slagstart</span><span class="hf-val" id="hf-slag"></span></div>
+          <div class="hf-row" id="hf-avail-row" style="display:none"><span class="hf-lbl">Golfplatser</span><span class="hf-val" id="hf-avail"></span></div>
+          <div class="cap-bar-wrap" id="hf-cap-wrap" style="display:none"><div class="cap-bar" id="hf-cap-bar" style="width:0%"></div></div>
+        </div>
+        <button class="btn-p" style="width:100%;text-align:center" data-nav="reg">Anmäl dig nu</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="sec-in">
+      <div class="sec-lbl">Dagens program</div>
+      <div class="sec-title">Schema 20 Juni</div>
+      <div class="tl-grid">
+        <div class="tl-card"><div class="tl-time">09:00</div><div class="tl-icon">☕</div><div class="tl-name">Registrering & Kaffe</div><div class="tl-desc">Välkommen till Rya GK. Hämta scorekort och tee-tider i klubbhuset.</div><div class="tl-tag golf">Golf</div></div>
+        <div class="tl-card"><div class="tl-time">10:00</div><div class="tl-icon">🏌️</div><div class="tl-name">Slagstart — Poängbogey</div><div class="tl-desc">Shotgun-start alla 18 hål. Poängbogey med fullt handicap för alla nivåer.</div><div class="tl-tag golf">Golf</div></div>
+        <div class="tl-card"><div class="tl-time">15:00</div><div class="tl-icon">🏆</div><div class="tl-name">19:e hålet</div><div class="tl-desc">Drinkar i baren. Preliminär scoring och avkoppling med kollegor.</div><div class="tl-tag golf">Golf</div></div>
+        <div class="tl-card"><div class="tl-time">18:00</div><div class="tl-icon">🍻 🍔</div><div class="tl-name">Pre Game Party</div><div class="tl-desc">Välkomstkväll med midsommarkänsla. Dress code: somrig smart casual.</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">19:00</div><div class="tl-icon">⚽ 🇸🇪 vs 🇳🇱 🏆</div><div class="tl-name">Sverige - Holland & Prisutdelning</div><div class="tl-desc">Trerättersmiddag. Årets poängbogey-mästare kröns!</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">22:00</div><div class="tl-icon">💃 🕺 🍹</div><div class="tl-name">Midsommarfest!</div><div class="tl-desc">Musik, dans och midsommarkänsla. Natten är lång och ljus.</div><div class="tl-tag party">Kväll</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-in">
+      <div class="sec-lbl">Deltagande</div>
+      <div class="sec-title">Välj ditt paket</div>
+      <div class="pkg-grid" id="pkg-grid"></div>
+    </div>
+  </section>
+
+  <section class="section alt" id="startlista-sec" style="display:none">
+    <div class="sec-in">
+      <div class="sec-lbl">Starttider</div>
+      <div class="sec-title">Startlista</div>
+      <div class="startlista-grid" id="startlista-grid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- == REGISTRATION ========================================= -->
+<div id="page-reg" class="page page-body">
+  <div class="form-layout">
+    <div class="form-card">
+      <div class="form-head">
+        <h2>Anmälan</h2>
+        <p id="form-sub"></p>
+      </div>
+      <div class="form-body">
+        <div class="err-box" id="reg-err" role="alert"><span style="font-size:17px;flex-shrink:0" aria-hidden="true">⚠️</span><div class="err-text" id="reg-err-txt"></div></div>
+        <div class="f-sec">
+          <div class="f-lbl" style="margin-bottom:.8rem">Välj paket</div>
+          <div class="p-opts" id="p-opts"></div>
+        </div>
+        <div class="f-sec">
+          <div class="f-lbl">Personuppgifter</div>
+          <div class="field"><label>För- och efternamn</label><input type="text" id="f-name" placeholder="Anna Lindqvist" data-clear="reg-err"></div>
+          <div class="two-col">
+            <div class="field"><label>E-post</label><input type="email" id="f-email" placeholder="anna@exempel.se" data-clear="reg-err"></div>
+            <div class="field"><label>Telefon</label><input type="tel" id="f-tel" placeholder="07X-XXXXXXX" data-format-tel></div>
+          </div>
+          <div class="field golf-wrap" id="golfid-wrap">
+            <label>Golf-ID <em>(krävs vid tävlingsdeltagande)</em></label>
+            <input type="text" id="f-golfid" placeholder="t.ex. 760828-016" data-clear="reg-err">
+          </div>
+          <div class="field golf-wrap two-col" id="hcp-wrap">
+            <div class="field">
+              <label>Handicap <em>(exakt, t.ex. 12.4)</em></label>
+              <input type="number" id="f-hcp" placeholder="12.4" min="0" max="54" step="0.1">
+            </div>
+          </div>
+        </div>
+        <div class="f-sec">
+          <div class="f-lbl">Övriga uppgifter</div>
+          <div class="field"><label>Allergier / Specialkost <em>(om tillämpligt)</em></label><textarea id="f-allergy" placeholder="t.ex. glutenfri, nötfri, vegan..."></textarea></div>
+        </div>
+        <button class="full-btn" id="reg-btn">Skicka anmälan →</button>
+        <p class="form-note">Betalningsinstruktioner skickas till din e-post</p>
+      </div>
+    </div>
+    <div class="form-aside">
+      <div class="aside-card">
+        <div class="aside-title">⛳ Paketpriser</div>
+        <div class="aside-row"><span class="aside-lbl">Fullt paket</span><span class="aside-val" id="as-full"></span></div>
+        <div class="aside-row"><span class="aside-lbl">Endast Golf</span><span class="aside-val" id="as-golf"></span></div>
+        <div class="aside-row"><span class="aside-lbl">Middag & Fest</span><span class="aside-val" id="as-fest"></span></div>
+      </div>
+      <div class="aside-card">
+        <div class="aside-title">📊 Platser</div>
+        <div class="cap-pills">
+          <div class="cap-pill"><div class="cp-top"><span class="cp-name">⛳ Golf</span><span class="cp-num" id="cp-golf-num"></span></div><div class="cp-bar-wrap"><div class="cp-bar cp-g" id="cp-golf-bar" style="width:0%"></div></div></div>
+          <div class="cap-pill"><div class="cp-top"><span class="cp-name">🥂 Middag & Fest</span><span class="cp-num" id="cp-fest-num"></span></div><div class="cp-bar-wrap"><div class="cp-bar cp-g" id="cp-fest-bar" style="width:0%"></div></div></div>
+        </div>
+      </div>
+      <div class="aside-card">
+        <div class="aside-title">📅 Evenemangsinfo</div>
+        <div class="aside-row"><span class="aside-lbl">Datum</span><span class="aside-val" id="as-datum"></span></div>
+        <div class="aside-row"><span class="aside-lbl">Plats</span><span class="aside-val" id="as-plats"></span></div>
+        <div class="aside-row"><span class="aside-lbl">Tävlingsform</span><span class="aside-val">Poängbogey</span></div>
+        <div class="aside-row"><span class="aside-lbl">Slagstart</span><span class="aside-val" id="as-slag"></span></div>
+        <div class="aside-row"><span class="aside-lbl">Middag</span><span class="aside-val" id="as-middag"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- == CONFIRM ============================================== -->
+<div id="page-confirm" class="page page-body">
+  <div class="confirm-wrap">
+    <div class="confirm-top">
+      <div class="confirm-circ">✓</div>
+      <div class="confirm-title">Anmälan mottagen!</div>
+      <p class="confirm-sub">Tack <strong id="c-name">—</strong> · Bekräftelse skickas till din e-post</p>
+    </div>
+    <div id="c-pays"></div>
+    <div class="confirm-btns">
+      <button class="btn-sec" id="confirm-bet-btn" data-nav="bet">Gå till Betting 🎲</button>
+      <button class="btn-sec" data-nav="list">Se deltagarlistan 👥</button>
+      <button class="full-btn" data-nav="home">Tillbaka till startsidan</button>
+    </div>
+  </div>
+</div>
+
+<!-- == PARTICIPANTS ========================================== -->
+<div id="page-list" class="page page-body">
+  <div class="list-layout">
+    <div class="sec-lbl">Anmälda</div>
+    <div class="sec-title">Golfspelare</div>
+    <div id="golf-cnt-wrap" style="margin-bottom:.75rem;font-size:13px;color:var(--muted);display:none"><strong id="golf-cnt">0</strong> golfspelare anmälda</div>
+    <div class="golf-grid" id="golf-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">Laddar...</div>
+    </div>
+  </div>
+</div>
+
+<!-- == BETTING =============================================== -->
+<div id="page-bet" class="page page-body">
+  <div class="bet-layout">
+    <div class="bet-rules-bar">
+      <div class="bet-rules-title">Vem vinner? 🎲</div>
+      <div class="bet-rule-pills">
+        <div class="bet-rule-pill">👤 Välj max 5 spelare att betta på</div>
+        <div class="bet-rule-pill" id="bet-rule-pris">💰 20 kr per vald spelare</div>
+        <div class="bet-rule-pill">🏆 Potten delas bland vinnarna</div>
+      </div>
+    </div>
+    <div class="bet-grid">
+      <div>
+        <div class="bet-sec-lbl">Anmälda golfspelare — klicka för att välja</div>
+        <div class="players-grid" id="players-grid">
+          <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">Laddar...</div>
+        </div>
+        <div class="odds-card">
+          <div class="odds-title">Popularitet bland bettare</div>
+          <div class="odds-sub">Spelarnamnen är anonyma — visas som Spelare 1, 2 osv.</div>
+          <div id="odds-list"></div>
+        </div>
+      </div>
+      <div class="bet-panel">
+        <div class="bet-panel-head"><h3>Din insats</h3><p>Välj upp till 5 spelare</p></div>
+        <div class="bet-panel-body">
+          <div class="bet-prog-row">
+            <span id="bet-cnt-lbl">0 / 5</span>
+            <div class="bet-prog-bar"><div class="bet-prog-fill" id="bet-prog" style="width:0%"></div></div>
+            <span id="bet-pris-lbl">0 kr</span>
+          </div>
+          <div class="bet-sel-list" id="bet-sel-list">
+            <div class="bet-empty"><div class="bet-empty-ic">🎯</div>Ingen spelare vald</div>
+          </div>
+          <div class="bet-div"></div>
+          <div class="bet-tot-row"><span class="bet-tot-lbl">Totalt</span><span class="bet-tot-val" id="bet-tot-val">0 kr</span></div>
+          <div class="bet-tot-sub" id="bet-tot-sub">Välj minst 1 spelare</div>
+          <div class="err-box" id="bet-err" style="margin-bottom:.65rem" role="alert"><span style="font-size:16px;flex-shrink:0" aria-hidden="true">⚠️</span><div class="err-text" id="bet-err-txt"></div></div>
+          <div class="bet-inp"><label>Ditt namn</label><input type="text" id="bet-name" placeholder="Anna Lindqvist" data-clear="bet-err"></div>
+          <div class="bet-inp"><label>Din e-post</label><input type="email" id="bet-email" placeholder="anna@exempel.se" data-clear="bet-err"></div>
+          <div class="bet-inp"><label>Telefon</label><input type="tel" id="bet-tel" placeholder="07X-XXXXXXX" data-format-tel></div>
+          <button class="bet-sub-btn" id="bet-sub-btn" disabled>Bekräfta & visa betalning</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- == BET CONFIRM ============================================ -->
+<div id="page-bet-confirm" class="page page-body">
+  <div class="confirm-wrap">
+    <div class="confirm-top">
+      <div class="confirm-circ">🎲</div>
+      <div class="confirm-title">Bet registrerat!</div>
+      <p class="confirm-sub">Tack <strong id="bc-name">—</strong> · Bekräftelse skickas till din e-post</p>
+    </div>
+    <div id="bc-pay"></div>
+    <div class="confirm-btns">
+      <button class="btn-sec" data-nav="list">Se deltagarlistan 👥</button>
+      <button class="full-btn" data-nav="home">Tillbaka till startsidan</button>
+    </div>
+  </div>
+</div>
+
+<!-- == ADMIN LOGIN ============================================ -->
+<div id="page-admin-login" class="page page-body">
+  <div class="admin-login">
+    <div class="admin-login-card">
+      <div class="admin-login-head"><h2>⚙️ Admin</h2><p>Midsommardagsgolfen 2026</p></div>
+      <div class="admin-login-body">
+        <div class="err-box" id="admin-login-err" role="alert"><span style="font-size:16px;flex-shrink:0" aria-hidden="true">⚠️</span><div class="err-text">Fel lösenord. Försök igen.</div></div>
+        <div class="field"><label>Lösenord</label><input type="password" id="admin-pw" placeholder="••••••••"></div>
+        <button class="full-btn">Logga in</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- == ADMIN DASHBOARD ======================================== -->
+<div id="page-admin" class="page page-body">
+  <div class="admin-layout">
+    <div class="admin-header">
+      <div>
+        <div class="admin-title">⚙️ Administration</div>
+        <div class="admin-subtitle">Midsommardagsgolfen 2026 — Obetalda anmälningar och bet</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="admin-logout" data-action="admin-refresh">↻ Uppdatera</button>
+        <button class="admin-logout" data-action="admin-logout">Logga ut</button>
+      </div>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab on" data-admin-tab="anm">Anmälningar <span class="admin-badge-cnt" id="adm-anm-cnt">0</span></button>
+      <button class="admin-tab" data-admin-tab="bet">Bets <span class="admin-badge-cnt" id="adm-bet-cnt">0</span></button>
+      <button class="admin-tab" data-admin-tab="foto">Foton</button>
+    </div>
+    <div class="admin-table-wrap">
+      <div id="admin-anm-view">
+        <table class="admin-table" id="admin-anm-table">
+          <thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Paket</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead>
+          <tbody id="admin-anm-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody>
+        </table>
+      </div>
+      <div id="admin-bet-view" style="display:none">
+        <table class="admin-table" id="admin-bet-table">
+          <thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Spelare</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead>
+          <tbody id="admin-bet-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody>
+        </table>
+      </div>
+      <div id="admin-foto-view" style="display:none;padding:1.5rem">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem">
+          Ta bort ett foto för att låta spelaren ladda upp ett nytt.
+        </p>
+        <div id="admin-foto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- == OM PAGE ================================================ -->
+<div id="page-om" class="page page-body">
+  <section class="section">
+    <div class="sec-in" style="max-width:780px">
+      <div class="sec-lbl">Bakgrund</div>
+      <div class="sec-title">Om Midsommardagsgolfen</div>
+      <div id="om-content" style="font-size:15px;color:var(--body);line-height:1.8"></div>
+      <div id="om-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
+        Lägg till din beskrivning i omHistoria i content.js.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- == INFO PAGE ============================================== -->
+<div id="page-info" class="page page-body">
+  <section class="section">
+    <div class="sec-in" style="max-width:780px">
+      <div class="sec-lbl">Tävling</div>
+      <div class="sec-title">Regler & Information</div>
+      <div id="info-content" style="font-size:15px;color:var(--body);line-height:1.8"></div>
+      <div id="info-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
+        Lägg till tävlingsregler och information i infoInnehall i content.js.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- -- BOTTOM NAV -------------------------------------------- -->
+<div class="bnav">
+  <div class="bnav-inner">
+    <button class="bn-btn on" id="bn-home" data-nav="home"><div class="bn-ic" aria-hidden="true">🏠</div>Hem</button>
+    <button class="bn-btn" id="bn-om" data-nav="om"><div class="bn-ic" aria-hidden="true">📖</div>Om</button>
+    <button class="bn-btn" id="bn-info" data-nav="info"><div class="bn-ic" aria-hidden="true">📋</div>Info</button>
+    <button class="bn-btn" id="bn-reg" data-nav="reg"><div class="bn-ic" aria-hidden="true">📋</div>Anmälan</button>
+    <button class="bn-btn" id="bn-list" data-nav="list"><div class="bn-ic" aria-hidden="true">👥</div>Lista</button>
+    <button class="bn-btn" id="bn-bet" data-nav="bet"><div class="bn-ic" aria-hidden="true">🎲</div>Betting</button>
+  </div>
+</div>
+
+<!-- Teaser modal CSS patch -->
+<style>
+#teaser-modal.open { display: flex !important; }
+</style>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html><header class="nav">
   <div class="nav-brand" id="nav-brand">
     <img class="nav-logo" id="nav-logo" src="" alt="Logo">
     <div>
