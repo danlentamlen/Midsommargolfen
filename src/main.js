@@ -292,6 +292,12 @@ document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   if (btn) adminTab(btn.dataset.tab);
 });
 
+// Golf grid photo uploads (publik sida)
+document.getElementById('golf-grid')?.addEventListener('change', (e) => {
+  const input = e.target.closest('[data-photo-key]');
+  if (input) handlePhoto(e, input.dataset.photoKey);
+});
+
 // Admin foto
 document.querySelector('.admin-layout')?.addEventListener('change', (e) => {
   const inp = e.target.closest('[data-foto-pid]');
