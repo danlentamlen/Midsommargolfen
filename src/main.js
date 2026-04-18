@@ -2,7 +2,7 @@ import './styles.css';
 import { CFG, PAGE_IDX, BN_IDS } from './config.js';
 import { state, SAMPLE } from './state.js';
 import { formatTel, clearE, sanitizeHtml } from './utils.js';
-import { omHistoria, infoInnehall } from './content.js';
+import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
 import { loadSponsors } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
@@ -90,7 +90,7 @@ function showDemoBanner() {
   banner.id = 'demo-banner';
   banner.setAttribute('role', 'status');
   banner.style.cssText = 'background:var(--gold-bg);color:var(--gold-dk);text-align:center;padding:8px 16px;font-size:13px;font-family:var(--sans);border-bottom:1px solid var(--gold-lt)';
-  banner.textContent = '\u26a0\ufe0f Demoläge — ingen API konfigurerad. Data visas lokalt.';
+  banner.textContent = '⚠️ Demoläge — ingen API konfigurerad. Data visas lokalt.';
   document.body.prepend(banner);
 }
 
@@ -125,11 +125,12 @@ function show(id) {
     document.querySelectorAll('.nav-link')[idx]?.classList.add('on');
     document.getElementById(BN_IDS[idx])?.classList.add('on');
   }
-  if (id==='list')  { renderGolfGrid(); }
-  if (id==='bet')   { renderPlayers(); renderOdds(); }
-  if (id==='om')    { renderOmPage(); }
-  if (id==='info')  { renderInfoPage(); }
-  if (id==='admin') { adminLoadData(); }
+  if (id==='list')      { renderGolfGrid(); }
+  if (id==='bet')       { renderPlayers(); renderOdds(); }
+  if (id==='om')        { renderOmPage(); }
+  if (id==='info')      { renderInfoPage(); }
+  if (id==='sponsring') { renderSponringPage(); }
+  if (id==='admin')     { adminLoadData(); }
   window.scrollTo(0,0);
   const skipHash = ['admin','admin-login','confirm','bet-confirm'];
   if (!skipHash.includes(id)) history.replaceState(null,'','#'+id);
@@ -147,7 +148,7 @@ function navTo(id) {
 function mmOpen()  { document.getElementById('mm-ov').classList.add('open'); }
 function mmClose(e){ if(!e||e.target===document.getElementById('mm-ov')) document.getElementById('mm-ov').classList.remove('open'); }
 
-// -- OM & INFO PAGES ------------------------------------------
+// -- OM, INFO & SPONSRING PAGES -------------------------------
 function renderOmPage() {
   const el = document.getElementById('om-content');
   const fb = document.getElementById('om-fallback');
@@ -166,6 +167,19 @@ function renderInfoPage() {
   const fb = document.getElementById('info-fallback');
   if (infoInnehall?.trim()) {
     el.innerHTML = sanitizeHtml(infoInnehall);
+    el.style.display = 'block';
+    fb.style.display = 'none';
+  } else {
+    el.style.display = 'none';
+    fb.style.display = 'block';
+  }
+}
+
+function renderSponringPage() {
+  const el = document.getElementById('sponsring-content');
+  const fb = document.getElementById('sponsring-fallback');
+  if (sponsringInnehall?.trim()) {
+    el.innerHTML = sanitizeHtml(sponsringInnehall);
     el.style.display = 'block';
     fb.style.display = 'none';
   } else {
@@ -252,46 +266,37 @@ document.querySelectorAll('[data-clear]').forEach(el => {
 
 // Phone formatting
 document.querySelectorAll('[data-format-tel]').forEach(el => {
-  el.addEventListener('blur', () => { el.value = formatTel(el.value.trim()); });
+  el.addEventListener('input', () => { el.value = formatTel(el.value); });
 });
 
-// Golf grid photo uploads
-document.getElementById('golf-grid')?.addEventListener('change', (e) => {
-  const input = e.target.closest('[data-photo-key]');
-  if (input) handlePhoto(e, input.dataset.photoKey);
-});
-
-// Players grid (betting)
+// Betting
 document.getElementById('players-grid')?.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-player-idx]');
-  if (card) toggleP(parseInt(card.dataset.playerIdx, 10));
+  const card = e.target.closest('[data-pid]');
+  if (card) toggleP(card.dataset.pid);
 });
-
-// Bet selection remove
-document.getElementById('bet-sel-list')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-remove-idx]');
-  if (btn) toggleP(parseInt(btn.dataset.removeIdx, 10));
-});
-
-// Bet submit
 document.getElementById('bet-sub-btn')?.addEventListener('click', () => submitBet(show));
 
 // Admin login
+document.getElementById('admin-login-btn')?.addEventListener('click', () => adminLogin(show));
 document.getElementById('admin-pw')?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') adminLogin(show, adminLoadData);
+  if (e.key === 'Enter') adminLogin(show);
 });
-document.querySelector('#page-admin-login .full-btn')?.addEventListener('click', () => adminLogin(show, adminLoadData));
 
-// Admin logout & refresh
-document.querySelector('[data-action="admin-refresh"]')?.addEventListener('click', () => adminLoadData());
-document.querySelector('[data-action="admin-logout"]')?.addEventListener('click', () => adminLogout(show));
+// Admin logout
+document.getElementById('admin-logout-btn')?.addEventListener('click', () => adminLogout(show));
 
 // Admin tabs
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('.admin-tab');
-  if (btn) {
-    const tab = btn.dataset.adminTab;
-    if (tab) adminTab(tab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
+  const btn = e.target.closest('[data-tab]');
+  if (btn) adminTab(btn.dataset.tab);
+});
+
+// Admin foto
+document.querySelector('.admin-layout')?.addEventListener('change', (e) => {
+  const inp = e.target.closest('[data-foto-pid]');
+  if (inp && inp.files?.[0]) {
+    handlePhoto(inp.dataset.fotoPid, inp.files[0], renderGolfGrid, renderPlayers);
+    renderAdminFoto(renderGolfGrid, renderPlayers);
   }
 });
 
@@ -326,6 +331,7 @@ renderOdds();
 buildStartlista();
 renderOmPage();
 renderInfoPage();
+renderSponringPage();
 applyVisibility();
 fetchData();
 

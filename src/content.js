@@ -1,4 +1,4 @@
-// Sidinnehåll för Om- och Info-sidorna.
+// Sidinnehåll för Om-, Info- och Sponsring-sidorna.
 // Redigera direkt här — stöder HTML-taggar: <h3>, <p>, <b>, <ul>, <li>, <em> etc.
 
 export const omHistoria = `
@@ -36,4 +36,7 @@ export const omHistoria = `
 
 export const infoInnehall = `
 <h2>Texten om tävlingsregler, priser mm uppdteras snart...</h2>
+`;
+
+export const sponsringInnehall = `
 `;

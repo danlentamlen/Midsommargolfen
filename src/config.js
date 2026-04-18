@@ -58,5 +58,5 @@ export const CFG = {
 };
 
 // Navigation constants
-export const PAGE_IDX = {home:0,om:1,info:2,reg:3,list:4,bet:5,'bet-confirm':5,confirm:3,'admin-login':null,admin:null};
-export const BN_IDS = ['bn-home','bn-om','bn-info','bn-reg','bn-list','bn-bet'];
+export const PAGE_IDX = {home:0,om:1,info:2,sponsring:3,reg:4,list:5,bet:6,'bet-confirm':6,confirm:4,'admin-login':null,admin:null};
+export const BN_IDS = ['bn-home','bn-om','bn-info','bn-sponsring','bn-reg','bn-list','bn-bet'];

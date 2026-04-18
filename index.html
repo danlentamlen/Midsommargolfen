@@ -40,6 +40,7 @@
     <button class="nav-link on" data-nav="home">Hem</button>
     <button class="nav-link" data-nav="om">Om</button>
     <button class="nav-link" data-nav="info">Info</button>
+    <button class="nav-link" data-nav="sponsring">Sponsring</button>
     <button class="nav-link" id="nav-reg-btn" data-nav="reg">Anmälan</button>
     <button class="nav-link" id="nav-list-btn" data-nav="list">Deltagare</button>
     <button class="nav-link" id="nav-bet-btn" data-nav="bet">Betting</button>
@@ -55,6 +56,7 @@
     <button class="mm-btn on" data-mm-nav="home"><span class="mm-ic" aria-hidden="true">🏠</span>Hem</button>
     <button class="mm-btn" data-mm-nav="om"><span class="mm-ic" aria-hidden="true">📖</span>Om</button>
     <button class="mm-btn" data-mm-nav="info"><span class="mm-ic" aria-hidden="true">📋</span>Info</button>
+    <button class="mm-btn" data-mm-nav="sponsring"><span class="mm-ic" aria-hidden="true">🤝</span>Sponsring</button>
     <button class="mm-btn" id="mm-reg-btn" data-mm-nav="reg"><span class="mm-ic" aria-hidden="true">📋</span>Anmälan</button>
     <button class="mm-btn" id="mm-list-btn" data-mm-nav="list"><span class="mm-ic" aria-hidden="true">👥</span>Deltagare</button>
     <button class="mm-btn" id="mm-bet-btn" data-mm-nav="bet"><span class="mm-ic" aria-hidden="true">🎲</span>Betting</button>
@@ -77,42 +79,42 @@
     <div class="hero-bg"></div>
     <div class="hero-inner">
       <div>
-        <div class="hero-badge"><div class="h-dot"></div><span id="h-plats"></span><div class="h-dot"></div></div>
-        <h1 class="hero-title" id="h-title"></h1>
-        <span class="hero-sub">2026</span>
+        <div class="hero-badge"><div class="h-dot"></div><span id="h-plats"></span><div class="h-dot" style="opacity:.4"></div><span id="h-datum"></span></div>
+        <h1 class="hero-title" id="h-title">Midsommardags<em>golfen</em></h1>
+        <span class="hero-sub">Poängbogey · Rya GK · 2026</span>
         <div class="hero-meta">
-          <div class="hmeta"><div class="hmeta-ic">📅</div><span id="h-datum"></span></div>
-          <div class="hmeta"><div class="hmeta-ic">⛳</div>Poängbogey med Handicap</div>
-          <div class="hmeta"><div class="hmeta-ic">🍽️</div><span id="h-middag"></span></div>
+          <div class="hmeta"><div class="hmeta-ic">⛳</div><span>Slagstart <strong id="hf-slag"></strong></span></div>
+          <div class="hmeta"><div class="hmeta-ic">🥂</div><span id="h-middag"></span></div>
         </div>
         <div class="hero-actions">
-          <button class="btn-p" data-nav="reg">Anmäl dig nu</button>
-          <button class="btn-o" id="hero-bet-btn" data-nav="bet">Betting — Vem vinner?</button>
+          <button class="btn-p" id="nav-reg-hero-btn" data-nav="reg">Anmäl dig nu →</button>
+          <button class="btn-o" id="hero-bet-btn" data-nav="bet">Betta på vinnaren 🎲</button>
         </div>
       </div>
       <div class="hero-card">
         <div class="hero-logo-ring"><img id="hero-logo" src="" alt="Logo"></div>
         <div class="hero-facts">
-          <div class="hf-row"><span class="hf-lbl">Tävlingsform</span><span class="hf-val">Poängbogey</span></div>
-          <div class="hf-row"><span class="hf-lbl">Handicap</span><span class="hf-val">Fullt HCP</span></div>
-          <div class="hf-row"><span class="hf-lbl">Slagstart</span><span class="hf-val" id="hf-slag"></span></div>
-          <div class="hf-row" id="hf-avail-row" style="display:none"><span class="hf-lbl">Golfplatser</span><span class="hf-val" id="hf-avail"></span></div>
-          <div class="cap-bar-wrap" id="hf-cap-wrap" style="display:none"><div class="cap-bar" id="hf-cap-bar" style="width:0%"></div></div>
+          <div class="hf-row"><span class="hf-lbl">⛳ Golfplatser</span><span class="hf-val av" id="hf-golf">Laddar…</span></div>
+          <div class="cap-bar-wrap"><div class="cap-bar" id="cap-golf" style="width:0%"></div></div>
+          <div class="hf-row"><span class="hf-lbl">🥂 Middagsplatser</span><span class="hf-val av" id="hf-fest">Laddar…</span></div>
+          <div class="cap-bar-wrap"><div class="cap-bar" id="cap-fest" style="width:0%"></div></div>
         </div>
-        <button class="btn-p" style="width:100%;text-align:center" data-nav="reg">Anmäl dig nu</button>
+        <button class="btn-p" data-nav="reg">Säkra din plats →</button>
       </div>
     </div>
   </section>
 
-  <section class="section alt">
+  <div class="sec-div"></div>
+
+  <section class="section">
     <div class="sec-in">
-      <div class="sec-lbl">Dagens program</div>
-      <div class="sec-title">Schema 20 Juni</div>
+      <div class="sec-lbl">Dagen</div>
+      <div class="sec-title">Programmet 20 Juni</div>
       <div class="tl-grid">
-        <div class="tl-card"><div class="tl-time">09:00</div><div class="tl-icon">☕</div><div class="tl-name">Registrering & Kaffe</div><div class="tl-desc">Välkommen till Rya GK. Hämta scorekort och tee-tider i klubbhuset.</div><div class="tl-tag golf">Golf</div></div>
-        <div class="tl-card"><div class="tl-time">10:00</div><div class="tl-icon">🏌️</div><div class="tl-name">Slagstart — Poängbogey</div><div class="tl-desc">Shotgun-start alla 18 hål. Poängbogey med fullt handicap för alla nivåer.</div><div class="tl-tag golf">Golf</div></div>
-        <div class="tl-card"><div class="tl-time">15:00</div><div class="tl-icon">🏆</div><div class="tl-name">19:e hålet</div><div class="tl-desc">Drinkar i baren. Preliminär scoring och avkoppling med kollegor.</div><div class="tl-tag golf">Golf</div></div>
-        <div class="tl-card"><div class="tl-time">18:00</div><div class="tl-icon">🍻 🍔</div><div class="tl-name">Pre Game Party</div><div class="tl-desc">Välkomstkväll i klassisk amerikansk anda - Hamburgarbuffé & Kall Dryck servereas. Dress code: 🇸🇪 Gult & Blått så klart!</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">10:00</div><div class="tl-icon">⛳</div><div class="tl-name">Slagstart</div><div class="tl-desc">Poängbogey på Rya GK. Alla startar samtidigt på sina hål.</div><div class="tl-tag golf">Golf</div></div>
+        <div class="tl-card"><div class="tl-time">15:00</div><div class="tl-icon">🏆</div><div class="tl-name">Scorekort in</div><div class="tl-desc">Resultat sammanställs. Första ölen väntar i baren.</div><div class="tl-tag golf">Golf</div></div>
+        <div class="tl-card"><div class="tl-time">17:00</div><div class="tl-icon">🌿 🍹</div><div class="tl-name">Midsommarfirande</div><div class="tl-desc">Midsommarstämning, lekar och drinkar vid clubhuset.</div><div class="tl-tag party">Kväll</div></div>
+        <div class="tl-card"><div class="tl-time">19:30</div><div class="tl-icon">🍽️</div><div class="tl-name">Middag</div><div class="tl-desc">Tre rätters middag i Ryas fina lokaler. Dress code: 🇸🇪 Gult & Blått så klart!</div><div class="tl-tag party">Kväll</div></div>
         <div class="tl-card"><div class="tl-time">19:00</div><div class="tl-icon">⚽ 🇸🇪 vs 🇳🇱 🏆</div><div class="tl-name">Sverige - Holland & Prisutdelning</div><div class="tl-desc">Sjävklart kollar vi Sverige mot Holland. Vi korar årets mästare och priserna ska delas ut!</div><div class="tl-tag party">Kväll</div></div>
         <div class="tl-card"><div class="tl-time">22:00</div><div class="tl-icon">💃 🕺 🍹</div><div class="tl-name">Midsommardagsfest!</div><div class="tl-desc">Musik, dans och sommarkänsla. Natten är lång och ljus.</div><div class="tl-tag party">Kväll</div></div>
       </div>
@@ -358,7 +360,7 @@
       <div class="sec-title">Om Midsommardagsgolfen</div>
       <div id="om-content" style="font-size:15px;color:var(--body);line-height:1.8"></div>
       <div id="om-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
-        Lägg till din beskrivning i CFG.omHistoria i HTML-filen.
+        Lägg till din beskrivning i omHistoria i content.js.
       </div>
     </div>
   </section>
@@ -372,7 +374,21 @@
       <div class="sec-title">Regler & Information</div>
       <div id="info-content" style="font-size:15px;color:var(--body);line-height:1.8"></div>
       <div id="info-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
-        Lägg till tävlingsregler och information i CFG.infoInnehall i HTML-filen.
+        Lägg till tävlingsregler och information i infoInnehall i content.js.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- == SPONSRING PAGE ========================================= -->
+<div id="page-sponsring" class="page page-body">
+  <section class="section">
+    <div class="sec-in" style="max-width:780px">
+      <div class="sec-lbl">Stöd</div>
+      <div class="sec-title">Sponsring</div>
+      <div id="sponsring-content" style="font-size:15px;color:var(--body);line-height:1.8"></div>
+      <div id="sponsring-fallback" style="font-size:15px;color:var(--muted);font-style:italic;padding:2rem 0">
+        Lägg till sponsringsinformation i sponsringInnehall i content.js.
       </div>
     </div>
   </section>
@@ -384,6 +400,7 @@
     <button class="bn-btn on" id="bn-home" data-nav="home"><div class="bn-ic" aria-hidden="true">🏠</div>Hem</button>
     <button class="bn-btn" id="bn-om" data-nav="om"><div class="bn-ic" aria-hidden="true">📖</div>Om</button>
     <button class="bn-btn" id="bn-info" data-nav="info"><div class="bn-ic" aria-hidden="true">📋</div>Info</button>
+    <button class="bn-btn" id="bn-sponsring" data-nav="sponsring"><div class="bn-ic" aria-hidden="true">🤝</div>Sponsring</button>
     <button class="bn-btn" id="bn-reg" data-nav="reg"><div class="bn-ic" aria-hidden="true">📋</div>Anmälan</button>
     <button class="bn-btn" id="bn-list" data-nav="list"><div class="bn-ic" aria-hidden="true">👥</div>Lista</button>
     <button class="bn-btn" id="bn-bet" data-nav="bet"><div class="bn-ic" aria-hidden="true">🎲</div>Betting</button>
