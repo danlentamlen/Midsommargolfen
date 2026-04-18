@@ -190,31 +190,28 @@ function renderSponringPage() {
 }
 
 // -- VISIBILITY -----------------------------------------------
+function setVis(id, show) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (show) { el.style.removeProperty('display'); } else { el.style.display = 'none'; }
+}
+
 function applyVisibility() {
   // Betting
   const visaBet = CFG.visaBetting !== false;
-  ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = visaBet ? '' : 'none';
-  });
+  ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'].forEach(id => setVis(id, visaBet));
   const pageBet = document.getElementById('page-bet');
   if (pageBet && !visaBet) pageBet.style.display = 'none';
 
   // Anmälan
   const visaReg = CFG.visaAnmalan !== false;
-  ['nav-reg-btn','mm-reg-btn','bn-reg'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = visaReg ? '' : 'none';
-  });
+  ['nav-reg-btn','mm-reg-btn','bn-reg'].forEach(id => setVis(id, visaReg));
   const navCta = document.querySelector('.nav-cta');
-  if (navCta) navCta.style.display = visaReg ? '' : 'none';
+  if (navCta) { if (!visaReg) { navCta.style.display = 'none'; } else { navCta.style.removeProperty('display'); } }
 
   // Deltagare
   const visaList = CFG.visaDeltagare !== false;
-  ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = visaList ? '' : 'none';
-  });
+  ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => setVis(id, visaList));
 }
 
 // -- EVENT LISTENERS ------------------------------------------
