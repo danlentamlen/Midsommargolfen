@@ -26,11 +26,14 @@ export const CFG = {
   drivePhotoFolderId: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
   driveSponsorFolderId: '19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
 
+  // Fallback-loggor visas om Drive-anropet misslyckas.
+  // Ladda upp loggor i Drive-mappen (driveSponsorFolderId) för produktion.
+  // Filnamn spelar ingen roll — alla bildfiler i mappen visas.
   sponsorer: [
-    { namn: 'Rya GK', logoUrl: '/logos/ryagk.png', webbUrl: 'https://rya.nu' },
-    { namn: 'Brewski', logoUrl: '/logos/brewski.png', webbUrl: 'https://www.brewski.se' },
-    { namn: 'HAEGERSTRANDS', logoUrl: '/logos/haegerstrands.png', webbUrl: 'https://haegerstrands.se/eng/' },
-    { namn: 'KEMIRA', logoUrl: '/logos/kemira.png', webbUrl: 'https://www.kemira.com/sv/' },
+    { namn: 'Rya GK',        logoUrl: 'https://rya.nu/wp-content/uploads/2022/11/Rya_golf_Logo.svg',          webbUrl: 'https://rya.nu' },
+    { namn: 'Brewski',       logoUrl: 'https://lh3.googleusercontent.com/oFIpz8SHaKiSjXa6XYbAi3hCAny_-J9Sji6Dmb0rWBVuK3Ct7G4yNMGlBYBe5D21DTAdpF-JPlXdSLbhoUowsrYuaWORbc4=s750', webbUrl: 'https://www.brewski.se' },
+    { namn: 'HAEGERSTRANDS', logoUrl: 'https://usercontent.one/wp/haegerstrands.se/wp-content/uploads/2023/11/logga2.png', webbUrl: 'https://haegerstrands.se/eng/' },
+    { namn: 'Kemira',        logoUrl: 'https://www.kemira.com/wp-content/themes/kemira/images/kemira-logo.svg', webbUrl: 'https://www.kemira.com/sv/' },
   ],
 
   omHistoria: '',
