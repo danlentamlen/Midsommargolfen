@@ -35,7 +35,29 @@ export const omHistoria = `
 `;
 
 export const infoInnehall = `
-<h2>Texten om tävlingsregler, priser mm uppdteras snart...</h2>
+<h3>Tävlingsformat</h3>
+<p>Midsommardagsgolfen spelas som <b>slaggolf med fullt handicap</b> över 18 hål på Rya GK. Tävlingen avgörs genom nettoresultat — ditt bruttoresultat minus ditt spelhandicap för dagen.</p>
+
+<h3>Regler</h3>
+<ul>
+  <li><b>Max 5 över par per hål</b> — sätts in på scorekortet som max. Ingen behöver pinas på ett svårt hål!</li>
+  <li><b>Minst par</b> krävs för att ett hål ska räknas mot specialpriserna (närmast hål & längsta drive).</li>
+</ul>
+
+<h3>Specialpriser</h3>
+<ul>
+  <li>🎯 <b>Närmast hål</b> — gäller alla par 3-hål. Bollen måste ligga på greenen efter utslaget och spelaren ska ha spelat minst par på hålet.</li>
+  <li>💨 <b>Längsta drive</b> — mäts på <b>hål 7</b> och <b>hål 18</b>. Bollen måste ligga i fairway och spelaren ska ha spelat minst par på hålet.</li>
+</ul>
+
+<h3>Priser</h3>
+<p>I slagtävlingen delar vi ut priser till de tre bästa nettoresultaten:</p>
+<ul>
+  <li>🥇 <b>1:a pris</b></li>
+  <li>🥈 <b>2:a pris</b></li>
+  <li>🥉 <b>3:e pris</b></li>
+</ul>
+<p><em>Prisutdelningen sker under middagen. Priserna sponsras av årets samarbetspartners — stort tack till dem!</em></p>
 `;
 
 export const sponsringInnehall = `
