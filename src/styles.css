@@ -29,7 +29,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   padding-right:1rem;border-right:1px solid rgba(201,168,76,.4);
 }
 .sponsor-track{
-  display:flex;align-items:center;gap:2rem;flex:1;overflow:hidden;
+  display:flex;align-items:center;gap:3rem;flex:1;overflow:hidden;
+  /* Ticker-scroll: maskar kanterna med gradient */
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,black 5%,black 95%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0%,black 5%,black 95%,transparent 100%);
+}
+.sponsor-track-inner{
+  display:flex;align-items:center;gap:3rem;
+  animation:ticker-scroll 18s linear infinite;
+  /* Pausar vid hover */
+  will-change:transform;
+}
+.sponsor-track-inner:hover{animation-play-state:paused}
+@keyframes ticker-scroll{
+  0%  { transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
 }
 .sponsor-logo{
   height:34px;width:auto;max-width:100px;object-fit:contain;
