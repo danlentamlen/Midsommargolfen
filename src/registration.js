@@ -51,7 +51,7 @@ export function buildPkgs() {
       <div class="pkg-ic">${p.ic}</div><div class="pkg-name">${p.nm}</div>
       <div class="pkg-desc">${p.desc}</div>
       <div class="pkg-price">${p.pris.toLocaleString('sv-SE')} <span>kr</span></div>
-      ${p.id!=='party' ? `<div class="pkg-pott">🏆 Större delen går till prispotten</div>` : ''}
+      ${p.id!=='party' ? `<div class="pkg-pott">🏆 Större delen av golf-avgiften går till prispotten</div>` : ''}
       <button class="pkg-btn">Välj paket</button>
     </div>`
   ).join('');
