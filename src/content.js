@@ -39,4 +39,19 @@ export const infoInnehall = `
 `;
 
 export const sponsringInnehall = `
+<h3>Vill du bidra till årets prisbord?</h3>
+<p>​Midsommardagsgolfen på Rya GK är en uppskattad tradition som i år firar 6:e året. Vi välkomnar nu företag och privatpersoner som vill vara med och förgylla tävlingen genom sponsring till vårt prisbord.</p>
+​
+<p>Detta får ni som sponsor:
+​<p>Exponering: Er företagslogga publiceras här på hemsidan under fliken för samarbetspartners.</p>
+​<p>Omnämnande: Ni får ett personligt omnämnande och tack inför alla deltagare under den festliga prisutdelningen.</p>
+
+<h3>​Så anmäler du intresse:</h3>
+<p>Skicka ett mejl till midsommadagsgolfen@gmail.com och inkludera följande:
+​<li><b>Namn/Företag:</b> Vem står bakom sponsringen?</li>
+​<li><b>Logotyp:</b> Bifoga gärna din logga för publicering på webben.</li>
+​<li><b>Pris: Vad du/ni vill sponsra med</b> (produkter, tjänster eller presentkort).</li>
+​<p>Själva priserna lämnas in på klubben under speldagen den 20 juni.</p>
+​
+<p>Stort tack för ert stöd – det är ni som gör tävlingen extra speciell!</p>
 `;

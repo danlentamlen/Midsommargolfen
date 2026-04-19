@@ -3,7 +3,7 @@ export const CFG = {
   eventDatum: 'Lördag 20 Juni 2026',
   eventPlats: 'Rya Golfklubb, Helsingborg',
   slagstart: '10:00',
-  middagStart: '19:30',
+  middagStart: '17:30',
 
   prisGolf: 500,
   prisFest: 400,
@@ -30,6 +30,7 @@ export const CFG = {
     { namn: 'Rya GK', logoUrl: 'https://rya.nu/wp-content/uploads/2022/11/Rya_golf_Logo.svg', webbUrl: 'https://rya.nu' },
     { namn: 'Brewski', logoUrl: 'https://lh3.googleusercontent.com/oFIpz8SHaKiSjXa6XYbAi3hCAny_-J9Sji6Dmb0rWBVuK3Ct7G4yNMGlBYBe5D21DTAdpF-JPlXdSLbhoUowsrYuaWORbc4=s750', webbUrl: 'https://www.brewski.se' },
     { namn: 'HAEGERSTRANDS', logoUrl: 'https://usercontent.one/wp/haegerstrands.se/wp-content/uploads/2023/11/logga2.png', webbUrl: 'https://haegerstrands.se/eng/' },
+    { namn: 'KEMIRA', logoUrl: 'https://companieslogo.com/img/orig/KEMIRA.HE_BIG-f7fdae37.png?t=1720244492', webbUrl: 'https://www.kemira.com/sv/' },
   ],
 
   omHistoria: '',
@@ -38,9 +39,9 @@ export const CFG = {
   // -- Teaser-läge --
   // Sätt till false för att dölja sidan helt (nav, bottom nav, knappar försvinner).
   // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
-  visaAnmalan: true,
-  visaDeltagare: true,
-  visaBetting: true,
+  visaAnmalan: false,
+  visaDeltagare: false,
+  visaBetting: false,
 
   // Meddelandet som visas i popup när en dold sida klickas
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',
