@@ -57,7 +57,8 @@ export const infoInnehall = `
   <li>🥈 <b>2:a pris</b></li>
   <li>🥉 <b>3:e pris</b></li>
 </ul>
-<p><em>Prisutdelningen sker under middagen. Priserna sponsras av årets samarbetspartners — stort tack till dem!</em></p>
+<p><b>🏆 Prispotten finansieras av anmälningsavgifterna</b> — större delen av golf-avgiften går direkt till prisborden. Ju fler som anmäler sig, desto fetare priser!</p>
+<p><em>Prisutdelningen sker under middagen. Priserna kompletteras av årets samarbetspartners — stort tack till dem!</em></p>
 `;
 
 export const sponsringInnehall = `

@@ -42,15 +42,16 @@ export function setCapPill(barId,numId,cnt,max,left,pct){
 // -- PACKAGES -------------------------------------------------
 export function buildPkgs() {
   const pkgs = [
-    {id:'full', ic:'⭐', nm:'Fullt paket', desc:'Golf + Middag & Midsommarfest. Den kompletta upplevelsen.', pris:CFG.prisFull, feat:true},
-    {id:'golf', ic:'⛳', nm:'Endast Golf', desc:'Poängbogey-tävlingen utan kvällsevenemang.', pris:CFG.prisGolf, feat:false},
-    {id:'party',ic:'🥂', nm:'Middag & Fest', desc:'Kvällsevenemang utan golf. För sällskap & inbjudna.', pris:CFG.prisFest, feat:false},
+  {id:'full', ic:'⭐', nm:'Fullt paket',   desc:'Golf + Middag & Midsommarfest. Den kompletta upplevelsen.', pris:CFG.prisFull,  feat:true},
+  {id:'golf', ic:'⛳', nm:'Endast Golf',    desc:'Slaggolf-tävlingen utan kvällsevenemang.',                pris:CFG.prisGolf,  feat:false},
+  {id:'party',ic:'🥂', nm:'Middag & Fest', desc:'Kvällsevenemang utan golf. För sällskap & inbjudna.',       pris:CFG.prisFest,  feat:false},
   ];
   document.getElementById('pkg-grid').innerHTML = pkgs.map(p =>
     `<div class="pkg-card ${p.feat?'feat':''}" data-action="show-reg">
       <div class="pkg-ic">${p.ic}</div><div class="pkg-name">${p.nm}</div>
       <div class="pkg-desc">${p.desc}</div>
       <div class="pkg-price">${p.pris.toLocaleString('sv-SE')} <span>kr</span></div>
+      ${p.id!=='party' ? `<div class="pkg-pott">🏆 Större delen går till prispotten</div>` : ''}
       <button class="pkg-btn">Välj paket</button>
     </div>`
   ).join('');
