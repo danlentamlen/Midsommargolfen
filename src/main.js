@@ -13,38 +13,61 @@ import { fetchDrivePhotos } from './photos.js';
 setRenderPlayers(renderPlayers);
 
 // -- INJECT LOGO -----------------------------------------------
-// Sätt placeholder direkt så layouten inte hoppar
-['nav-logo','hero-logo'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.style.opacity = '0';
-});
+const LOGO_CACHE_KEY = 'midsommar_logo_url';
  
-async function loadLogo() {
-  if (CFG.driveLogoFolderId && CFG.appsScriptUrl) {
-    try {
-      const r = await fetchWithTimeout(
-        CFG.appsScriptUrl + '?action=logo&folderId=' + encodeURIComponent(CFG.driveLogoFolderId)
-      );
-      const d = await r.json();
-      if (d.ok && (d.url || d.base64)) {
-        const src = d.url || `data:${d.mimeType};base64,${d.base64}`;
-        ['nav-logo','hero-logo'].forEach(id => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          el.onload = () => { el.style.opacity = '1'; el.style.transition = 'opacity .3s'; };
-          el.src = src;
-        });
-        return;
-      }
-    } catch(e) {
-      console.warn('loadLogo: misslyckades', e);
-    }
-  }
-  // Fallback
+function setLogoSrc(src) {
   ['nav-logo','hero-logo'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) { el.src = '/logo.jpg'; el.style.opacity = '1'; }
+    if (!el) return;
+    el.onload = () => {
+      el.style.background = '';
+      el.style.transition = 'opacity .3s';
+      el.style.opacity = '1';
+    };
+    el.src = src;
   });
+}
+ 
+async function loadLogo() {
+  // Visa grön platshållare medan loggan laddas
+  ['nav-logo','hero-logo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.opacity = '0'; el.style.background = 'var(--pine)'; }
+  });
+ 
+  // 1. Kolla cache först — visas omedelbart utan nätverksanrop
+  const cached = localStorage.getItem(LOGO_CACHE_KEY);
+  if (cached) {
+    setLogoSrc(cached);
+    // Uppdatera cache i bakgrunden utan att blockera UI
+    refreshLogoCache();
+    return;
+  }
+ 
+  // 2. Inget i cache — hämta från Drive
+  await refreshLogoCache();
+}
+ 
+async function refreshLogoCache() {
+  if (!CFG.driveLogoFolderId || !CFG.appsScriptUrl) {
+    setLogoSrc('/logo.jpg');
+    return;
+  }
+  try {
+    const r = await fetchWithTimeout(
+      CFG.appsScriptUrl + '?action=logo&folderId=' + encodeURIComponent(CFG.driveLogoFolderId)
+    );
+    const d = await r.json();
+    if (d.ok && (d.url || d.base64)) {
+      const src = d.url || `data:${d.mimeType};base64,${d.base64}`;
+      try { localStorage.setItem(LOGO_CACHE_KEY, src); } catch { /* localStorage full */ }
+      setLogoSrc(src);
+      return;
+    }
+  } catch(e) {
+    console.warn('loadLogo: misslyckades', e);
+  }
+  setLogoSrc('/logo.jpg');
 }
 
 loadLogo();
