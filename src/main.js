@@ -348,7 +348,7 @@ document.getElementById('admin-logout-btn')?.addEventListener('click', () => adm
 // Admin tabs
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-tab]');
-  if (btn) adminTab(btn.dataset.tab);
+  if (btn) adminTab(btn.dataset.tab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
 });
 
 // Golf grid photo uploads (publik sida)
