@@ -14,7 +14,7 @@ setRenderPlayers(renderPlayers);
 
 // -- INJECT LOGO -----------------------------------------------
 const LOGO_CACHE_KEY = 'midsommar_logo_url';
- 
+
 function setLogoSrc(src) {
   ['nav-logo','hero-logo'].forEach(id => {
     const el = document.getElementById(id);
@@ -27,14 +27,14 @@ function setLogoSrc(src) {
     el.src = src;
   });
 }
- 
+
 async function loadLogo() {
   // Visa grön platshållare medan loggan laddas
   ['nav-logo','hero-logo'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.style.opacity = '0'; el.style.background = 'var(--pine)'; }
   });
- 
+
   // 1. Kolla cache först — visas omedelbart utan nätverksanrop
   const cached = localStorage.getItem(LOGO_CACHE_KEY);
   if (cached) {
@@ -43,11 +43,11 @@ async function loadLogo() {
     refreshLogoCache();
     return;
   }
- 
+
   // 2. Inget i cache — hämta från Drive
   await refreshLogoCache();
 }
- 
+
 async function refreshLogoCache() {
   if (!CFG.driveLogoFolderId || !CFG.appsScriptUrl) {
     setLogoSrc('/logo.jpg');
@@ -322,11 +322,18 @@ document.querySelectorAll('[data-format-tel]').forEach(el => {
   el.addEventListener('input', () => { el.value = formatTel(el.value); });
 });
 
-// Betting
+// Betting — FIX: använd data-player-idx (inte data-pid) och konvertera till Number
 document.getElementById('players-grid')?.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-pid]');
-  if (card) toggleP(card.dataset.pid);
+  const card = e.target.closest('[data-player-idx]');
+  if (card) toggleP(Number(card.dataset.playerIdx));
 });
+
+// Betting — ta bort spelare via ✕-knappen i bet-panelen
+document.querySelector('.bet-panel-body')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-remove-idx]');
+  if (btn) toggleP(Number(btn.dataset.removeIdx));
+});
+
 document.getElementById('bet-sub-btn')?.addEventListener('click', () => submitBet(show));
 
 // Admin login
