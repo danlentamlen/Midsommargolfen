@@ -23,9 +23,12 @@ export const CFG = {
 
   appsScriptUrl: import.meta.env.VITE_APPS_SCRIPT_URL || '',
 
-  drivePhotoFolderId: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
-  driveLogoFolderId:  '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',  
-  driveSponsorFolderId: '19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
+  drivePhotoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO'
+  // old: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
+  driveLogoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO'
+  // old: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',  
+  driveSponsorFolderId: '14GouS8CnAK-zWyS-pyh0tIrW2WEUDTkY'
+  // old: '19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
 
   // Fallback-loggor visas om Drive-anropet misslyckas.
   // Ladda upp loggor i Drive-mappen (driveSponsorFolderId) för produktion.
@@ -43,9 +46,9 @@ export const CFG = {
   // -- Teaser-läge --
   // Sätt till false för att dölja sidan helt (nav, bottom nav, knappar försvinner).
   // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
-  visaAnmalan: false,
-  visaDeltagare: false,
-  visaBetting: false,
+  visaAnmalan: true,
+  visaDeltagare: true,
+  visaBetting: true,
 
   // Meddelandet som visas i popup när en dold sida klickas
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',
