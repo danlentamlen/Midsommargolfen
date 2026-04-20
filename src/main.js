@@ -13,6 +13,12 @@ import { fetchDrivePhotos } from './photos.js';
 setRenderPlayers(renderPlayers);
 
 // -- INJECT LOGO -----------------------------------------------
+// Sätt placeholder direkt så layouten inte hoppar
+['nav-logo','hero-logo'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.style.opacity = '0';
+});
+ 
 async function loadLogo() {
   if (CFG.driveLogoFolderId && CFG.appsScriptUrl) {
     try {
@@ -20,9 +26,14 @@ async function loadLogo() {
         CFG.appsScriptUrl + '?action=logo&folderId=' + encodeURIComponent(CFG.driveLogoFolderId)
       );
       const d = await r.json();
-      if (d.ok && d.base64) {
-        const src = `data:${d.mimeType};base64,${d.base64}`;
-        ['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = src);
+      if (d.ok && (d.url || d.base64)) {
+        const src = d.url || `data:${d.mimeType};base64,${d.base64}`;
+        ['nav-logo','hero-logo'].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.onload = () => { el.style.opacity = '1'; el.style.transition = 'opacity .3s'; };
+          el.src = src;
+        });
         return;
       }
     } catch(e) {
@@ -30,7 +41,10 @@ async function loadLogo() {
     }
   }
   // Fallback
-  ['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = '/logo.jpg');
+  ['nav-logo','hero-logo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.src = '/logo.jpg'; el.style.opacity = '1'; }
+  });
 }
 
 loadLogo();
