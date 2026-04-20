@@ -336,19 +336,25 @@ document.querySelector('.bet-panel-body')?.addEventListener('click', (e) => {
 
 document.getElementById('bet-sub-btn')?.addEventListener('click', () => submitBet(show));
 
-// Admin login
-document.getElementById('admin-login-btn')?.addEventListener('click', () => adminLogin(show));
+// Admin login — knappen har inget id, delegera från formuläret
+document.querySelector('.admin-login-body')?.addEventListener('click', (e) => {
+  if (e.target.closest('.full-btn')) adminLogin(show, adminLoadData);
+});
 document.getElementById('admin-pw')?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') adminLogin(show);
+  if (e.key === 'Enter') adminLogin(show, adminLoadData);
 });
 
-// Admin logout
-document.getElementById('admin-logout-btn')?.addEventListener('click', () => adminLogout(show));
+// Admin logout & refresh — använder data-action (inte id)
+document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
+  const action = e.target.closest('[data-action]')?.dataset.action;
+  if (action === 'admin-logout') adminLogout(show);
+  if (action === 'admin-refresh') adminLoadData();
+});
 
-// Admin tabs
+// Admin tabs — använder data-admin-tab (inte data-tab)
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-tab]');
-  if (btn) adminTab(btn.dataset.tab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
+  const btn = e.target.closest('[data-admin-tab]');
+  if (btn) adminTab(btn.dataset.adminTab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
 });
 
 // Golf grid photo uploads (publik sida)
