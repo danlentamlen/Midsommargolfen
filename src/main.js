@@ -10,8 +10,6 @@ import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendCon
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
-const LOGO_FALLBACK = '/logo.jpg';
-
 setRenderPlayers(renderPlayers);
 
 // -- INJECT LOGO -----------------------------------------------
@@ -28,11 +26,11 @@ async function loadLogo() {
         return;
       }
     } catch(e) {
-      console.warn('loadLogo: misslyckades, använder fallback', e);
+      console.warn('loadLogo: misslyckades', e);
     }
   }
-  // Fallback tills Drive-anropet svarar eller om det misslyckas
-  ['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = LOGO_FALLBACK);
+  // Fallback
+  ['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = '/logo.jpg');
 }
 
 loadLogo();
