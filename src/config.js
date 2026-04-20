@@ -23,11 +23,11 @@ export const CFG = {
 
   appsScriptUrl: import.meta.env.VITE_APPS_SCRIPT_URL || '',
 
-  drivePhotoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO'
+  drivePhotoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO',
   // old: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
-  driveLogoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO'
+  driveLogoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO',
   // old: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',  
-  driveSponsorFolderId: '14GouS8CnAK-zWyS-pyh0tIrW2WEUDTkY'
+  driveSponsorFolderId: '14GouS8CnAK-zWyS-pyh0tIrW2WEUDTkY',
   // old: '19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
 
   // Fallback-loggor visas om Drive-anropet misslyckas.
