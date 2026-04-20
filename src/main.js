@@ -10,12 +10,32 @@ import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendCon
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
-const logoUrl = '/logo.jpg';
+const LOGO_FALLBACK = '/logo.jpg';
 
 setRenderPlayers(renderPlayers);
 
 // -- INJECT LOGO -----------------------------------------------
-['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = logoUrl);
+async function loadLogo() {
+  if (CFG.driveLogoFolderId && CFG.appsScriptUrl) {
+    try {
+      const r = await fetchWithTimeout(
+        CFG.appsScriptUrl + '?action=logo&folderId=' + encodeURIComponent(CFG.driveLogoFolderId)
+      );
+      const d = await r.json();
+      if (d.ok && d.base64) {
+        const src = `data:${d.mimeType};base64,${d.base64}`;
+        ['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = src);
+        return;
+      }
+    } catch(e) {
+      console.warn('loadLogo: misslyckades, använder fallback', e);
+    }
+  }
+  // Fallback tills Drive-anropet svarar eller om det misslyckas
+  ['nav-logo','hero-logo'].forEach(id => document.getElementById(id).src = LOGO_FALLBACK);
+}
+
+loadLogo();
 
 // -- INIT DOM FROM CFG ----------------------------------------
 document.getElementById('nav-name').textContent = CFG.eventNamn;

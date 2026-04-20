@@ -24,6 +24,7 @@ export const CFG = {
   appsScriptUrl: import.meta.env.VITE_APPS_SCRIPT_URL || '',
 
   drivePhotoFolderId: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
+  driveLogoFolderId:  '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',  
   driveSponsorFolderId: '19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
 
   // Fallback-loggor visas om Drive-anropet misslyckas.
