@@ -37,19 +37,16 @@ export const omHistoria = `
 export const infoInnehall = `
 <h3>Tävlingsformat</h3>
 <p>Midsommardagsgolfen spelas som <b>slaggolf med fullt handicap</b> över 18 hål på Rya GK. Tävlingen avgörs genom nettoresultat — ditt bruttoresultat minus ditt spelhandicap för dagen.</p>
-
 <h3>Regler</h3>
 <ul>
   <li><b>Max 5 över par per hål</b> — sätts in på scorekortet som max. Ingen behöver pinas på ett svårt hål!</li>
   <li><b>Minst par</b> krävs för att ett hål ska räknas mot specialpriserna (närmast hål & längsta drive).</li>
 </ul>
-
 <h3>Specialpriser</h3>
 <ul>
   <li>🎯 <b>Närmast hål</b> — gäller alla par 3-hål. Bollen måste ligga på greenen efter utslaget och spelaren ska ha spelat minst par på hålet.</li>
   <li>💨 <b>Längsta drive</b> — mäts på <b>hål 7</b> och <b>hål 18</b>. Bollen måste ligga i fairway och spelaren ska ha spelat minst par på hålet.</li>
 </ul>
-
 <h3>Priser</h3>
 <p>I slagtävlingen delar vi ut priser till de tre bästa nettoresultaten:</p>
 <ul>
@@ -59,6 +56,15 @@ export const infoInnehall = `
 </ul>
 <p><b>🏆 Prispotten finansieras av anmälningsavgifterna</b> — större delen av golf-avgiften går direkt till prisborden. Ju fler som anmäler sig, desto fetare priser!</p>
 <p><em>Prisutdelningen sker under middagen. Priserna kompletteras av årets samarbetspartners — stort tack till dem!</em></p>
+<h3>Bar & Dryck</h3>
+<p>Under eftermiddagen och kvällen håller baren öppen med schyssta priser för vårt sällskap:</p>
+<ul>
+  <li>🍺 <b>Öl på tapp</b> — 65 kr</li>
+  <li>🍷 <b>Glas vin eller cava</b> — 85 kr</li>
+  <li>🍾 <b>Flaska vin eller cava</b> — 360 kr</li>
+  <li>🍹 <b>GT & sommardrinkar</b> — 100 kr</li>
+</ul>
+<p>Det kommer att finnas två olika fräscha sommardrinkar att välja mellan!</p>
 `;
 
 export const sponsringInnehall = `

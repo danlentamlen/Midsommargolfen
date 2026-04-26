@@ -10,8 +10,8 @@ export const CFG = {
   prisFull: 900,
   prisBetPerSpel: 20,
 
-  swishGolf: '070-111 22 33',
-  swishFest: '070-444 55 66',
+  swishGolf: '073-401 99 32',
+  swishFest: '073-401 99 32',
   swishBetNr: '070-XXX XX XX',
 
   swishLankGolf: '',
@@ -48,7 +48,7 @@ export const CFG = {
   // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
   visaAnmalan: true,
   visaDeltagare: true,
-  visaBetting: true,
+  visaBetting: false,
 
   // Meddelandet som visas i popup när en dold sida klickas
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',
