@@ -14,11 +14,11 @@ function probeImage(url) {
     if (!url) return resolve(false);
     const img = new Image();
     img.referrerPolicy = 'no-referrer';
-    img.crossOrigin = '';
+    // Ingen crossOrigin och ingen cache-bust — undviker CORS preflight
     const t = setTimeout(() => resolve(false), 5000);
     img.onload  = () => { clearTimeout(t); resolve(true);  };
     img.onerror = () => { clearTimeout(t); resolve(false); };
-    img.src = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+    img.src = url; // ← ingen _t= cache-bust
   });
 }
 
