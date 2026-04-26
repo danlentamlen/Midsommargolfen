@@ -462,3 +462,51 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   .site-footer{padding:1.2rem 1.25rem 1.4rem}
   .page-body{padding-bottom:calc(62px + 3.4rem)}
 }
+/* --- SPONSRING GRID ------------------------------------------ */
+#sponsring-logos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.25rem;
+}
+.sp-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1.5rem 1rem 1rem;
+  text-decoration: none;
+  transition: box-shadow .2s, border-color .2s, transform .15s;
+  min-height: 110px;
+}
+.sp-grid-item:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 18px rgba(201,168,76,.18);
+  transform: translateY(-2px);
+}
+.sp-grid-item img {
+  height: 52px;
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+}
+.sp-grid-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+}
+.sp-grid-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: .04em;
+}
+@media (max-width: 640px) {
+  #sponsring-logos {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}

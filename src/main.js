@@ -3,7 +3,7 @@ import { CFG, PAGE_IDX, BN_IDS } from './config.js';
 import { state, SAMPLE } from './state.js';
 import { formatTel, clearE, sanitizeHtml } from './utils.js';
 import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
-import { loadSponsors } from './sponsors.js';
+import { loadSponsors, renderSponsorGrid } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
 import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendConfirmMail, renderAdminFoto, deletePhoto } from './admin.js';
@@ -242,6 +242,8 @@ function renderSponringPage() {
     el.style.display = 'none';
     fb.style.display = 'block';
   }
+  // NYTT: Ladda sponsorloggor
+  renderSponsorGrid();
 }
 
 // -- VISIBILITY -----------------------------------------------
