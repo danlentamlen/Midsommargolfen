@@ -18,9 +18,9 @@ export const CFG = {
   swishLankFest: '',
   swishLankBet: '',
 
-  maxGolf: 30,
+  maxGolf: 32,
   maxFest: 70,
-  maxGolfReserv: 10,  // eller valfritt antal
+  maxGolfReserv: 6,  // eller valfritt antal
 
   appsScriptUrl: import.meta.env.VITE_APPS_SCRIPT_URL || '',
 
