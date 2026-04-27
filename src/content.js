@@ -76,7 +76,7 @@ export const sponsringInnehall = `
 </ul>
 
 <h3>Så anmäler du intresse:</h3>
-<p>Skicka ett mejl till <b>midsommadagsgolfen@gmail.com</b> och inkludera följande:</p>
+<p>Skicka ett mejl till <b>midsommardagsgolfen@gmail.com</b> och inkludera följande:</p>
 <ul>
   <li><b>Namn/Företag:</b> Vem står bakom sponsringen?</li>
   <li><b>Logotyp:</b> Bifoga gärna din logga för publicering på webben.</li>
