@@ -31,7 +31,6 @@ export function updateCap(parts) {
   setCapPill('cp-golf-bar','cp-golf-num',state.golfCnt,CFG.maxGolf,gL,gP);
   setCapPill('cp-fest-bar','cp-fest-num',state.festCnt,CFG.maxFest,fL,fP);
 
-  // Uppdatera paket-kort på startsidan och radio-alternativ i formuläret
   _applyCapToCards(gL, fL);
   _applyCapToOpts(gL, fL);
 }
@@ -44,7 +43,6 @@ export function setCapPill(barId, numId, cnt, max, left, pct) {
     `${cnt}/${max} (${left>0 ? left+' kvar' : 'Fullbokad'})`;
 }
 
-// Gråar ut fullbokade paket-kort på startsidan
 function _applyCapToCards(gL, fL) {
   const grid = document.getElementById('pkg-grid');
   if (!grid) return;
@@ -74,7 +72,6 @@ function _applyCapToCards(gL, fL) {
   });
 }
 
-// Inaktiverar fullbokade radio-alternativ i anmälningsformuläret
 function _applyCapToOpts(gL, fL) {
   const opts = document.getElementById('p-opts');
   if (!opts) return;
@@ -96,7 +93,6 @@ function _applyCapToOpts(gL, fL) {
     } else if (!full && badge) {
       badge.remove();
     }
-    // Om valt alternativ blir fullbokat — välj party istället
     if (full && input.checked) {
       const party = opts.querySelector('input[value=party]');
       if (party && !party.disabled) {
@@ -246,6 +242,19 @@ export function pkgChange() {
 
 // -- SUBMIT REGISTRATION --------------------------------------
 export async function submitReg(showFn) {
+  const btn = document.getElementById('reg-btn');
+
+  // ── Omedelbart disabled för att förhindra dubbelklick ────────
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = 'Kontrollerar...';
+
+  // Hjälpfunktion — återaktiverar knappen vid fel
+  function resetBtn() {
+    btn.disabled = false;
+    btn.textContent = 'Skicka anmälan →';
+  }
+
   const name    = document.getElementById('f-name').value.trim();
   const email   = document.getElementById('f-email').value.trim();
   const tel     = formatTel(document.getElementById('f-tel').value.trim());
@@ -253,7 +262,10 @@ export async function submitReg(showFn) {
   const hcp     = document.getElementById('f-hcp').value.trim();
   const allergy = document.getElementById('f-allergy').value.trim();
 
-  if (!name||!email) { showErr('reg-err','Fyll i namn och e-post.'); return; }
+  if (!name||!email) {
+    showErr('reg-err','Fyll i namn och e-post.');
+    resetBtn(); return;
+  }
 
   const pkg = document.querySelector('input[name=pkg]:checked')?.value;
 
@@ -262,26 +274,23 @@ export async function submitReg(showFn) {
   const fL = CFG.maxFest - state.festCnt;
   if ((pkg==='full'||pkg==='golf') && gL <= 0) {
     showErr('reg-err', 'Tyvärr — golf är fullbokat! Du kan fortfarande anmäla dig till Middag & Fest.');
-    return;
+    resetBtn(); return;
   }
   if ((pkg==='full'||pkg==='party') && fL <= 0) {
     showErr('reg-err', 'Tyvärr — Middag & Fest är fullbokat!');
-    return;
+    resetBtn(); return;
   }
 
-  if ((pkg==='full'||pkg==='golf') && !gid) { showErr('reg-err','Golf-ID krävs för att delta i tävlingen.'); return; }
-  if (gid && !/^\d{6}-\d{3}$/.test(gid)) { showErr('reg-err','Golf-ID ska ha formatet YYMMDD-NNN (t.ex. 760828-016).'); return; }
-
-  const btn = document.getElementById('reg-btn');
-  if (btn.dataset.rateLimited || sessionStorage.getItem('reg-submitted')) {
-    showErr('reg-err','Vänta innan du skickar igen.');
-    return;
+  if ((pkg==='full'||pkg==='golf') && !gid) {
+    showErr('reg-err','Golf-ID krävs för att delta i tävlingen.');
+    resetBtn(); return;
   }
-  btn.textContent = 'Kontrollerar...'; btn.disabled = true;
-  btn.dataset.rateLimited = 'true';
-  sessionStorage.setItem('reg-submitted', Date.now().toString());
-  setTimeout(() => { delete btn.dataset.rateLimited; sessionStorage.removeItem('reg-submitted'); }, 5000);
+  if (gid && !/^\d{6}-\d{3}$/.test(gid)) {
+    showErr('reg-err','Golf-ID ska ha formatet YYMMDD-NNN (t.ex. 760828-016).');
+    resetBtn(); return;
+  }
 
+  // ── Duplikatkontroll ─────────────────────────────────────────
   if (CFG.appsScriptUrl) {
     try {
       const r = await fetchWithTimeout(
@@ -293,13 +302,13 @@ export async function submitReg(showFn) {
       const d = await r.json();
       if (d.exists) {
         showErr('reg-err', d.meddelande||'Anmälan finns redan.');
-        btn.textContent='Skicka anmälan →'; btn.disabled=false;
-        return;
+        resetBtn(); return;
       }
     } catch { /* network error — continue */ }
   }
 
   btn.textContent = 'Skickar...';
+
   const payload = {
     action:'anmalan', namn:name, email, telefon:tel,
     golfid:gid, handicap:hcp||'—', paket:pkg,
@@ -315,17 +324,18 @@ export async function submitReg(showFn) {
         'Anmälan kunde inte skickas från den här webbläsaren. ' +
         'Öppna sidan i Safari eller Chrome och försök igen.'
       );
-      btn.textContent = 'Skicka anmälan →'; btn.disabled = false;
-      return;
+      resetBtn(); return;
     }
   }
 
+  // ── Succé — knappen återaktiveras INTE, confirm visas istället ─
   state.allParts.push({name, hcp:hcp||'—', golfid:gid||'—', bets:0, pkg});
   updateCap(state.allParts);
   document.getElementById('c-name').textContent = name.split(' ')[0];
   buildRegConfirm(name, pkg);
-  btn.textContent = 'Skicka anmälan →'; btn.disabled = false;
   showFn('confirm');
+  // Nollställ knappen efter en stund ifall användaren går tillbaka
+  setTimeout(() => { btn.disabled = false; btn.textContent = 'Skicka anmälan →'; }, 3000);
 }
 
 export function buildRegConfirm(name, pkg) {
@@ -345,7 +355,7 @@ export function buildRegConfirm(name, pkg) {
       <div class="pay-row"><span class="pay-lbl">Swisha till</span><span class="pay-val">${swishNr}</span></div>
       <div class="pay-row"><span class="pay-lbl">Märk med</span><span class="pay-tag">${mark}</span></div>
       ${swishLank
-        ? `<a class="swish-btn" href="${escapeHtml(swishLank)}" target="_blank" rel="noopener">
+        ? `<a class="swish-btn" href="${escapeHtml(swishLank)}" target="_blank" rel="noopener noreferrer">
              <span class="swish-btn-icon">💸</span> Öppna Swish
            </a>`
         : ''}
