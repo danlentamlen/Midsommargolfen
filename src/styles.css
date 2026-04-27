@@ -362,6 +362,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 .s-ob{background:#ffcdd2;color:#b71c1c}
 .s-be{background:#c8e6c9;color:#1b5e20}
 .s-at{background:#fff9c4;color:#f57f17}
+.s-re{background:#bbdefb;color:#0d47a1}
 .admin-sel{padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;font-family:var(--sans);background:var(--bg);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
 .admin-sel:focus{border-color:var(--leaf)}
 .admin-mail-btn{background:var(--forest);color:var(--gold);border:none;border-radius:7px;padding:5px 11px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--sans);white-space:nowrap}
@@ -509,4 +510,142 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   #sponsring-logos {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   }
+}
+/* --- RESERVLISTA --------------------------------------------- */
+
+/* Paket-kort på startsidan */
+.pkg-card.pkg-reserv {
+  border-color: #f0c040;
+  background: #fffde7;
+}
+.pkg-card.pkg-reserv .pkg-ic { color: #f57f17; }
+.pkg-price-free {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+/* Radio-alternativ i formuläret */
+.p-opt.p-opt-reserv {
+  border-color: #f0c040;
+  background: #fffde7;
+}
+.p-opt.p-opt-reserv:has(input:checked) {
+  border-color: #f57f17;
+  background: #fff8e1;
+}
+
+/* Bekräftelsekort för reserv */
+.pay-head.r {
+  background: #fff8e1;
+  color: #856404;
+  border-bottom: 1px solid #ffe082;
+}
+.reserv-info {
+  font-size: 14px;
+  color: #2a4a34;
+  line-height: 1.7;
+  padding: 4px 0;
+}
+
+/* Kapacitetsfärgning */
+.pkg-card.pkg-full { opacity:.55; cursor:not-allowed; pointer-events:none; }
+.pkg-full-badge {
+  display:inline-block; background:var(--danger); color:#fff;
+  font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 10px; border-radius:20px; margin-bottom:.5rem;
+}
+.pkg-card.pkg-full .pkg-btn { background:#ccc; color:#888; cursor:not-allowed; }
+.p-opt.p-opt-disabled { opacity:.45; cursor:not-allowed; pointer-events:none; }
+.p-opt-full {
+  font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--danger); margin-left:auto; padding-left:.5rem; white-space:nowrap;
+}
+/* --- PÅMINNELSE-KNAPP ---------------------------------------- */
+.admin-mail-btn--reminder {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107 !important;
+}
+.admin-mail-btn--reminder:hover {
+  background: #ffe082;
+}
+
+/* --- RESERV-BADGE -------------------------------------------- */
+.s-re { background: #bbdefb; color: #0d47a1; }
+
+/* --- RESERVLISTA PAKET-KORT ---------------------------------- */
+.pkg-card.pkg-reserv {
+  border-color: #f0c040;
+  background: #fffde7;
+}
+.pkg-card.pkg-reserv .pkg-ic { color: #f57f17; }
+.pkg-price-free {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+/* Radio-alternativ reserv */
+.p-opt.p-opt-reserv {
+  border-color: #f0c040;
+  background: #fffde7;
+}
+.p-opt.p-opt-reserv:has(input:checked) {
+  border-color: #f57f17;
+  background: #fff8e1;
+}
+
+/* Bekräftelsekort för reserv */
+.pay-head.r {
+  background: #fff8e1;
+  color: #856404;
+  border-bottom: 1px solid #ffe082;
+}
+.reserv-info {
+  font-size: 14px;
+  color: #2a4a34;
+  line-height: 1.7;
+  padding: 4px 0;
+}
+
+/* --- KAPACITET: FULLBOKADE PAKET ----------------------------- */
+.pkg-card.pkg-full {
+  opacity: .55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.pkg-full-badge {
+  display: inline-block;
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: .5rem;
+}
+.pkg-card.pkg-full .pkg-btn {
+  background: #ccc;
+  color: #888;
+  cursor: not-allowed;
+}
+.p-opt.p-opt-disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.p-opt-full {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--danger);
+  margin-left: auto;
+  padding-left: .5rem;
+  white-space: nowrap;
 }

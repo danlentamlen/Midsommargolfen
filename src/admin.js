@@ -41,11 +41,12 @@ export async function adminLoadData() {
 export function renderAdminSample() {
   state.adminData = {
     anm:[
-      {id:1,namn:'Anna Svensson',email:'anna@test.se',paket:'Golf + Middag & Fest',belopp:'900 kr',status:'Obetald'},
-      {id:2,namn:'Per Johansson',email:'per@test.se',paket:'Enbart Golf',belopp:'500 kr',status:'Obetald'},
+      {id:0,namn:'Anna Svensson',email:'anna@test.se',telefon:'070-111 22 33',paket:'Golf + Middag & Fest',belopp:'900 kr',status:'Obetald'},
+      {id:1,namn:'Per Johansson',email:'per@test.se',telefon:'070-333 44 55',paket:'Enbart Golf',belopp:'500 kr',status:'Obetald'},
+      {id:2,namn:'Lisa Reserv',email:'lisa@test.se',telefon:'070-666 77 88',paket:'Reservlista Golf',belopp:'0 kr',status:'GolfReserv'},
     ],
     bet:[
-      {id:1,namn:'Maria Ek',email:'maria@test.se',spelare:'Spelare A, Spelare B',belopp:'40 kr',status:'Obetald'},
+      {id:0,namn:'Maria Ek',email:'maria@test.se',telefon:'070-999 00 11',spelare:'Spelare A, Spelare B',belopp:'40 kr',status:'Obetald'},
     ]
   };
   renderAdminAnm(); renderAdminBet();
@@ -53,23 +54,67 @@ export function renderAdminSample() {
 
 export function renderAdminAnm() {
   const alla = state.adminData.anm || [];
-  document.getElementById('adm-anm-cnt').textContent = alla.filter(r=>r.status==='Obetald').length;
+  document.getElementById('adm-anm-cnt').textContent =
+    alla.filter(r => r.status==='Obetald' || r.status==='GolfReserv').length;
+
   if (!alla.length) {
-    document.getElementById('admin-anm-body').innerHTML = `<tr><td colspan="7" class="admin-empty">Inga anmälningar ännu</td></tr>`;
+    document.getElementById('admin-anm-body').innerHTML =
+      `<tr><td colspan="7" class="admin-empty">Inga anmälningar ännu</td></tr>`;
     return;
   }
+
   document.getElementById('admin-anm-body').innerHTML = alla.map(r => {
-    const rowBg    = r.status==='Betald' ? 'background:#f0faf0' : r.status==='Återbetald' ? 'background:#fffde7' : '';
+    const rowBg = r.status==='Betald'     ? 'background:#f0faf0'
+                : r.status==='Återbetald' ? 'background:#fffde7'
+                : r.status==='GolfReserv' ? 'background:#e3f2fd'
+                : '';
+
     const sNamn    = escapeHtml(r.namn    || '');
     const sEmail   = escapeHtml(r.email   || '');
     const sTelefon = escapeHtml(r.telefon || '—');
     const sPaket   = escapeHtml(r.paket   || '');
     const sBelopp  = escapeHtml(r.belopp  || '');
-    const mailBtn  = r.status !== 'Obetald'
-      ? `<button class="admin-mail-btn" data-mail-type="anm" data-mail-id="${r.id}" data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="${r.status}">
-           ✉ ${r.status==='Betald' ? 'Kvitto' : 'Återbet.'}
-         </button>`
-      : `<span style="font-size:11px;color:var(--muted)">—</span>`;
+
+    let mailBtns;
+    if (r.status === 'Obetald') {
+      mailBtns = `
+        <button class="admin-mail-btn admin-mail-btn--reminder"
+                data-mail-type="anm" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Påminnelse"
+                title="Skicka betalningspåminnelse">
+          🔔 Påminnelse
+        </button>`;
+    } else if (r.status === 'Betald') {
+      mailBtns = `
+        <button class="admin-mail-btn"
+                data-mail-type="anm" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Betald">
+          ✉ Kvitto
+        </button>`;
+    } else if (r.status === 'Återbetald') {
+      mailBtns = `
+        <button class="admin-mail-btn"
+                data-mail-type="anm" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Återbetald">
+          ✉ Återbet.
+        </button>`;
+    } else if (r.status === 'GolfReserv') {
+      mailBtns = `
+        <button class="admin-mail-btn"
+                data-mail-type="anm" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="GolfReserv">
+          ✉ Reserv-mail
+        </button>`;
+    } else {
+      mailBtns = `<span style="font-size:11px;color:var(--muted)">—</span>`;
+    }
+
+    const badgeCls = r.status==='Betald'     ? 's-be'
+                   : r.status==='Återbetald' ? 's-at'
+                   : r.status==='GolfReserv' ? 's-re'
+                   : 's-ob';
+    const badgeTxt = r.status==='GolfReserv' ? 'Reserv' : r.status;
+
     return `<tr style="${rowBg}">
       <td><strong>${sNamn}</strong></td>
       <td style="font-size:12px">${sTelefon}</td>
@@ -78,12 +123,14 @@ export function renderAdminAnm() {
       <td>${sBelopp}</td>
       <td>
         <select class="admin-sel" data-status-type="anm" data-status-id="${r.id}">
-          <option ${r.status==='Obetald'?'selected':''}>Obetald</option>
-          <option ${r.status==='Betald'?'selected':''}>Betald</option>
-          <option ${r.status==='Återbetald'?'selected':''}>Återbetald</option>
+          <option ${r.status==='Obetald'    ?'selected':''}>Obetald</option>
+          <option ${r.status==='Betald'     ?'selected':''}>Betald</option>
+          <option ${r.status==='Återbetald' ?'selected':''}>Återbetald</option>
+          <option ${r.status==='GolfReserv' ?'selected':''}>GolfReserv</option>
         </select>
+        <span class="status-badge ${badgeCls}" style="margin-left:6px">${badgeTxt}</span>
       </td>
-      <td>${mailBtn}</td>
+      <td>${mailBtns}</td>
     </tr>`;
   }).join('');
 }
@@ -91,22 +138,50 @@ export function renderAdminAnm() {
 export function renderAdminBet() {
   const alla = state.adminData.bet || [];
   document.getElementById('adm-bet-cnt').textContent = alla.filter(r=>r.status==='Obetald').length;
+
   if (!alla.length) {
-    document.getElementById('admin-bet-body').innerHTML = `<tr><td colspan="7" class="admin-empty">Inga bets ännu</td></tr>`;
+    document.getElementById('admin-bet-body').innerHTML =
+      `<tr><td colspan="7" class="admin-empty">Inga bets ännu</td></tr>`;
     return;
   }
+
   document.getElementById('admin-bet-body').innerHTML = alla.map(r => {
-    const rowBg    = r.status==='Betald' ? 'background:#f0faf0' : r.status==='Återbetald' ? 'background:#fffde7' : '';
+    const rowBg    = r.status==='Betald'     ? 'background:#f0faf0'
+                   : r.status==='Återbetald' ? 'background:#fffde7'
+                   : '';
     const sNamn    = escapeHtml(r.namn    || '');
     const sEmail   = escapeHtml(r.email   || '');
     const sTelefon = escapeHtml(r.telefon || '—');
     const sSpelare = escapeHtml(r.spelare || '');
     const sBelopp  = escapeHtml(r.belopp  || '');
-    const mailBtn  = r.status !== 'Obetald'
-      ? `<button class="admin-mail-btn" data-mail-type="bet" data-mail-id="${r.id}" data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="${r.status}">
-           ✉ ${r.status==='Betald' ? 'Kvitto' : 'Återbet.'}
-         </button>`
-      : `<span style="font-size:11px;color:var(--muted)">—</span>`;
+
+    let mailBtn;
+    if (r.status === 'Obetald') {
+      mailBtn = `
+        <button class="admin-mail-btn admin-mail-btn--reminder"
+                data-mail-type="bet" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Påminnelse"
+                title="Skicka betalningspåminnelse">
+          🔔 Påminnelse
+        </button>`;
+    } else if (r.status === 'Betald') {
+      mailBtn = `
+        <button class="admin-mail-btn"
+                data-mail-type="bet" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Betald">
+          ✉ Kvitto
+        </button>`;
+    } else if (r.status === 'Återbetald') {
+      mailBtn = `
+        <button class="admin-mail-btn"
+                data-mail-type="bet" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Återbetald">
+          ✉ Återbet.
+        </button>`;
+    } else {
+      mailBtn = `<span style="font-size:11px;color:var(--muted)">—</span>`;
+    }
+
     return `<tr style="${rowBg}">
       <td><strong>${sNamn}</strong></td>
       <td style="font-size:12px">${sTelefon}</td>
@@ -115,9 +190,9 @@ export function renderAdminBet() {
       <td>${sBelopp}</td>
       <td>
         <select class="admin-sel" data-status-type="bet" data-status-id="${r.id}">
-          <option ${r.status==='Obetald'?'selected':''}>Obetald</option>
-          <option ${r.status==='Betald'?'selected':''}>Betald</option>
-          <option ${r.status==='Återbetald'?'selected':''}>Återbetald</option>
+          <option ${r.status==='Obetald'    ?'selected':''}>Obetald</option>
+          <option ${r.status==='Betald'     ?'selected':''}>Betald</option>
+          <option ${r.status==='Återbetald' ?'selected':''}>Återbetald</option>
         </select>
       </td>
       <td>${mailBtn}</td>
@@ -163,34 +238,20 @@ export function renderAdminFoto(renderGolfGridFn, renderPlayersFn) {
 export async function deletePhoto(key, renderGolfGridFn, renderPlayersFn) {
   if (!confirm('Ta bort foto? Spelaren kan sedan ladda upp ett nytt.')) return;
 
-  // Ta bort lokalt direkt
   const photos = getLocalPhotos();
   delete photos[key];
   try { localStorage.setItem('golf_photos', JSON.stringify(photos)); } catch { /* full */ }
 
-  // Ta bort från Drive via Apps Script
-  if (!CFG.appsScriptUrl) {
-    console.warn('deletePhoto: appsScriptUrl saknas i config');
-  } else if (!CFG.drivePhotoFolderId) {
-    console.warn('deletePhoto: drivePhotoFolderId saknas i config');
-  } else {
+  if (CFG.appsScriptUrl && CFG.drivePhotoFolderId) {
     const url = CFG.appsScriptUrl
       + '?action=raderaFoto'
       + '&namn='     + encodeURIComponent(key)
       + '&folderId=' + encodeURIComponent(CFG.drivePhotoFolderId);
-
-    console.log('Raderar foto från Drive:', url);
     try {
       const r = await fetchWithTimeout(url);
       const d = await r.json();
-      if (d.ok) {
-        console.log('Foto raderat från Drive:', key, '— raderade:', d.raderade);
-        } else {
-        console.error('Apps Script kunde inte radera foto:', d.fel);
-        console.log('Filer som faktiskt finns i Drive-mappen:', d.filerIMapp);
-      }
-    } 
-    catch(e) {
+      if (!d.ok) console.error('Apps Script kunde inte radera foto:', d.fel);
+    } catch(e) {
       console.error('Nätverksfel vid radering:', e);
     }
   }

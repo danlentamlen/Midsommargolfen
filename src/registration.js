@@ -6,11 +6,16 @@ import { fetchWithTimeout, postToAppsScript } from './fetch.js';
 
 // -- CAPACITY --------------------------------------------------
 export function updateCap(parts) {
-  state.golfCnt = parts.filter(p=>p.pkg==='full'||p.pkg==='golf').length;
-  state.festCnt = parts.filter(p=>p.pkg==='full'||p.pkg==='party').length;
-  const gL = CFG.maxGolf - state.golfCnt, fL = CFG.maxFest - state.festCnt;
-  const gP = Math.min(state.golfCnt/CFG.maxGolf*100,100);
-  const fP = Math.min(state.festCnt/CFG.maxFest*100,100);
+  state.golfCnt  = parts.filter(p=>p.pkg==='full'||p.pkg==='golf').length;
+  state.festCnt  = parts.filter(p=>p.pkg==='full'||p.pkg==='party').length;
+  state.reservCnt = parts.filter(p=>p.pkg==='reserv').length;
+
+  const gL = CFG.maxGolf       - state.golfCnt;
+  const fL = CFG.maxFest       - state.festCnt;
+  const rL = CFG.maxGolfReserv - state.reservCnt;
+
+  const gP = Math.min(state.golfCnt/CFG.maxGolf*100, 100);
+  const fP = Math.min(state.festCnt/CFG.maxFest*100, 100);
 
   const avRow   = document.getElementById('hf-avail-row');
   const capWrap = document.getElementById('hf-cap-wrap');
@@ -31,26 +36,29 @@ export function updateCap(parts) {
   setCapPill('cp-golf-bar','cp-golf-num',state.golfCnt,CFG.maxGolf,gL,gP);
   setCapPill('cp-fest-bar','cp-fest-num',state.festCnt,CFG.maxFest,fL,fP);
 
-  _applyCapToCards(gL, fL);
-  _applyCapToOpts(gL, fL);
+  _applyCapToCards(gL, fL, rL);
+  _applyCapToOpts(gL, fL, rL);
 }
 
 export function setCapPill(barId, numId, cnt, max, left, pct) {
   const b = document.getElementById(barId);
+  if (!b) return;
   b.style.width = pct + '%';
   b.className = 'cp-bar ' + (pct>=100 ? 'cp-r' : pct>=80 ? 'cp-a' : 'cp-g');
   document.getElementById(numId).textContent =
     `${cnt}/${max} (${left>0 ? left+' kvar' : 'Fullbokad'})`;
 }
 
-function _applyCapToCards(gL, fL) {
+// Gråar ut / byter fullbokade paket-kort på startsidan
+function _applyCapToCards(gL, fL, rL) {
   const grid = document.getElementById('pkg-grid');
   if (!grid) return;
   grid.querySelectorAll('.pkg-card').forEach(card => {
     const id = card.dataset.pkgId;
     const golfFull = gL <= 0 && (id === 'full' || id === 'golf');
     const festFull = fL <= 0 && (id === 'full' || id === 'party');
-    const full = golfFull || festFull;
+    const reservFull = rL <= 0 && id === 'reserv';
+    const full = golfFull || festFull || reservFull;
     card.classList.toggle('pkg-full', full);
     const btn = card.querySelector('.pkg-btn');
     if (btn) {
@@ -72,16 +80,19 @@ function _applyCapToCards(gL, fL) {
   });
 }
 
-function _applyCapToOpts(gL, fL) {
+// Inaktiverar fullbokade radio-alternativ i formuläret
+function _applyCapToOpts(gL, fL, rL) {
   const opts = document.getElementById('p-opts');
   if (!opts) return;
   opts.querySelectorAll('.p-opt').forEach(label => {
     const input = label.querySelector('input[type=radio]');
     if (!input) return;
     const id = input.value;
-    const golfFull = gL <= 0 && (id === 'full' || id === 'golf');
-    const festFull = fL <= 0 && (id === 'full' || id === 'party');
-    const full = golfFull || festFull;
+    const golfFull  = gL <= 0 && (id === 'full' || id === 'golf');
+    const festFull  = fL <= 0 && (id === 'party');
+    const fullFull  = (gL <= 0 || fL <= 0) && id === 'full';
+    const reservFull = rL <= 0 && id === 'reserv';
+    const full = golfFull || festFull || fullFull || reservFull;
     input.disabled = full;
     label.classList.toggle('p-opt-disabled', full);
     let badge = label.querySelector('.p-opt-full');
@@ -93,43 +104,55 @@ function _applyCapToOpts(gL, fL) {
     } else if (!full && badge) {
       badge.remove();
     }
+    // Om valt alternativ blir fullbokat — välj bästa tillgängliga
     if (full && input.checked) {
-      const party = opts.querySelector('input[value=party]');
-      if (party && !party.disabled) {
-        party.checked = true;
-        pkgChange();
-      }
+      const fallback = opts.querySelector('input[value=party]:not(:disabled)')
+        || opts.querySelector('input:not(:disabled)');
+      if (fallback) { fallback.checked = true; pkgChange(); }
     }
   });
 }
 
 // -- PACKAGES -------------------------------------------------
 export function buildPkgs() {
-  const pkgs = [
-    { id:'full',  ic:'⭐', nm:'Fullt paket',   desc:'Golf + Middag & Midsommarfest. Den kompletta upplevelsen.', pris:CFG.prisFull,  feat:true  },
-    { id:'golf',  ic:'⛳', nm:'Endast Golf',    desc:'Slaggolf-tävlingen utan kvällsevenemang.',                 pris:CFG.prisGolf,  feat:false },
-    { id:'party', ic:'🥂', nm:'Middag & Fest',  desc:'Kvällsevenemang utan golf. För sällskap & inbjudna.',      pris:CFG.prisFest,  feat:false },
-  ];
+  const golfFull  = (CFG.maxGolf - (state.golfCnt||0)) <= 0;
+  const reservFull = (CFG.maxGolfReserv - (state.reservCnt||0)) <= 0;
+
+  // Bygg paket-listan dynamiskt beroende på kapacitet
+  const pkgs = [];
+
+  if (!golfFull) {
+    // Golf fortfarande tillgängligt
+    pkgs.push({ id:'full',  ic:'⭐', nm:'Fullt paket',   desc:'Golf + Middag & Midsommarfest. Den kompletta upplevelsen.', pris:CFG.prisFull,  feat:true  });
+    pkgs.push({ id:'golf',  ic:'⛳', nm:'Endast Golf',    desc:'Slaggolf-tävlingen utan kvällsevenemang.',                 pris:CFG.prisGolf,  feat:false });
+  } else if (!reservFull) {
+    // Golf fullt — visa reservlista istället
+    pkgs.push({ id:'reserv', ic:'📋', nm:'Reservlista Golf', desc:'Golf är fullbokat. Skriv upp dig på reservlistan — vi kontaktar dig om en plats öppnas.', pris:0, feat:true, isReserv:true });
+  }
+
+  pkgs.push({ id:'party', ic:'🥂', nm:'Middag & Fest', desc:'Kvällsevenemang utan golf. För sällskap & inbjudna.', pris:CFG.prisFest, feat:false });
 
   document.getElementById('pkg-grid').innerHTML = pkgs.map(p =>
-    `<div class="pkg-card ${p.feat?'feat':''}" data-action="show-reg" data-pkg-id="${p.id}">
+    `<div class="pkg-card ${p.feat?'feat':''} ${p.isReserv?'pkg-reserv':''}" data-action="show-reg" data-pkg-id="${p.id}">
       <div class="pkg-ic">${p.ic}</div>
       <div class="pkg-name">${p.nm}</div>
       <div class="pkg-desc">${p.desc}</div>
-      <div class="pkg-price">${p.pris.toLocaleString('sv-SE')} <span>kr</span></div>
-      ${p.id!=='party' ? `<div class="pkg-pott">🏆 Större delen av golf-avgiften går till prispotten</div>` : ''}
+      ${p.pris > 0
+        ? `<div class="pkg-price">${p.pris.toLocaleString('sv-SE')} <span>kr</span></div>`
+        : `<div class="pkg-price pkg-price-free">Gratis</div>`}
+      ${p.id==='full' || p.id==='golf' ? `<div class="pkg-pott">🏆 Större delen av golf-avgiften går till prispotten</div>` : ''}
       <button class="pkg-btn">Välj paket</button>
     </div>`
   ).join('');
 
   document.getElementById('p-opts').innerHTML = pkgs.map(p =>
-    `<label class="p-opt" id="popt-${p.id}">
+    `<label class="p-opt ${p.isReserv?'p-opt-reserv':''}" id="popt-${p.id}">
       <input type="radio" name="pkg" value="${p.id}" ${p.feat?'checked':''}>
       <div class="p-opt-inf">
         <div class="p-opt-n">${p.ic} ${p.nm}</div>
-        <div class="p-opt-s">${p.id==='full' ? 'En betalning för hela paketet' : p.desc.split('.')[0]}</div>
+        <div class="p-opt-s">${p.id==='full' ? 'En betalning för hela paketet' : p.id==='reserv' ? 'Vi kontaktar dig om en plats öppnas' : p.desc.split('.')[0]}</div>
       </div>
-      <div class="p-opt-p">${p.pris.toLocaleString('sv-SE')} kr</div>
+      <div class="p-opt-p">${p.pris > 0 ? p.pris.toLocaleString('sv-SE')+' kr' : 'Gratis'}</div>
     </label>`
   ).join('');
 }
@@ -145,7 +168,7 @@ export async function buildStartlista() {
       const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=startlista');
       const d = await r.json();
       if (d && d.length) groups = d;
-    } catch { /* use fallback startlista */ }
+    } catch { /* use fallback */ }
   }
 
   const photos = getLocalPhotos();
@@ -235,8 +258,9 @@ export async function handlePhoto(pid, file, renderGolfGridFn, renderPlayersFn) 
 // -- PKG CHANGE ------------------------------------------------
 export function pkgChange() {
   const v = document.querySelector('input[name=pkg]:checked')?.value;
-  const isGolf = v !== 'party';
-  document.getElementById('golfid-wrap').classList.toggle('show', isGolf);
+  const isGolf = v === 'full' || v === 'golf';
+  const isReserv = v === 'reserv';
+  document.getElementById('golfid-wrap').classList.toggle('show', isGolf || isReserv);
   document.getElementById('hcp-wrap').classList.toggle('show', isGolf);
 }
 
@@ -244,12 +268,11 @@ export function pkgChange() {
 export async function submitReg(showFn) {
   const btn = document.getElementById('reg-btn');
 
-  // ── Omedelbart disabled för att förhindra dubbelklick ────────
+  // Omedelbart disabled — förhindrar dubbelklick
   if (btn.disabled) return;
   btn.disabled = true;
   btn.textContent = 'Kontrollerar...';
 
-  // Hjälpfunktion — återaktiverar knappen vid fel
   function resetBtn() {
     btn.disabled = false;
     btn.textContent = 'Skicka anmälan →';
@@ -261,28 +284,31 @@ export async function submitReg(showFn) {
   const gid     = document.getElementById('f-golfid').value.trim();
   const hcp     = document.getElementById('f-hcp').value.trim();
   const allergy = document.getElementById('f-allergy').value.trim();
+  const pkg     = document.querySelector('input[name=pkg]:checked')?.value;
 
-  if (!name||!email) {
-    showErr('reg-err','Fyll i namn och e-post.');
-    resetBtn(); return;
-  }
-
-  const pkg = document.querySelector('input[name=pkg]:checked')?.value;
+  if (!name||!email) { showErr('reg-err','Fyll i namn och e-post.'); resetBtn(); return; }
 
   // ── Kapacitetskontroll ────────────────────────────────────────
-  const gL = CFG.maxGolf - state.golfCnt;
-  const fL = CFG.maxFest - state.festCnt;
+  const gL = CFG.maxGolf       - state.golfCnt;
+  const fL = CFG.maxFest       - state.festCnt;
+  const rL = CFG.maxGolfReserv - state.reservCnt;
+
   if ((pkg==='full'||pkg==='golf') && gL <= 0) {
-    showErr('reg-err', 'Tyvärr — golf är fullbokat! Du kan fortfarande anmäla dig till Middag & Fest.');
+    showErr('reg-err', 'Golf är fullbokat! Du kan skriva upp dig på reservlistan eller anmäla dig till Middag & Fest.');
     resetBtn(); return;
   }
   if ((pkg==='full'||pkg==='party') && fL <= 0) {
     showErr('reg-err', 'Tyvärr — Middag & Fest är fullbokat!');
     resetBtn(); return;
   }
+  if (pkg==='reserv' && rL <= 0) {
+    showErr('reg-err', 'Tyvärr — reservlistan är också full.');
+    resetBtn(); return;
+  }
 
-  if ((pkg==='full'||pkg==='golf') && !gid) {
-    showErr('reg-err','Golf-ID krävs för att delta i tävlingen.');
+  // Golf-ID krävs för golf och reserv
+  if ((pkg==='full'||pkg==='golf'||pkg==='reserv') && !gid) {
+    showErr('reg-err','Golf-ID krävs för att delta i tävlingen eller ställa sig i kön.');
     resetBtn(); return;
   }
   if (gid && !/^\d{6}-\d{3}$/.test(gid)) {
@@ -318,8 +344,7 @@ export async function submitReg(showFn) {
   if (CFG.appsScriptUrl) {
     try {
       await postToAppsScript(CFG.appsScriptUrl, payload);
-    } catch (e) {
-      // Vanligt i Facebook-appen och andra inbyggda webbläsare
+    } catch {
       showErr('reg-err',
         'Anmälan kunde inte skickas från den här webbläsaren. ' +
         'Öppna sidan i Safari eller Chrome och försök igen.'
@@ -328,39 +353,62 @@ export async function submitReg(showFn) {
     }
   }
 
-  // ── Succé — knappen återaktiveras INTE, confirm visas istället ─
-  state.allParts.push({name, hcp:hcp||'—', golfid:gid||'—', bets:0, pkg});
+  // Uppdatera lokal state (reservister räknas separat, visas ej i deltagarlistan)
+  if (pkg !== 'reserv') {
+    state.allParts.push({name, hcp:hcp||'—', golfid:gid||'—', bets:0, pkg});
+  } else {
+    state.reservCnt = (state.reservCnt||0) + 1;
+  }
   updateCap(state.allParts);
+
   document.getElementById('c-name').textContent = name.split(' ')[0];
   buildRegConfirm(name, pkg);
   showFn('confirm');
-  // Nollställ knappen efter en stund ifall användaren går tillbaka
+
+  // Återaktivera knappen efter en stund ifall användaren går tillbaka
   setTimeout(() => { btn.disabled = false; btn.textContent = 'Skicka anmälan →'; }, 3000);
 }
 
 export function buildRegConfirm(name, pkg) {
-  const belopp    = pkg==='full' ? CFG.prisFull : pkg==='golf' ? CFG.prisGolf : CFG.prisFest;
-  const swishNr   = pkg==='party' ? CFG.swishFest  : CFG.swishGolf;
+  const isReserv = pkg === 'reserv';
+  const belopp   = pkg==='full' ? CFG.prisFull : pkg==='golf' ? CFG.prisGolf : pkg==='party' ? CFG.prisFest : 0;
+  const swishNr  = pkg==='party' ? CFG.swishFest : CFG.swishGolf;
   const swishLank = pkg==='party' ? CFG.swishLankFest : CFG.swishLankGolf;
   const sName = escapeHtml(name);
-  const mark  = pkg==='full' ? sName+' Fullt' : pkg==='golf' ? sName+' Golf' : sName+' Fest';
-  const ic    = pkg==='party' ? '🥂' : '⛳';
-  const titel = pkg==='full' ? 'Fullt paket (Golf + Middag & Fest)' : pkg==='golf' ? 'Enbart Golf' : 'Middag & Fest';
-  const cls   = pkg==='party' ? 'p' : 'g';
+  const ic    = pkg==='party' ? '🥂' : pkg==='reserv' ? '📋' : '⛳';
+  const titel = pkg==='full' ? 'Fullt paket (Golf + Middag & Fest)'
+              : pkg==='golf' ? 'Enbart Golf'
+              : pkg==='reserv' ? 'Reservlista Golf'
+              : 'Middag & Fest';
+  const mark  = pkg==='full' ? sName+' Fullt' : pkg==='golf' ? sName+' Golf' : pkg==='reserv' ? sName+' Reserv' : sName+' Fest';
+  const cls   = pkg==='party' ? 'p' : pkg==='reserv' ? 'r' : 'g';
 
-  const h = `<div class="pay-card">
-    <div class="pay-head ${cls}"><div class="pay-head-ic">${ic}</div><div class="pay-head-title">${titel}</div></div>
-    <div class="pay-body">
-      <div class="pay-row"><span class="pay-lbl">Belopp</span><span class="pay-val">${belopp.toLocaleString('sv-SE')} kr</span></div>
-      <div class="pay-row"><span class="pay-lbl">Swisha till</span><span class="pay-val">${swishNr}</span></div>
-      <div class="pay-row"><span class="pay-lbl">Märk med</span><span class="pay-tag">${mark}</span></div>
-      ${swishLank
-        ? `<a class="swish-btn" href="${escapeHtml(swishLank)}" target="_blank" rel="noopener noreferrer">
-             <span class="swish-btn-icon">💸</span> Öppna Swish
-           </a>`
-        : ''}
-    </div>
-  </div>`;
+  let h;
+  if (isReserv) {
+    h = `<div class="pay-card">
+      <div class="pay-head ${cls}"><div class="pay-head-ic">${ic}</div><div class="pay-head-title">${titel}</div></div>
+      <div class="pay-body">
+        <div class="reserv-info">
+          <p>Du är nu uppsatt på reservlistan för golf. Vi kontaktar dig på <strong>${escapeHtml(document.getElementById('f-email')?.value||'')}</strong> om en plats öppnas.</p>
+          <p style="margin-top:.5rem;font-size:13px;color:var(--muted)">Ingen betalning behövs nu.</p>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    h = `<div class="pay-card">
+      <div class="pay-head ${cls}"><div class="pay-head-ic">${ic}</div><div class="pay-head-title">${titel}</div></div>
+      <div class="pay-body">
+        <div class="pay-row"><span class="pay-lbl">Belopp</span><span class="pay-val">${belopp.toLocaleString('sv-SE')} kr</span></div>
+        <div class="pay-row"><span class="pay-lbl">Swisha till</span><span class="pay-val">${swishNr}</span></div>
+        <div class="pay-row"><span class="pay-lbl">Märk med</span><span class="pay-tag">${mark}</span></div>
+        ${swishLank
+          ? `<a class="swish-btn" href="${escapeHtml(swishLank)}" target="_blank" rel="noopener noreferrer">
+               <span class="swish-btn-icon">💸</span> Öppna Swish
+             </a>`
+          : ''}
+      </div>
+    </div>`;
+  }
 
   document.getElementById('c-pays').innerHTML = h;
 }

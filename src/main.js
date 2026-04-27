@@ -29,22 +29,17 @@ function setLogoSrc(src) {
 }
 
 async function loadLogo() {
-  // Visa grön platshållare medan loggan laddas
   ['nav-logo','hero-logo'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.style.opacity = '0'; el.style.background = 'var(--pine)'; }
   });
 
-  // 1. Kolla cache först — visas omedelbart utan nätverksanrop
   const cached = localStorage.getItem(LOGO_CACHE_KEY);
   if (cached) {
     setLogoSrc(cached);
-    // Uppdatera cache i bakgrunden utan att blockera UI
     refreshLogoCache();
     return;
   }
-
-  // 2. Inget i cache — hämta från Drive
   await refreshLogoCache();
 }
 
@@ -110,6 +105,8 @@ async function fetchData() {
     state.allParts   = [...SAMPLE];
     state.betPlayers = SAMPLE.filter(p=>p.pkg!=='party');
     updateCap(state.allParts);
+    buildPkgs();   // ← bygg om paketen med korrekt kapacitet
+    pkgChange();
     renderGolfGrid();
     renderPlayers();
     renderOdds();
@@ -130,6 +127,8 @@ async function fetchData() {
     showLoadError();
   }
   updateCap(state.allParts);
+  buildPkgs();   // ← bygg om paketen nu när vi vet faktisk kapacitet
+  pkgChange();
   renderGolfGrid();
   renderPlayers();
   renderOdds();
@@ -192,7 +191,6 @@ function show(id) {
   if (!skipHash.includes(id)) history.replaceState(null,'','#'+id);
 }
 
-// Navigera med teaser-kontroll
 function navTo(id) {
   if (id === 'reg'  && !CFG.visaAnmalan)   { showTeaser(); return false; }
   if (id === 'list' && !CFG.visaDeltagare) { showTeaser(); return false; }
@@ -242,31 +240,27 @@ function renderSponringPage() {
     el.style.display = 'none';
     fb.style.display = 'block';
   }
-  // NYTT: Ladda sponsorloggor
   renderSponsorGrid();
 }
 
 // -- VISIBILITY -----------------------------------------------
-function setVis(id, show) {
+function setVis(id, visible) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (show) { el.style.removeProperty('display'); } else { el.style.display = 'none'; }
+  if (visible) { el.style.removeProperty('display'); } else { el.style.display = 'none'; }
 }
 
 function applyVisibility() {
-  // Betting
   const visaBet = CFG.visaBetting !== false;
   ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'].forEach(id => setVis(id, visaBet));
   const pageBet = document.getElementById('page-bet');
   if (pageBet && !visaBet) pageBet.style.display = 'none';
 
-  // Anmälan
   const visaReg = CFG.visaAnmalan !== false;
   ['nav-reg-btn','mm-reg-btn','bn-reg'].forEach(id => setVis(id, visaReg));
   const navCta = document.querySelector('.nav-cta');
   if (navCta) { if (!visaReg) { navCta.style.display = 'none'; } else { navCta.style.removeProperty('display'); } }
 
-  // Deltagare
   const visaList = CFG.visaDeltagare !== false;
   ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => setVis(id, visaList));
 }
@@ -332,13 +326,13 @@ document.querySelectorAll('[data-format-tel]').forEach(el => {
   el.addEventListener('input', () => { el.value = formatTel(el.value); });
 });
 
-// Betting — FIX: använd data-player-idx (inte data-pid) och konvertera till Number
+// Betting — data-player-idx
 document.getElementById('players-grid')?.addEventListener('click', (e) => {
   const card = e.target.closest('[data-player-idx]');
   if (card) toggleP(Number(card.dataset.playerIdx));
 });
 
-// Betting — ta bort spelare via ✕-knappen i bet-panelen
+// Betting — ta bort spelare via ✕-knappen
 document.querySelector('.bet-panel-body')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-remove-idx]');
   if (btn) toggleP(Number(btn.dataset.removeIdx));
@@ -346,7 +340,7 @@ document.querySelector('.bet-panel-body')?.addEventListener('click', (e) => {
 
 document.getElementById('bet-sub-btn')?.addEventListener('click', () => submitBet(show));
 
-// Admin login — knappen har inget id, delegera från formuläret
+// Admin login
 document.querySelector('.admin-login-body')?.addEventListener('click', (e) => {
   if (e.target.closest('.full-btn')) adminLogin(show, adminLoadData);
 });
@@ -354,23 +348,23 @@ document.getElementById('admin-pw')?.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') adminLogin(show, adminLoadData);
 });
 
-// Admin logout & refresh — använder data-action (inte id)
+// Admin logout & refresh
 document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
   const action = e.target.closest('[data-action]')?.dataset.action;
   if (action === 'admin-logout') adminLogout(show);
   if (action === 'admin-refresh') adminLoadData();
 });
 
-// Admin tabs — använder data-admin-tab (inte data-tab)
+// Admin tabs
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-admin-tab]');
   if (btn) adminTab(btn.dataset.adminTab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
 });
 
-// Golf grid photo uploads (publik sida)
+// Golf grid photo uploads
 document.getElementById('golf-grid')?.addEventListener('change', (e) => {
   const input = e.target.closest('[data-photo-key]');
-  if (input) handlePhoto(e, input.dataset.photoKey);
+  if (input && input.files?.[0]) handlePhoto(input.dataset.photoKey, input.files[0], renderGolfGrid, renderPlayers);
 });
 
 // Admin foto
@@ -415,7 +409,7 @@ renderOmPage();
 renderInfoPage();
 renderSponringPage();
 applyVisibility();
-fetchData();
+fetchData(); // ← anropar buildPkgs() + pkgChange() igen efter data laddats
 
 const loadSp = () => loadSponsors();
 if ('requestIdleCallback' in window) {
