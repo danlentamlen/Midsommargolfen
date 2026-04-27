@@ -38,6 +38,9 @@ export const CFG = {
     { namn: 'Brewski',       logoUrl: 'https://lh3.googleusercontent.com/oFIpz8SHaKiSjXa6XYbAi3hCAny_-J9Sji6Dmb0rWBVuK3Ct7G4yNMGlBYBe5D21DTAdpF-JPlXdSLbhoUowsrYuaWORbc4=s750', webbUrl: 'https://www.brewski.se' },
     { namn: 'HAEGERSTRANDS', logoUrl: 'https://usercontent.one/wp/haegerstrands.se/wp-content/uploads/2023/11/logga2.png', webbUrl: 'https://haegerstrands.se/eng/' },
     { namn: 'Kemira',        logoUrl: 'https://www.kemira.com/wp-content/themes/kemira/images/kemira-logo.svg', webbUrl: 'https://www.kemira.com/sv/' },
+    { namn: 'Leman',         logoUrl: '', webbUrl: 'https://leman.com' },
+    { namn: 'Celeber',       logoUrl: '', webbUrl: 'https://celeber.se' },
+    { namn: 'mickaeltannus', logoUrl: '', webbUrl: 'https://www.mickaeltannus.com' }
   ],
 
   omHistoria: '',

@@ -6,3 +6,6 @@ dist/
 index.original.html
 index.legacy.html
 public/logo.jpg
+
+# Local Netlify folder
+.netlify
