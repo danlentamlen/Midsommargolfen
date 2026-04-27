@@ -12,53 +12,127 @@ export function updateCap(parts) {
   const gP = Math.min(state.golfCnt/CFG.maxGolf*100,100);
   const fP = Math.min(state.festCnt/CFG.maxFest*100,100);
 
-  const avRow  = document.getElementById('hf-avail-row');
+  const avRow   = document.getElementById('hf-avail-row');
   const capWrap = document.getElementById('hf-cap-wrap');
   const av = document.getElementById('hf-avail');
   const cb = document.getElementById('hf-cap-bar');
   if (state.golfCnt === 0) {
-    avRow.style.display  = 'none';
+    avRow.style.display   = 'none';
     capWrap.style.display = 'none';
   } else {
-    avRow.style.display  = '';
+    avRow.style.display   = '';
     capWrap.style.display = '';
     cb.style.width = gP + '%';
-    if(gL>5){av.textContent=gL+' kvar';av.className='hf-val av';}
-    else if(gL>0){av.textContent=gL+' kvar!';av.className='hf-val warn';}
-    else{av.textContent='Fullbokad';av.className='hf-val full';}
+    if (gL>5)      { av.textContent=gL+' kvar';   av.className='hf-val av';   }
+    else if (gL>0) { av.textContent=gL+' kvar!';  av.className='hf-val warn'; }
+    else           { av.textContent='Fullbokad';   av.className='hf-val full'; }
   }
 
   setCapPill('cp-golf-bar','cp-golf-num',state.golfCnt,CFG.maxGolf,gL,gP);
   setCapPill('cp-fest-bar','cp-fest-num',state.festCnt,CFG.maxFest,fL,fP);
+
+  // Uppdatera paket-kort på startsidan och radio-alternativ i formuläret
+  _applyCapToCards(gL, fL);
+  _applyCapToOpts(gL, fL);
 }
 
-export function setCapPill(barId,numId,cnt,max,left,pct){
+export function setCapPill(barId, numId, cnt, max, left, pct) {
   const b = document.getElementById(barId);
-  b.style.width = pct+'%';
-  b.className = 'cp-bar '+(pct>=100?'cp-r':pct>=80?'cp-a':'cp-g');
-  document.getElementById(numId).textContent = `${cnt}/${max} (${left>0?left+' kvar':'Fullbokad'})`;
+  b.style.width = pct + '%';
+  b.className = 'cp-bar ' + (pct>=100 ? 'cp-r' : pct>=80 ? 'cp-a' : 'cp-g');
+  document.getElementById(numId).textContent =
+    `${cnt}/${max} (${left>0 ? left+' kvar' : 'Fullbokad'})`;
+}
+
+// Gråar ut fullbokade paket-kort på startsidan
+function _applyCapToCards(gL, fL) {
+  const grid = document.getElementById('pkg-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.pkg-card').forEach(card => {
+    const id = card.dataset.pkgId;
+    const golfFull = gL <= 0 && (id === 'full' || id === 'golf');
+    const festFull = fL <= 0 && (id === 'full' || id === 'party');
+    const full = golfFull || festFull;
+    card.classList.toggle('pkg-full', full);
+    const btn = card.querySelector('.pkg-btn');
+    if (btn) {
+      btn.textContent = full ? 'Fullbokad' : 'Välj paket';
+      btn.disabled = full;
+    }
+    if (full) {
+      card.removeAttribute('data-action');
+      if (!card.querySelector('.pkg-full-badge')) {
+        const badge = document.createElement('div');
+        badge.className = 'pkg-full-badge';
+        badge.textContent = 'Fullbokad';
+        card.prepend(badge);
+      }
+    } else {
+      card.dataset.action = 'show-reg';
+      card.querySelector('.pkg-full-badge')?.remove();
+    }
+  });
+}
+
+// Inaktiverar fullbokade radio-alternativ i anmälningsformuläret
+function _applyCapToOpts(gL, fL) {
+  const opts = document.getElementById('p-opts');
+  if (!opts) return;
+  opts.querySelectorAll('.p-opt').forEach(label => {
+    const input = label.querySelector('input[type=radio]');
+    if (!input) return;
+    const id = input.value;
+    const golfFull = gL <= 0 && (id === 'full' || id === 'golf');
+    const festFull = fL <= 0 && (id === 'full' || id === 'party');
+    const full = golfFull || festFull;
+    input.disabled = full;
+    label.classList.toggle('p-opt-disabled', full);
+    let badge = label.querySelector('.p-opt-full');
+    if (full && !badge) {
+      badge = document.createElement('span');
+      badge.className = 'p-opt-full';
+      badge.textContent = 'Fullbokad';
+      label.appendChild(badge);
+    } else if (!full && badge) {
+      badge.remove();
+    }
+    // Om valt alternativ blir fullbokat — välj party istället
+    if (full && input.checked) {
+      const party = opts.querySelector('input[value=party]');
+      if (party && !party.disabled) {
+        party.checked = true;
+        pkgChange();
+      }
+    }
+  });
 }
 
 // -- PACKAGES -------------------------------------------------
 export function buildPkgs() {
   const pkgs = [
-  {id:'full', ic:'⭐', nm:'Fullt paket',   desc:'Golf + Middag & Midsommarfest. Den kompletta upplevelsen.', pris:CFG.prisFull,  feat:true},
-  {id:'golf', ic:'⛳', nm:'Endast Golf',    desc:'Slaggolf-tävlingen utan kvällsevenemang.',                pris:CFG.prisGolf,  feat:false},
-  {id:'party',ic:'🥂', nm:'Middag & Fest', desc:'Kvällsevenemang utan golf. För sällskap & inbjudna.',       pris:CFG.prisFest,  feat:false},
+    { id:'full',  ic:'⭐', nm:'Fullt paket',   desc:'Golf + Middag & Midsommarfest. Den kompletta upplevelsen.', pris:CFG.prisFull,  feat:true  },
+    { id:'golf',  ic:'⛳', nm:'Endast Golf',    desc:'Slaggolf-tävlingen utan kvällsevenemang.',                 pris:CFG.prisGolf,  feat:false },
+    { id:'party', ic:'🥂', nm:'Middag & Fest',  desc:'Kvällsevenemang utan golf. För sällskap & inbjudna.',      pris:CFG.prisFest,  feat:false },
   ];
+
   document.getElementById('pkg-grid').innerHTML = pkgs.map(p =>
-    `<div class="pkg-card ${p.feat?'feat':''}" data-action="show-reg">
-      <div class="pkg-ic">${p.ic}</div><div class="pkg-name">${p.nm}</div>
+    `<div class="pkg-card ${p.feat?'feat':''}" data-action="show-reg" data-pkg-id="${p.id}">
+      <div class="pkg-ic">${p.ic}</div>
+      <div class="pkg-name">${p.nm}</div>
       <div class="pkg-desc">${p.desc}</div>
       <div class="pkg-price">${p.pris.toLocaleString('sv-SE')} <span>kr</span></div>
       ${p.id!=='party' ? `<div class="pkg-pott">🏆 Större delen av golf-avgiften går till prispotten</div>` : ''}
       <button class="pkg-btn">Välj paket</button>
     </div>`
   ).join('');
+
   document.getElementById('p-opts').innerHTML = pkgs.map(p =>
     `<label class="p-opt" id="popt-${p.id}">
       <input type="radio" name="pkg" value="${p.id}" ${p.feat?'checked':''}>
-      <div class="p-opt-inf"><div class="p-opt-n">${p.ic} ${p.nm}</div><div class="p-opt-s">${p.id==='full'?'En betalning för hela paketet':p.desc.split('.')[0]}</div></div>
+      <div class="p-opt-inf">
+        <div class="p-opt-n">${p.ic} ${p.nm}</div>
+        <div class="p-opt-s">${p.id==='full' ? 'En betalning för hela paketet' : p.desc.split('.')[0]}</div>
+      </div>
       <div class="p-opt-p">${p.pris.toLocaleString('sv-SE')} kr</div>
     </label>`
   ).join('');
@@ -81,14 +155,20 @@ export async function buildStartlista() {
   const photos = getLocalPhotos();
   document.getElementById('startlista-grid').innerHTML = groups.map(g => `
     <div class="sg-card">
-      <div class="sg-head"><span class="sg-name">${g.grupp}</span><span class="sg-time">⏱ Hål ${g.teeHal||1} · ${g.teeStart||''}</span></div>
-      <div class="sg-body">${g.spelare.filter(n=>n).map(n=>{
-        const sN = escapeHtml(n);
+      <div class="sg-head">
+        <span class="sg-name">${g.grupp}</span>
+        <span class="sg-time">⏱ Hål ${g.teeHal||1} · ${g.teeStart||''}</span>
+      </div>
+      <div class="sg-body">${g.spelare.filter(n=>n).map(n => {
+        const sN   = escapeHtml(n);
         const init = n.split(' ').map(w=>w[0]).join('').slice(0,2);
         const match = (state.betPlayers||[]).find(p=>p.name===n) || (state.allParts||[]).find(p=>p.name===n);
-        const key = match ? photoKey(match) : n.toLowerCase();
-        const ph = photos[key] || '';
-        return `<div class="sg-player"><div class="sg-av">${ph?`<img src="${ph}" decoding="async">`:'<span>'+escapeHtml(init)+'</span>'}</div><div class="sg-pname">${sN}</div></div>`;
+        const key   = match ? photoKey(match) : n.toLowerCase();
+        const ph    = photos[key] || '';
+        return `<div class="sg-player">
+          <div class="sg-av">${ph ? `<img src="${ph}" decoding="async">` : '<span>'+escapeHtml(init)+'</span>'}</div>
+          <div class="sg-pname">${sN}</div>
+        </div>`;
       }).join('')}</div>
     </div>`
   ).join('');
@@ -112,9 +192,9 @@ export function renderGolfGrid() {
   const photos = getLocalPhotos();
   grid.innerHTML = golfers.map(p => {
     const sName = escapeHtml(p.name);
-    const init = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
-    const key  = photoKey(p);
-    const ph   = photos[key] || '';
+    const init  = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const key   = photoKey(p);
+    const ph    = photos[key] || '';
     return `<div class="golf-card">
       <div class="golf-photo">${ph
         ? `<img src="${ph}" alt="${sName}" loading="lazy" decoding="async">`
@@ -122,8 +202,8 @@ export function renderGolfGrid() {
       }</div>
       <div class="golf-card-body">
         <div class="golf-card-name">${sName}</div>
-        ${p.hcp&&p.hcp!=='—'?`<div class="golf-card-hcp">HCP ${escapeHtml(String(p.hcp))}</div>`:''}
-        ${p.golfid&&p.golfid!=='—'?`<div class="golf-card-gid">Golf-ID: ${escapeHtml(p.golfid)}</div>`:''}
+        ${p.hcp&&p.hcp!=='—' ? `<div class="golf-card-hcp">HCP ${escapeHtml(String(p.hcp))}</div>` : ''}
+        ${p.golfid&&p.golfid!=='—' ? `<div class="golf-card-gid">Golf-ID: ${escapeHtml(p.golfid)}</div>` : ''}
         ${ph
           ? `<div class="photo-exists">✓ Foto uppladdad</div>`
           : `<div class="photo-up"><label class="photo-up-label">
@@ -135,19 +215,21 @@ export function renderGolfGrid() {
   }).join('');
 }
 
-export async function handlePhoto(e, key) {
-  const file = e.target.files[0];
+let _renderPlayersFn = null;
+export function setRenderPlayers(fn) { _renderPlayersFn = fn; }
+
+export async function handlePhoto(pid, file, renderGolfGridFn, renderPlayersFn) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = async ev => {
-    saveLocalPhoto(key, ev.target.result);
-    renderGolfGrid();
-    renderPlayers();
+    saveLocalPhoto(pid, ev.target.result);
+    renderGolfGridFn();
+    renderPlayersFn();
     buildStartlista();
-    const driveUrl = await uploadPhotoToDrive(key, file);
+    const driveUrl = await uploadPhotoToDrive(pid, file);
     if (driveUrl) {
-      renderGolfGrid();
-      renderPlayers();
+      renderGolfGridFn();
+      renderPlayersFn();
       buildStartlista();
     }
   };
@@ -164,66 +246,111 @@ export function pkgChange() {
 
 // -- SUBMIT REGISTRATION --------------------------------------
 export async function submitReg(showFn) {
-  const name  = document.getElementById('f-name').value.trim();
-  const email = document.getElementById('f-email').value.trim();
-  const tel   = formatTel(document.getElementById('f-tel').value.trim());
-  const gid   = document.getElementById('f-golfid').value.trim();
-  const hcp   = document.getElementById('f-hcp').value.trim();
+  const name    = document.getElementById('f-name').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const tel     = formatTel(document.getElementById('f-tel').value.trim());
+  const gid     = document.getElementById('f-golfid').value.trim();
+  const hcp     = document.getElementById('f-hcp').value.trim();
   const allergy = document.getElementById('f-allergy').value.trim();
+
   if (!name||!email) { showErr('reg-err','Fyll i namn och e-post.'); return; }
+
   const pkg = document.querySelector('input[name=pkg]:checked')?.value;
+
+  // ── Kapacitetskontroll ────────────────────────────────────────
+  const gL = CFG.maxGolf - state.golfCnt;
+  const fL = CFG.maxFest - state.festCnt;
+  if ((pkg==='full'||pkg==='golf') && gL <= 0) {
+    showErr('reg-err', 'Tyvärr — golf är fullbokat! Du kan fortfarande anmäla dig till Middag & Fest.');
+    return;
+  }
+  if ((pkg==='full'||pkg==='party') && fL <= 0) {
+    showErr('reg-err', 'Tyvärr — Middag & Fest är fullbokat!');
+    return;
+  }
+
   if ((pkg==='full'||pkg==='golf') && !gid) { showErr('reg-err','Golf-ID krävs för att delta i tävlingen.'); return; }
   if (gid && !/^\d{6}-\d{3}$/.test(gid)) { showErr('reg-err','Golf-ID ska ha formatet YYMMDD-NNN (t.ex. 760828-016).'); return; }
 
   const btn = document.getElementById('reg-btn');
-  if (btn.dataset.rateLimited || sessionStorage.getItem('reg-submitted')) { showErr('reg-err','Vänta innan du skickar igen.'); return; }
-  btn.textContent='Kontrollerar...'; btn.disabled=true;
+  if (btn.dataset.rateLimited || sessionStorage.getItem('reg-submitted')) {
+    showErr('reg-err','Vänta innan du skickar igen.');
+    return;
+  }
+  btn.textContent = 'Kontrollerar...'; btn.disabled = true;
   btn.dataset.rateLimited = 'true';
   sessionStorage.setItem('reg-submitted', Date.now().toString());
   setTimeout(() => { delete btn.dataset.rateLimited; sessionStorage.removeItem('reg-submitted'); }, 5000);
 
   if (CFG.appsScriptUrl) {
     try {
-      const r = await fetchWithTimeout(CFG.appsScriptUrl+'?action=checkDuplikat&golfid='+encodeURIComponent(gid)+'&email='+encodeURIComponent(email)+'&namn='+encodeURIComponent(name));
+      const r = await fetchWithTimeout(
+        CFG.appsScriptUrl+'?action=checkDuplikat'+
+        '&golfid='+encodeURIComponent(gid)+
+        '&email='+encodeURIComponent(email)+
+        '&namn='+encodeURIComponent(name)
+      );
       const d = await r.json();
-      if (d.exists) { showErr('reg-err', d.meddelande||'Anmälan finns redan.'); btn.textContent='Skicka anmälan →'; btn.disabled=false; return; }
-    } catch { /* network error — continue registration */ }
+      if (d.exists) {
+        showErr('reg-err', d.meddelande||'Anmälan finns redan.');
+        btn.textContent='Skicka anmälan →'; btn.disabled=false;
+        return;
+      }
+    } catch { /* network error — continue */ }
   }
 
-  btn.textContent='Skickar...';
-  const payload = {action:'anmalan',namn:name,email:email,telefon:tel,golfid:gid,handicap:hcp||'—',paket:pkg,allergier:allergy,tidpunkt:new Date().toLocaleString('sv-SE')};
-  if (CFG.appsScriptUrl) await postToAppsScript(CFG.appsScriptUrl, payload);
+  btn.textContent = 'Skickar...';
+  const payload = {
+    action:'anmalan', namn:name, email, telefon:tel,
+    golfid:gid, handicap:hcp||'—', paket:pkg,
+    allergier:allergy, tidpunkt:new Date().toLocaleString('sv-SE')
+  };
 
-  state.allParts.push({name,hcp:hcp||'—',golfid:gid||'—',bets:0,pkg});
+  if (CFG.appsScriptUrl) {
+    try {
+      await postToAppsScript(CFG.appsScriptUrl, payload);
+    } catch (e) {
+      // Vanligt i Facebook-appen och andra inbyggda webbläsare
+      showErr('reg-err',
+        'Anmälan kunde inte skickas från den här webbläsaren. ' +
+        'Öppna sidan i Safari eller Chrome och försök igen.'
+      );
+      btn.textContent = 'Skicka anmälan →'; btn.disabled = false;
+      return;
+    }
+  }
+
+  state.allParts.push({name, hcp:hcp||'—', golfid:gid||'—', bets:0, pkg});
   updateCap(state.allParts);
   document.getElementById('c-name').textContent = name.split(' ')[0];
   buildRegConfirm(name, pkg);
-  btn.textContent='Skicka anmälan →'; btn.disabled=false;
+  btn.textContent = 'Skicka anmälan →'; btn.disabled = false;
   showFn('confirm');
 }
 
 export function buildRegConfirm(name, pkg) {
-  const belopp = pkg==='full'?CFG.prisFull : pkg==='golf'?CFG.prisGolf : CFG.prisFest;
-  const swishNr = pkg==='party' ? CFG.swishFest : CFG.swishGolf;
+  const belopp    = pkg==='full' ? CFG.prisFull : pkg==='golf' ? CFG.prisGolf : CFG.prisFest;
+  const swishNr   = pkg==='party' ? CFG.swishFest  : CFG.swishGolf;
   const swishLank = pkg==='party' ? CFG.swishLankFest : CFG.swishLankGolf;
   const sName = escapeHtml(name);
-  const mark = pkg==='full' ? sName+' Fullt' : pkg==='golf' ? sName+' Golf' : sName+' Fest';
-  const ic = pkg==='party'?'🥂':'⛳';
-  const titel = pkg==='full'?'Fullt paket (Golf + Middag & Fest)':pkg==='golf'?'Enbart Golf':'Middag & Fest';
-  const cls = pkg==='party'?'p':'g';
+  const mark  = pkg==='full' ? sName+' Fullt' : pkg==='golf' ? sName+' Golf' : sName+' Fest';
+  const ic    = pkg==='party' ? '🥂' : '⛳';
+  const titel = pkg==='full' ? 'Fullt paket (Golf + Middag & Fest)' : pkg==='golf' ? 'Enbart Golf' : 'Middag & Fest';
+  const cls   = pkg==='party' ? 'p' : 'g';
 
-  let h = `<div class="pay-card">
+  const h = `<div class="pay-card">
     <div class="pay-head ${cls}"><div class="pay-head-ic">${ic}</div><div class="pay-head-title">${titel}</div></div>
     <div class="pay-body">
       <div class="pay-row"><span class="pay-lbl">Belopp</span><span class="pay-val">${belopp.toLocaleString('sv-SE')} kr</span></div>
       <div class="pay-row"><span class="pay-lbl">Swisha till</span><span class="pay-val">${swishNr}</span></div>
       <div class="pay-row"><span class="pay-lbl">Märk med</span><span class="pay-tag">${mark}</span></div>
-      ${swishLank ? `<a href="${swishLank}" class="swish-btn"><span class="swish-btn-icon">💸</span>Öppna i Swish</a>` : ''}
+      ${swishLank
+        ? `<a class="swish-btn" href="${escapeHtml(swishLank)}" target="_blank" rel="noopener">
+             <span class="swish-btn-icon">💸</span> Öppna Swish
+           </a>`
+        : ''}
     </div>
   </div>`;
+
   document.getElementById('c-pays').innerHTML = h;
 }
-
-let _renderPlayers = null;
-export function setRenderPlayers(fn) { _renderPlayers = fn; }
-function renderPlayers() { if (_renderPlayers) _renderPlayers(); }
