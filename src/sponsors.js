@@ -8,9 +8,19 @@ function renderTrack(html) {
   track.innerHTML = `<div class="sponsor-track-inner">${html}${html}</div>`;
 }
 
-// Normaliserar webb-URL oavsett om fältet heter webb (Drive) eller webbUrl (CFG.sponsorer)
+// Normaliserar webb-URL:
+// 1. Använd s.webb eller s.webbUrl om de finns
+// 2. Annars matcha sponsornamnet mot CFG.sponsorer (Drive returnerar tomt webb-fält)
 function getWebb(s) {
-  return s.webb || s.webbUrl || '';
+  const direct = s.webb || s.webbUrl || '';
+  if (direct) return direct;
+  if (s.namn && CFG.sponsorer?.length) {
+    const match = CFG.sponsorer.find(
+      c => c.namn.toLowerCase() === (s.namn || '').toLowerCase()
+    );
+    if (match) return match.webbUrl || match.webb || '';
+  }
+  return '';
 }
 
 // Testar om en bild-URL faktiskt kan visas — utan fetch, bara img-element
@@ -44,7 +54,7 @@ export async function loadSponsors() {
             ? `data:${s.mimeType || 'image/png'};base64,${s.base64}`
             : escapeHtml(s.url || '');
           if (!imgSrc) return `<span class="sponsor-placeholder">${sNamn}</span>`;
-          return `<a href="${href}" target="_blank" rel="noopener" title="${sNamn}">
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer" title="${sNamn}">
             <img class="sponsor-logo" src="${imgSrc}" alt="${sNamn}" loading="lazy" decoding="async">
           </a>`;
         }).join('');
@@ -66,7 +76,7 @@ export async function loadSponsors() {
   const placeholders = sponsors.map(s => {
     const sNamn = escapeHtml(s.namn || 'Sponsor');
     const href  = escapeHtml(getWebb(s) || '#');
-    return `<a href="${href}" target="_blank" rel="noopener" title="${sNamn}">
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer" title="${sNamn}">
       <span class="sponsor-placeholder">${sNamn}</span>
     </a>`;
   }).join('');
@@ -78,12 +88,12 @@ export async function loadSponsors() {
     const sNamn = escapeHtml(s.namn || 'Sponsor');
     const href  = escapeHtml(getWebb(s) || '#');
     if (ok[i] && s.logoUrl) {
-      return `<a href="${href}" target="_blank" rel="noopener" title="${sNamn}">
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer" title="${sNamn}">
         <img class="sponsor-logo" src="${s.logoUrl}" alt="${sNamn}"
              referrerpolicy="no-referrer" loading="lazy" decoding="async">
       </a>`;
     }
-    return `<a href="${href}" target="_blank" rel="noopener" title="${sNamn}">
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer" title="${sNamn}">
       <span class="sponsor-placeholder">${sNamn}</span>
     </a>`;
   }).join('');
@@ -113,7 +123,7 @@ export async function renderSponsorGrid() {
           const imgSrc = s.base64
             ? `data:${s.mimeType || 'image/png'};base64,${s.base64}`
             : escapeHtml(s.url || '');
-          return `<a class="sp-grid-item" href="${href}" target="_blank" rel="noopener" title="${sNamn}">
+          return `<a class="sp-grid-item" href="${href}" target="_blank" rel="noopener noreferrer" title="${sNamn}">
             ${imgSrc
               ? `<img src="${imgSrc}" alt="${sNamn}" loading="lazy" decoding="async">`
               : `<span class="sp-grid-name">${sNamn}</span>`}
@@ -135,7 +145,7 @@ export async function renderSponsorGrid() {
   grid.innerHTML = sponsors.map((s, i) => {
     const sNamn = escapeHtml(s.namn || 'Sponsor');
     const href  = escapeHtml(getWebb(s) || '#');
-    return `<a class="sp-grid-item" href="${href}" target="_blank" rel="noopener" title="${sNamn}">
+    return `<a class="sp-grid-item" href="${href}" target="_blank" rel="noopener noreferrer" title="${sNamn}">
       ${ok[i] && s.logoUrl
         ? `<img src="${s.logoUrl}" alt="${sNamn}" referrerpolicy="no-referrer" loading="lazy">`
         : `<span class="sp-grid-name">${sNamn}</span>`}
