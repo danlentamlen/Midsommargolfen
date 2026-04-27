@@ -273,6 +273,14 @@ function applyVisibility() {
 
 // -- EVENT LISTENERS ------------------------------------------
 
+// Förhindra att externa <a>-länkklick bubblar upp till SPA-navigering
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href]');
+  if (a && (a.href.startsWith('http') || a.target === '_blank')) {
+    e.stopPropagation();
+  }
+});
+
 // Navigation — alla data-nav knappar via navTo()
 document.querySelectorAll('[data-nav]').forEach(btn => {
   btn.addEventListener('click', () => navTo(btn.dataset.nav));
