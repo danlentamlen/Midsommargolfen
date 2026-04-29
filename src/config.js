@@ -39,7 +39,8 @@ export const CFG = {
     { namn: 'Leman',         logoUrl: '/images/sponsors/leman.png', webbUrl: 'https://leman.com' },
     { namn: 'Celeber',       logoUrl: '/images/sponsors/celeber.png', webbUrl: 'https://celeber.se' },
     { namn: 'mickaeltannus', logoUrl: '/images/sponsors/mickaeltannus.png ', webbUrl: 'https://www.mickaeltannus.com' },
-    { namn: 'Optimera',      logoUrl: '/images/sponsors/optimera.png', webbUrl: 'https://www.optimera.se' }
+    { namn: 'Optimera',      logoUrl: '/images/sponsors/optimera.png', webbUrl: 'https://www.optimera.se' },
+    { namn: 'Jolo Meal',     logoUrl: '/images/sponsors/jolomeal.png', webbUrl: 'https://www.jobmeal.se' }
   ],
 
   omHistoria: '',
