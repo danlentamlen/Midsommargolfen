@@ -62,7 +62,7 @@ async function refreshLogoCache() {
   } catch(e) {
     console.warn('loadLogo: misslyckades', e);
   }
-  setLogoSrc('/logo.jpg');
+  setLogoSrc('/images/logo.jpg');
 }
 
 loadLogo();

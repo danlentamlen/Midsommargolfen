@@ -25,23 +25,21 @@ export const CFG = {
   appsScriptUrl: import.meta.env.VITE_APPS_SCRIPT_URL || '',
 
   drivePhotoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO',
-  // old: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',
-  driveLogoFolderId: '1i0DL8ne3QksUIT_nvout9PD7-kwKOnpO',
-  // old: '1UuiM_4JQaaDDtBm8md-ChigUktjvP2O9',  
-  driveSponsorFolderId: '14GouS8CnAK-zWyS-pyh0tIrW2WEUDTkY',
-  // old: '19iyXGU2Ek7CQWIIFfYdhHSvRnbWU96Ij',
+  driveLogoFolderId: '',
+  driveSponsorFolderId: '',
 
   // Fallback-loggor visas om Drive-anropet misslyckas.
   // Ladda upp loggor i Drive-mappen (driveSponsorFolderId) för produktion.
   // Filnamn spelar ingen roll — alla bildfiler i mappen visas.
   sponsorer: [
-    { namn: 'Rya GK',        logoUrl: 'https://rya.nu/wp-content/uploads/2022/11/Rya_golf_Logo.svg',          webbUrl: 'https://rya.nu' },
-    { namn: 'Brewski',       logoUrl: 'https://lh3.googleusercontent.com/oFIpz8SHaKiSjXa6XYbAi3hCAny_-J9Sji6Dmb0rWBVuK3Ct7G4yNMGlBYBe5D21DTAdpF-JPlXdSLbhoUowsrYuaWORbc4=s750', webbUrl: 'https://www.brewski.se' },
-    { namn: 'HAEGERSTRANDS', logoUrl: 'https://usercontent.one/wp/haegerstrands.se/wp-content/uploads/2023/11/logga2.png', webbUrl: 'https://haegerstrands.se/eng/' },
-    { namn: 'Kemira',        logoUrl: 'https://www.kemira.com/wp-content/themes/kemira/images/kemira-logo.svg', webbUrl: 'https://www.kemira.com/sv/' },
-    { namn: 'Leman',         logoUrl: '', webbUrl: 'https://leman.com' },
-    { namn: 'Celeber',       logoUrl: '', webbUrl: 'https://celeber.se' },
-    { namn: 'mickaeltannus', logoUrl: '', webbUrl: 'https://www.mickaeltannus.com' }
+    { namn: 'Rya GK',        logoUrl: '/images/sponsors/rya-gk.svg',          webbUrl: 'https://rya.nu' },
+    { namn: 'Brewski',       logoUrl: '/images/sponsors/brewski.png', webbUrl: 'https://www.brewski.se' },
+    { namn: 'HAEGERSTRANDS', logoUrl: '/images/sponsors/haegerstrands.png', webbUrl: 'https://haegerstrands.se/eng/' },
+    { namn: 'Kemira',        logoUrl: '/images/sponsors/kemira.svg', webbUrl: 'https://www.kemira.com/sv/' },
+    { namn: 'Leman',         logoUrl: '/images/sponsors/leman.png', webbUrl: 'https://leman.com' },
+    { namn: 'Celeber',       logoUrl: '/images/sponsors/celeber.png', webbUrl: 'https://celeber.se' },
+    { namn: 'mickaeltannus', logoUrl: '/images/sponsors/mickaeltannus.png ', webbUrl: 'https://www.mickaeltannus.com' }
+    { namn: 'Optimera',      logoUrl: '/images/sponsors/optimera.png', webbUrl: 'https://www.optimera.se' }
   ],
 
   omHistoria: '',
