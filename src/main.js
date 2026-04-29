@@ -34,6 +34,13 @@ async function loadLogo() {
     if (el) { el.style.opacity = '0'; el.style.background = 'var(--pine)'; }
   });
 
+  // Om inget Drive-ID är konfigurerat — rensa gammal cache och använd lokal fil direkt
+  if (!CFG.driveLogoFolderId || !CFG.appsScriptUrl) {
+    localStorage.removeItem(LOGO_CACHE_KEY);
+    setLogoSrc('/logo.jpg');
+    return;
+  }
+
   const cached = localStorage.getItem(LOGO_CACHE_KEY);
   if (cached) {
     setLogoSrc(cached);
@@ -62,7 +69,7 @@ async function refreshLogoCache() {
   } catch(e) {
     console.warn('loadLogo: misslyckades', e);
   }
-  setLogoSrc('/public/logo.jpg');
+  setLogoSrc('/logo.jpg');
 }
 
 loadLogo();
@@ -71,25 +78,25 @@ loadLogo();
 document.getElementById('nav-name').textContent = CFG.eventNamn;
 document.getElementById('nav-sub').textContent  = 'Rya GK · 20 Juni 2026';
 document.getElementById('h-plats').textContent  = CFG.eventPlats;
-document.getElementById('h-datum').textContent  = CFG.eventDatum;
-document.getElementById('h-middag').textContent = 'Middag ' + CFG.middagStart;
-document.getElementById('hf-slag').textContent      = CFG.slagstart;
-document.getElementById('hf-slag-meta').textContent = CFG.slagstart;
-document.getElementById('h-title').innerHTML    = CFG.eventNamn.replace('golfen','<em>golfen</em>');
-document.getElementById('form-sub').textContent = CFG.eventNamn + ' · Rya GK · 20 Juni';
-document.getElementById('as-full').textContent  = CFG.prisFull + ' kr';
-document.getElementById('as-golf').textContent  = CFG.prisGolf + ' kr';
-document.getElementById('as-fest').textContent  = CFG.prisFest + ' kr';
-document.getElementById('as-datum').textContent = CFG.eventDatum;
-document.getElementById('as-plats').textContent = CFG.eventPlats;
-document.getElementById('as-slag').textContent  = CFG.slagstart;
-document.getElementById('as-middag').textContent= CFG.middagStart;
-document.getElementById('bet-rule-pris').textContent = `💰 ${CFG.prisBetPerSpel} kr per vald spelare`;
+
+// -- VISIBILITY -----------------------------------------------
+function applyVisibility() {
+  const pages = ['reg','list','bet'];
+  const flags = [CFG.visaAnmalan, CFG.visaDeltagare, CFG.visaBetting];
+  pages.forEach((p, i) => {
+    const navLink = document.querySelectorAll('.nav-link')[PAGE_IDX[p]];
+    const bnLink  = document.getElementById(BN_IDS[PAGE_IDX[p]]);
+    if (navLink) navLink.style.display = flags[i] ? '' : 'none';
+    if (bnLink)  bnLink.style.display  = flags[i] ? '' : 'none';
+  });
+}
 
 // -- TEASER MODAL ---------------------------------------------
 function showTeaser() {
   const modal = document.getElementById('teaser-modal');
-  document.getElementById('teaser-msg').textContent = CFG.teaserMeddelande || 'Vi öppnar snart!';
+  const msg   = document.getElementById('teaser-msg');
+  if (!modal) return;
+  if (msg) msg.textContent = CFG.teaserMeddelande || 'Kommer snart!';
   modal.classList.add('open');
 }
 
@@ -105,7 +112,7 @@ async function fetchData() {
     state.allParts   = [...SAMPLE];
     state.betPlayers = SAMPLE.filter(p=>p.pkg!=='party');
     updateCap(state.allParts);
-    buildPkgs();   // ← bygg om paketen med korrekt kapacitet
+    buildPkgs();
     pkgChange();
     renderGolfGrid();
     renderPlayers();
@@ -127,7 +134,7 @@ async function fetchData() {
     showLoadError();
   }
   updateCap(state.allParts);
-  buildPkgs();   // ← bygg om paketen nu när vi vet faktisk kapacitet
+  buildPkgs();
   pkgChange();
   renderGolfGrid();
   renderPlayers();
@@ -188,180 +195,93 @@ function show(id) {
   if (id==='admin')     { adminLoadData(); }
   window.scrollTo(0,0);
   const skipHash = ['admin','admin-login','confirm','bet-confirm'];
-  if (!skipHash.includes(id)) history.replaceState(null,'','#'+id);
+  if (!skipHash.includes(id)) window.location.hash = id;
 }
 
 function navTo(id) {
-  if (id === 'reg'  && !CFG.visaAnmalan)   { showTeaser(); return false; }
-  if (id === 'list' && !CFG.visaDeltagare) { showTeaser(); return false; }
-  if (id === 'bet'  && !CFG.visaBetting)   { showTeaser(); return false; }
+  const hidden = {reg:!CFG.visaAnmalan, list:!CFG.visaDeltagare, bet:!CFG.visaBetting};
+  if (hidden[id]) { showTeaser(); return; }
   show(id);
-  return true;
 }
 
-function mmOpen()  { document.getElementById('mm-ov').classList.add('open'); }
-function mmClose(e){ if(!e||e.target===document.getElementById('mm-ov')) document.getElementById('mm-ov').classList.remove('open'); }
-
-// -- OM, INFO & SPONSRING PAGES -------------------------------
+// -- CONTENT PAGES --------------------------------------------
 function renderOmPage() {
   const el = document.getElementById('om-content');
-  const fb = document.getElementById('om-fallback');
-  if (omHistoria?.trim()) {
-    el.innerHTML = sanitizeHtml(omHistoria);
-    el.style.display = 'block';
-    fb.style.display = 'none';
-  } else {
-    el.style.display = 'none';
-    fb.style.display = 'block';
-  }
+  if (el) el.innerHTML = sanitizeHtml(omHistoria());
 }
 
 function renderInfoPage() {
   const el = document.getElementById('info-content');
-  const fb = document.getElementById('info-fallback');
-  if (infoInnehall?.trim()) {
-    el.innerHTML = sanitizeHtml(infoInnehall);
-    el.style.display = 'block';
-    fb.style.display = 'none';
-  } else {
-    el.style.display = 'none';
-    fb.style.display = 'block';
-  }
+  if (el) el.innerHTML = sanitizeHtml(infoInnehall());
 }
 
 function renderSponringPage() {
   const el = document.getElementById('sponsring-content');
-  const fb = document.getElementById('sponsring-fallback');
-  if (sponsringInnehall?.trim()) {
-    el.innerHTML = sanitizeHtml(sponsringInnehall);
-    el.style.display = 'block';
-    fb.style.display = 'none';
-  } else {
-    el.style.display = 'none';
-    fb.style.display = 'block';
-  }
+  if (el) el.innerHTML = sanitizeHtml(sponsringInnehall());
   renderSponsorGrid();
 }
 
-// -- VISIBILITY -----------------------------------------------
-function setVis(id, visible) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (visible) { el.style.removeProperty('display'); } else { el.style.display = 'none'; }
-}
-
-function applyVisibility() {
-  const visaBet = CFG.visaBetting !== false;
-  ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'].forEach(id => setVis(id, visaBet));
-  const pageBet = document.getElementById('page-bet');
-  if (pageBet && !visaBet) pageBet.style.display = 'none';
-
-  const visaReg = CFG.visaAnmalan !== false;
-  ['nav-reg-btn','mm-reg-btn','bn-reg'].forEach(id => setVis(id, visaReg));
-  const navCta = document.querySelector('.nav-cta');
-  if (navCta) { if (!visaReg) { navCta.style.display = 'none'; } else { navCta.style.removeProperty('display'); } }
-
-  const visaList = CFG.visaDeltagare !== false;
-  ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => setVis(id, visaList));
-}
-
-// -- EVENT LISTENERS ------------------------------------------
-
-// Förhindra att externa <a>-länkklick bubblar upp till SPA-navigering
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href]');
-  if (a && (a.href.startsWith('http') || a.target === '_blank')) {
-    e.stopPropagation();
-  }
+// -- TRIPLE-TAP ADMIN -----------------------------------------
+let tapCount = 0, tapTimer = null;
+['nav-logo','hero-logo'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', () => {
+    tapCount++;
+    if (tapCount === 1) tapTimer = setTimeout(() => { tapCount = 0; }, 400);
+    if (tapCount >= 3) {
+      clearTimeout(tapTimer);
+      tapCount = 0;
+      navTo('admin');
+    }
+  });
 });
 
-// Navigation — alla data-nav knappar via navTo()
+// -- EVENT WIRING ---------------------------------------------
+
+// Nav links
 document.querySelectorAll('[data-nav]').forEach(btn => {
   btn.addEventListener('click', () => navTo(btn.dataset.nav));
 });
 
-// Mobile menu
-document.querySelectorAll('[data-mm-nav]').forEach(btn => {
-  btn.addEventListener('click', () => { navTo(btn.dataset.mmNav); mmClose(); });
-});
-document.getElementById('ham')?.addEventListener('click', mmOpen);
-document.getElementById('mm-ov')?.addEventListener('click', (e) => mmClose(e));
-
-// Nav brand — triple-tap for admin
-let logoTapCount = 0, logoTapTimer;
-document.getElementById('nav-brand').addEventListener('click', () => {
-  logoTapCount++;
-  clearTimeout(logoTapTimer);
-  logoTapTimer = setTimeout(() => {
-    if (logoTapCount === 1 || logoTapCount === 2) show('home');
-    logoTapCount = 0;
-  }, 400);
-  if (logoTapCount >= 3) {
-    clearTimeout(logoTapTimer);
-    logoTapCount = 0;
-    show('admin');
-  }
+// Hamburger
+document.getElementById('ham')?.addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
 });
 
-// Package cards på startsidan
-document.getElementById('pkg-grid')?.addEventListener('click', (e) => {
-  if (e.target.closest('[data-action="show-reg"]')) navTo('reg');
+// Reg form
+document.getElementById('reg-form')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  submitReg(show);
 });
 
-// Package radio
-document.getElementById('p-opts')?.addEventListener('change', (e) => {
-  if (e.target.name === 'pkg') pkgChange();
+// Package change
+document.querySelectorAll('input[name=pkg]').forEach(r => {
+  r.addEventListener('change', pkgChange);
 });
 
-// Registration
-document.getElementById('reg-btn')?.addEventListener('click', () => submitReg(show));
-
-// Input clearing
-document.querySelectorAll('[data-clear]').forEach(el => {
-  el.addEventListener('input', () => clearE(el.dataset.clear));
-});
-
-// Phone formatting
-document.querySelectorAll('[data-format-tel]').forEach(el => {
-  el.addEventListener('input', () => { el.value = formatTel(el.value); });
-});
-
-// Betting — data-player-idx
-document.getElementById('players-grid')?.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-player-idx]');
-  if (card) toggleP(Number(card.dataset.playerIdx));
-});
-
-// Betting — ta bort spelare via ✕-knappen
-document.querySelector('.bet-panel-body')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-remove-idx]');
-  if (btn) toggleP(Number(btn.dataset.removeIdx));
-});
-
-document.getElementById('bet-sub-btn')?.addEventListener('click', () => submitBet(show));
+// Bet submit
+document.getElementById('bet-submit')?.addEventListener('click', () => submitBet(show));
 
 // Admin login
-document.querySelector('.admin-login-body')?.addEventListener('click', (e) => {
-  if (e.target.closest('.full-btn')) adminLogin(show, adminLoadData);
-});
-document.getElementById('admin-pw')?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') adminLogin(show, adminLoadData);
+document.getElementById('admin-login-form')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  adminLogin(show);
 });
 
-// Admin logout & refresh
-document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
-  const action = e.target.closest('[data-action]')?.dataset.action;
-  if (action === 'admin-logout') adminLogout(show);
-  if (action === 'admin-refresh') adminLoadData();
-});
+// Admin logout
+document.getElementById('admin-logout')?.addEventListener('click', () => adminLogout(show));
 
 // Admin tabs
-document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-admin-tab]');
-  if (btn) adminTab(btn.dataset.adminTab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
+document.querySelectorAll('[data-admin-tab]').forEach(btn => {
+  btn.addEventListener('click', () => adminTab(btn.dataset.adminTab));
 });
 
-// Golf grid photo uploads
+// Player toggle (betting)
+document.getElementById('bet-players')?.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-pid]');
+  if (card) toggleP(card.dataset.pid);
+});
+
+// Photo upload (registration list)
 document.getElementById('golf-grid')?.addEventListener('change', (e) => {
   const input = e.target.closest('[data-photo-key]');
   if (input && input.files?.[0]) handlePhoto(input.dataset.photoKey, input.files[0], renderGolfGrid, renderPlayers);
@@ -409,7 +329,7 @@ renderOmPage();
 renderInfoPage();
 renderSponringPage();
 applyVisibility();
-fetchData(); // ← anropar buildPkgs() + pkgChange() igen efter data laddats
+fetchData();
 
 const loadSp = () => loadSponsors();
 if ('requestIdleCallback' in window) {
