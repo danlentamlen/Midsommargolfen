@@ -88,7 +88,7 @@
         </div>
         <div class="hero-actions">
           <button class="btn-p" data-nav="reg">Anmäl dig nu →</button>
-          <button class="btn-o" id="hero-bet-btn" data-nav="bet">Betta på vinnaren 🎲</button>
+          <button class="btn-o" id="hero-bet-btn" data-nav="bet"><span>Betta på vinnaren 🎲</span></button>
         </div>
       </div>
       <div class="hero-card">
@@ -431,6 +431,46 @@
 <!-- Teaser modal CSS patch -->
 <style>
 #teaser-modal.open { display: flex !important; }
+</style>
+
+<!-- Betting open banner styles -->
+<style>
+.bet-open-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1.25rem;
+  background: rgba(201,168,76,.15);
+  border: 1px solid rgba(201,168,76,.4);
+  border-radius: 100px;
+  padding: 10px 20px;
+  color: var(--gold-lt);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  width: fit-content;
+}
+.bet-open-banner:hover {
+  background: rgba(201,168,76,.25);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.bet-open-pulse {
+  width: 8px;
+  height: 8px;
+  background: #7dd898;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: bet-pulse 2s infinite;
+}
+@keyframes bet-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(125,216,152,.5); }
+  70%  { box-shadow: 0 0 0 7px rgba(125,216,152,0); }
+  100% { box-shadow: 0 0 0 0 rgba(125,216,152,0); }
+}
+.bet-open-arrow { font-size: 15px; margin-left: 4px; }
 </style>
 
 <script type="module" src="/src/main.js"></script>

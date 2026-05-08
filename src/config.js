@@ -12,7 +12,7 @@ export const CFG = {
 
   swishGolf: '073-401 99 32',
   swishFest: '073-401 99 32',
-  swishBetNr: '070-XXX XX XX',
+  swishBetNr: '073-427 48 41',
 
   swishLankGolf: '',
   swishLankFest: '',
@@ -35,7 +35,7 @@ export const CFG = {
     { namn: 'Rya GK',        logoUrl: '/images/sponsors/ryagk.png',          webbUrl: 'https://rya.nu' },
     { namn: 'Brewski',       logoUrl: '/images/sponsors/brewski.png', webbUrl: 'https://www.brewski.se' },
     { namn: 'HAEGERSTRANDS', logoUrl: '/images/sponsors/haegerstrands.png', webbUrl: 'https://haegerstrands.se/eng/' },
-    { namn: 'Kemira',        logoUrl: '/images/sponsors/kemira.svg', webbUrl: 'https://www.kemira.com/sv/' },
+    { namn: 'Kemira',        logoUrl: '/images/sponsors/kemira.png', webbUrl: 'https://www.kemira.com/sv/' },
     { namn: 'Leman',         logoUrl: '/images/sponsors/leman.png', webbUrl: 'https://leman.com' },
     { namn: 'Celeber',       logoUrl: '/images/sponsors/celeber.png', webbUrl: 'https://celeber.se' },
     { namn: 'mickaeltannus', logoUrl: '/images/sponsors/mickaeltannus.png ', webbUrl: 'https://www.mickaeltannus.com' },
@@ -51,7 +51,7 @@ export const CFG = {
   // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
   visaAnmalan: true,
   visaDeltagare: true,
-  visaBetting: false,
+  visaBetting: true,
 
   // Meddelandet som visas i popup när en dold sida klickas
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',

@@ -2,9 +2,13 @@ import { CFG } from './config.js';
 import { fetchWithTimeout } from './fetch.js';
 
 // --- Photo key ---
+// Prioriterar golfid så att nyckeln matchar hamtaSpelarFoton() i Apps Script
+// som namnger filer efter spelarens namn och slår upp golfid från Spelare-fliken.
 export function photoKey(p) {
-  if (p.spelarid) return ('id_' + p.spelarid).toLowerCase();
-  if (p.golfid && p.golfid !== '\u2014' && p.golfid !== '—') return ('gid_' + p.golfid).toLowerCase();
+  if (p.golfid && p.golfid !== '—' && p.golfid !== '\u2014')
+    return ('gid_' + p.golfid).toLowerCase();
+  if (p.spelarid)
+    return ('id_' + p.spelarid).toLowerCase();
   return p.name.toLowerCase();
 }
 
@@ -60,6 +64,7 @@ export async function fetchDrivePhotos(players) {
     console.warn('fetchDrivePhotos failed:', e);
   }
 }
+
 // --- Compress image ---
 export function compressImage(file, maxWidth, quality) {
   return new Promise((res, rej) => {
