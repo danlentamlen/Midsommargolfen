@@ -51,7 +51,7 @@ export const CFG = {
   // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
   visaAnmalan: true,
   visaDeltagare: true,
-  visaBetting: true,
+  visaBetting: false,
 
   // Meddelandet som visas i popup när en dold sida klickas
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',
