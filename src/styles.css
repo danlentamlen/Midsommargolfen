@@ -107,6 +107,20 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 .btn-p:hover{background:var(--gold-lt);transform:translateY(-1px)}
 .btn-o{background:transparent;color:rgba(255,255,255,.8);font-family:var(--sans);font-weight:500;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:14px 24px;border-radius:100px;border:1px solid rgba(255,255,255,.25);cursor:pointer;transition:all .2s}
 .btn-o:hover{border-color:rgba(255,255,255,.6);color:#fff}
+/* Live-dot på betting-knappen */
+.btn-live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #7dd898;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+  animation: bet-pulse 2s infinite;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
 
 /* Hero card — iOS fix: use explicit flex column, no min-height issues */
 .hero-card{

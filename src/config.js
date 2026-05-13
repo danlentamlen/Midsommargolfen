@@ -20,7 +20,7 @@ export const CFG = {
 
   maxGolf: 32,
   maxFest: 70,
-  maxGolfReserv: 6,  // eller valfritt antal
+  maxGolfReserv: 6,
 
   appsScriptUrl: import.meta.env.VITE_APPS_SCRIPT_URL || '',
 
@@ -29,31 +29,29 @@ export const CFG = {
   driveSponsorFolderId: '',
 
   // Fallback-loggor visas om Drive-anropet misslyckas.
-  // Ladda upp loggor i Drive-mappen (driveSponsorFolderId) för produktion.
-  // Filnamn spelar ingen roll — alla bildfiler i mappen visas.
   sponsorer: [
     { namn: 'Rya GK',        logoUrl: '/images/sponsors/ryagk.png',          webbUrl: 'https://rya.nu' },
-    { namn: 'Brewski',       logoUrl: '/images/sponsors/brewski.png', webbUrl: 'https://www.brewski.se' },
-    { namn: 'HAEGERSTRANDS', logoUrl: '/images/sponsors/haegerstrands.png', webbUrl: 'https://haegerstrands.se/eng/' },
-    { namn: 'Kemira',        logoUrl: '/images/sponsors/kemira.png', webbUrl: 'https://www.kemira.com/sv/' },
-    { namn: 'Leman',         logoUrl: '/images/sponsors/leman.png', webbUrl: 'https://leman.com' },
-    { namn: 'Celeber',       logoUrl: '/images/sponsors/celeber.png', webbUrl: 'https://celeber.se' },
-    { namn: 'mickaeltannus', logoUrl: '/images/sponsors/mickaeltannus.png ', webbUrl: 'https://www.mickaeltannus.com' },
-    { namn: 'Optimera',      logoUrl: '/images/sponsors/optimera.png', webbUrl: 'https://www.optimera.se' },
-    { namn: 'Job Meal',     logoUrl: '/images/sponsors/jobmeal.png', webbUrl: 'https://www.jobmeal.se' }
+    { namn: 'Brewski',       logoUrl: '/images/sponsors/brewski.png',        webbUrl: 'https://www.brewski.se' },
+    { namn: 'HAEGERSTRANDS', logoUrl: '/images/sponsors/haegerstrands.png',  webbUrl: 'https://haegerstrands.se/eng/' },
+    { namn: 'Kemira',        logoUrl: '/images/sponsors/kemira.png',         webbUrl: 'https://www.kemira.com/sv/' },
+    { namn: 'Leman',         logoUrl: '/images/sponsors/leman.png',          webbUrl: 'https://leman.com' },
+    { namn: 'Celeber',       logoUrl: '/images/sponsors/celeber.png',        webbUrl: 'https://celeber.se' },
+    { namn: 'mickaeltannus', logoUrl: '/images/sponsors/mickaeltannus.png',  webbUrl: 'https://www.mickaeltannus.com' },
+    { namn: 'Optimera',      logoUrl: '/images/sponsors/optimera.png',       webbUrl: 'https://www.optimera.se' },
+    { namn: 'Job Meal',      logoUrl: '/images/sponsors/jobmeal.png',        webbUrl: 'https://www.jobmeal.se' }
   ],
 
   omHistoria: '',
   visaStartlista: false,
 
-  // -- Teaser-läge --
-  // Sätt till false för att dölja sidan helt (nav, bottom nav, knappar försvinner).
-  // När false visas i stället ett popup-meddelande (teaserMeddelande) vid klick på knappar.
   visaAnmalan: true,
   visaDeltagare: true,
-  visaBetting: false,
 
-  // Meddelandet som visas i popup när en dold sida klickas
+  // Styrs via Netlify Environment Variable: VITE_VISA_BETTING
+  // Site configuration → Environment variables → VITE_VISA_BETTING = true
+  // OBS: kräver ny deploy efter ändring (Vite läser env-variabler vid build-tid).
+  visaBetting: import.meta.env.VITE_VISA_BETTING === 'true',
+
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',
 
   startlista: [
@@ -62,12 +60,9 @@ export const CFG = {
 
   infoInnehall: '',
 
-  /* Admin password hash (SHA-256 of the password) */
-  /* To change: echo -n 'yourpassword' | shasum -a 256 */
-  /* 'golf2026' */
+  /* Admin password hash (SHA-256) — 'golf2026' */
   adminLosenordHash: 'c3d202d707368179b25dd25eead59c9dd6f45f55e65347c0e23485dfba34e403',
 };
 
-// Navigation constants
-export const PAGE_IDX = {home:0,om:1,info:2,sponsring:3,reg:4,list:5,bet:6,'bet-confirm':6,confirm:4,'admin-login':null,admin:null};
+export const PAGE_IDX = { home:0, om:1, info:2, sponsring:3, reg:4, list:5, bet:6, 'bet-confirm':6, confirm:4, 'admin-login':null, admin:null };
 export const BN_IDS = ['bn-home','bn-om','bn-info','bn-sponsring','bn-reg','bn-list','bn-bet'];

@@ -260,10 +260,6 @@ function setVis(id, visible) {
 function applyVisibility() {
   const visaBet = CFG.visaBetting !== false;
   ['nav-bet-btn','mm-bet-btn','hero-bet-btn','confirm-bet-btn','bn-bet'].forEach(id => setVis(id, visaBet));
-  // Dölj/visa betting-bannern på startsidan
-  document.querySelectorAll('.bet-open-banner').forEach(el => {
-    el.style.display = visaBet ? '' : 'none';
-  });
   const pageBet = document.getElementById('page-bet');
   if (pageBet && !visaBet) pageBet.style.display = 'none';
 
