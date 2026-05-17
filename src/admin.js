@@ -67,6 +67,7 @@ export function renderAdminAnm() {
     const rowBg = r.status==='Betald'     ? 'background:#f0faf0'
                 : r.status==='Återbetald' ? 'background:#fffde7'
                 : r.status==='GolfReserv' ? 'background:#e3f2fd'
+                : r.status==='Antagen'    ? 'background:#fff3e0'
                 : '';
 
     const sNamn    = escapeHtml(r.namn    || '');
@@ -104,6 +105,19 @@ export function renderAdminAnm() {
                 data-mail-type="anm" data-mail-id="${r.id}"
                 data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="GolfReserv">
           ✉ Reserv-mail
+        </button>
+        <button class="admin-mail-btn admin-mail-btn--promote"
+                data-promote-id="${r.id}"
+                data-promote-email="${sEmail}" data-promote-namn="${sNamn}"
+                title="Anta till golf och skicka betalningsmail automatiskt">
+          ⛳ Anta till Golf
+        </button>`;
+    } else if (r.status === 'Antagen') {
+      mailBtns = `
+        <button class="admin-mail-btn"
+                data-mail-type="anm" data-mail-id="${r.id}"
+                data-mail-email="${sEmail}" data-mail-namn="${sNamn}" data-mail-status="Antagen">
+          ✉ Skicka igen
         </button>`;
     } else {
       mailBtns = `<span style="font-size:11px;color:var(--muted)">—</span>`;
@@ -112,8 +126,11 @@ export function renderAdminAnm() {
     const badgeCls = r.status==='Betald'     ? 's-be'
                    : r.status==='Återbetald' ? 's-at'
                    : r.status==='GolfReserv' ? 's-re'
+                   : r.status==='Antagen'    ? 's-an'
                    : 's-ob';
-    const badgeTxt = r.status==='GolfReserv' ? 'Reserv' : r.status;
+    const badgeTxt = r.status==='GolfReserv' ? 'Reserv'
+                   : r.status==='Antagen'    ? 'Antagen'
+                   : r.status;
 
     return `<tr style="${rowBg}">
       <td><strong>${sNamn}</strong></td>
@@ -127,7 +144,15 @@ export function renderAdminAnm() {
           <option ${r.status==='Betald'     ?'selected':''}>Betald</option>
           <option ${r.status==='Återbetald' ?'selected':''}>Återbetald</option>
           <option ${r.status==='GolfReserv' ?'selected':''}>GolfReserv</option>
+          <option ${r.status==='Antagen'    ?'selected':''}>Antagen</option>
         </select>
+        ${r.status==='Antagen' || r.status==='Obetald' ? `
+          <select class="admin-sel" style="margin-top:4px"
+                  data-paket-type="anm" data-paket-id="${r.id}">
+            <option ${sPaket.includes('Fest')||sPaket.includes('full') ?'selected':''}>Golf + Middag & Fest</option>
+            <option ${sPaket.includes('Enbart Golf')                   ?'selected':''}>Enbart Golf</option>
+            <option ${sPaket.includes('Fest')&&!sPaket.includes('Golf')?'selected':''}>Enbart Fest</option>
+          </select>` : ''}
         <span class="status-badge ${badgeCls}" style="margin-left:6px">${badgeTxt}</span>
       </td>
       <td>${mailBtns}</td>
@@ -282,4 +307,83 @@ export async function sendConfirmMail(type, id, email, namn, status, btn) {
   await postToAppsScript(CFG.appsScriptUrl, {action:'sendMail', type, id, email, namn, status: status||'Obetald'});
   btn.textContent='✓ Skickat!';
   setTimeout(()=>{ btn.textContent=origText; btn.disabled=false; }, 3000);
+}
+
+// -- NY FUNKTION: Konvertera reservist → antagen golfare ----------
+export async function promoteReservist(id, email, namn, btn) {
+  if (!CFG.appsScriptUrl) { alert('Konfigurera Apps Script URL först.'); return; }
+
+  // Paketväljare som dialog
+  const val = await new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:2rem;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+        <div style="font-family:Georgia,serif;font-size:1.3rem;font-weight:700;color:#0c3318;margin-bottom:.5rem">⛳ Anta till Golf</div>
+        <div style="font-size:14px;color:#666;margin-bottom:1.5rem">Välj paket för <strong>${namn}</strong></div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem">
+          <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid #e0e0e0;border-radius:10px;cursor:pointer">
+            <input type="radio" name="prm-pkg" value="full" checked style="accent-color:#0c3318">
+            <div><div style="font-weight:600;font-size:14px">⭐ Fullt paket</div><div style="font-size:12px;color:#888">Golf + Middag & Fest — 900 kr</div></div>
+          </label>
+          <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid #e0e0e0;border-radius:10px;cursor:pointer">
+            <input type="radio" name="prm-pkg" value="golf" style="accent-color:#0c3318">
+            <div><div style="font-weight:600;font-size:14px">⛳ Enbart Golf</div><div style="font-size:12px;color:#888">Utan kvällsevenemang — 500 kr</div></div>
+          </label>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button id="prm-cancel" style="flex:1;padding:11px;border:1.5px solid #ddd;border-radius:10px;background:#fff;font-size:14px;cursor:pointer;font-family:var(--sans)">Avbryt</button>
+          <button id="prm-confirm" style="flex:2;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--sans)">Anta & skicka mail →</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#prm-cancel').onclick  = () => { document.body.removeChild(overlay); resolve(null); };
+    overlay.querySelector('#prm-confirm').onclick = () => {
+      const pkg = overlay.querySelector('input[name="prm-pkg"]:checked')?.value || 'full';
+      document.body.removeChild(overlay);
+      resolve(pkg);
+    };
+  });
+
+  if (!val) return; // Avbruten
+
+  const belopp = val === 'full' ? CFG.prisFull : CFG.prisGolf;
+  const origText = btn.textContent;
+  btn.textContent = 'Skickar...';
+  btn.disabled = true;
+
+  try {
+    // Steg 1: Uppdatera status + paket + belopp
+    await postToAppsScript(CFG.appsScriptUrl, {
+      action: 'updateStatus', type: 'anm', id, status: 'Antagen', paket: val, belopp
+    });
+
+    // Steg 2: Skicka antagningsmail
+    await postToAppsScript(CFG.appsScriptUrl, {
+      action: 'sendMail', type: 'anm', id, email, namn, status: 'Antagen', paket: val
+    });
+
+    btn.textContent = '✓ Antagen & mailad!';
+    setTimeout(async () => {
+      btn.textContent = origText;
+      btn.disabled = false;
+      await adminLoadData();
+    }, 2500);
+  } catch (e) {
+    console.error('promoteReservist misslyckades:', e);
+    btn.textContent = '⚠ Fel – försök igen';
+    setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 3000);
+  }
+}
+
+export async function updatePaket(id, paket) {
+  if (!CFG.appsScriptUrl) return;
+  const belopp = paket.includes('Enbart Golf') ? CFG.prisGolf
+               : paket.includes('Fest') && !paket.includes('Golf') ? CFG.prisFest
+               : CFG.prisFull;
+  await postToAppsScript(CFG.appsScriptUrl, {
+    action: 'updatePaket', type: 'anm', id, paket, belopp
+  });
+  await adminLoadData();
 }

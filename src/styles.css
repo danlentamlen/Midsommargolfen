@@ -663,3 +663,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   padding-left: .5rem;
   white-space: nowrap;
 }
+
+.admin-mail-btn--promote {
+  display: block;
+  margin-top: 4px;
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: #fff;
+  border-color: #2e7d32;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-mail-btn--promote:hover {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+}
+.s-an {
+  background: #fff3e0;
+  color: #e65100;
+  border-color: #ffcc80;
+}

@@ -15,7 +15,8 @@ export function formatTel(raw) {
   let digits = raw.replace(/\D/g, '');
   if (digits.startsWith('46') && digits.length >= 11) digits = '0' + digits.slice(2);
   if (!digits.startsWith('0') || digits.length < 9 || digits.length > 10) return raw;
-  return digits.slice(0, 3) + '-' + digits.slice(3);
+  const rest = digits.slice(3);
+  return digits.slice(0, 3) + '-' + rest.slice(0, 3) + ' ' + rest.slice(3, 5) + ' ' + rest.slice(5);
 }
 
 export function clearE(id) {

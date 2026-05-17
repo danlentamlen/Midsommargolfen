@@ -6,7 +6,7 @@ import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
 import { loadSponsors, renderSponsorGrid } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
-import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, sendConfirmMail, renderAdminFoto, deletePhoto } from './admin.js';
+import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto } from './admin.js';
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
@@ -384,15 +384,25 @@ document.querySelector('.admin-layout')?.addEventListener('change', (e) => {
 });
 
 // Admin status dropdowns
+document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
+  const mailBtn = e.target.closest('[data-mail-type]');
+  if (mailBtn) {
+    sendConfirmMail(mailBtn.dataset.mailType, parseInt(mailBtn.dataset.mailId, 10), mailBtn.dataset.mailEmail, mailBtn.dataset.mailNamn, mailBtn.dataset.mailStatus, mailBtn);
+    return;
+  }
+  const promoteBtn = e.target.closest('[data-promote-id]');
+  if (promoteBtn) {
+    promoteReservist(parseInt(promoteBtn.dataset.promoteId, 10), promoteBtn.dataset.promoteEmail, promoteBtn.dataset.promoteNamn, promoteBtn);
+  }
+});
+
+// Admin status dropdowns + paketväljare
 document.querySelector('.admin-table-wrap')?.addEventListener('change', (e) => {
   const sel = e.target.closest('[data-status-type]');
   if (sel) updateStatus(sel.dataset.statusType, parseInt(sel.dataset.statusId, 10), sel.value);
-});
 
-// Admin mail buttons
-document.querySelector('.admin-table-wrap')?.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-mail-type]');
-  if (btn) sendConfirmMail(btn.dataset.mailType, parseInt(btn.dataset.mailId, 10), btn.dataset.mailEmail, btn.dataset.mailNamn, btn.dataset.mailStatus, btn);
+  const pkg = e.target.closest('[data-paket-type]');
+  if (pkg) updatePaket(parseInt(pkg.dataset.paketId, 10), pkg.value);
 });
 
 // Admin foto-borttagning
