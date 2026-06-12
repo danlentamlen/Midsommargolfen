@@ -1,4 +1,4 @@
-import { CFG } from './config.js';
+import { CFG, RUNTIME_FLAGS } from './config.js';
 import { state } from './state.js';
 import { escapeHtml } from './utils.js';
 import { fetchWithTimeout, postToAppsScript } from './fetch.js';
@@ -26,27 +26,29 @@ export async function adminLogin(showFn, loadDataFn) {
 
 export function adminLogout(showFn) { state.adminAuthed=false; state.adminPw=''; showFn('home'); }
 
-// -- INSTÄLLNINGAR: betting på/av -----------------------------
-// Speglar nuvarande CFG.visaBetting på switchen i admin-panelen.
+// -- INSTÄLLNINGAR: realtidsflaggor (betting, anmälan, ...) ----
+// Speglar varje flagga i RUNTIME_FLAGS på sin switch i admin-panelen.
 export function renderAdminSettings() {
-  const toggle = document.getElementById('set-betting-toggle');
-  const label  = document.getElementById('set-betting-label');
-  if (!toggle) return;
-  const on = CFG.visaBetting !== false;
-  toggle.checked = on;
-  toggle.setAttribute('aria-checked', String(on));
-  if (label) label.textContent = on ? 'På' : 'Av';
+  RUNTIME_FLAGS.forEach(({ key, toggleId, labelId }) => {
+    const toggle = document.getElementById(toggleId);
+    if (!toggle) return;
+    const on = CFG[key] !== false;
+    toggle.checked = on;
+    toggle.setAttribute('aria-checked', String(on));
+    const label = document.getElementById(labelId);
+    if (label) label.textContent = on ? 'På' : 'Av';
+  });
 }
 
-// Sparar betting-flaggan i backend (Apps Script). Optimistisk: uppdaterar CFG
+// Sparar en flagga i backend (Apps Script). Optimistisk: uppdaterar CFG
 // direkt; servern är källan vid nästa sidladdning via ?action=config.
 // Lösenordet skickas med så servern kan verifiera skrivningen.
-export async function saveBettingFlag(value) {
-  CFG.visaBetting = value;
+export async function saveConfigFlag(key, value) {
+  CFG[key] = value;
   if (CFG.appsScriptUrl) {
     await postToAppsScript(CFG.appsScriptUrl, {
       action: 'setConfig',
-      key: 'visaBetting',
+      key: key,
       value: value,
       pw: state.adminPw,
     });

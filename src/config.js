@@ -45,7 +45,9 @@ export const CFG = {
   omHistoria: '',
   visaStartlista: false,
 
-  visaAnmalan: true,
+  // Standardvärde (build-tid). Kan överstyras i realtid från admin-panelen
+  // (server > localStorage > detta värde). Anmälan är stängd → dold som default.
+  visaAnmalan: false,
   visaDeltagare: true,
 
   // Styrs via Netlify Environment Variable: VITE_VISA_BETTING
@@ -67,3 +69,10 @@ export const CFG = {
 
 export const PAGE_IDX = { home:0, om:1, info:2, sponsring:3, reg:4, list:5, bet:6, 'bet-confirm':6, confirm:4, 'admin-login':null, admin:null };
 export const BN_IDS = ['bn-home','bn-om','bn-info','bn-sponsring','bn-reg','bn-list','bn-bet'];
+
+// Flaggor som kan styras i realtid från admin-panelen (utan ny deploy).
+// Lägg till en rad här + en switch-rad i index.html för att göra fler togglebara.
+export const RUNTIME_FLAGS = [
+  { key: 'visaBetting', toggleId: 'set-betting-toggle', labelId: 'set-betting-label' },
+  { key: 'visaAnmalan', toggleId: 'set-anmalan-toggle', labelId: 'set-anmalan-label' },
+];

@@ -366,6 +366,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 /* Inställningar — betting på/av */
 .admin-settings{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.5rem}
 .admin-set-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.admin-set-row + .admin-set-row{border-top:1px solid var(--border);margin-top:.85rem;padding-top:.85rem}
 .admin-set-title{font-size:14px;font-weight:600;color:var(--ink)}
 .admin-set-desc{font-size:12.5px;color:var(--muted);margin-top:2px;max-width:46ch}
 .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}

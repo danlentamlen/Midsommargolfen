@@ -1,12 +1,12 @@
 import './styles.css';
-import { CFG, PAGE_IDX, BN_IDS } from './config.js';
+import { CFG, PAGE_IDX, BN_IDS, RUNTIME_FLAGS } from './config.js';
 import { state, SAMPLE } from './state.js';
 import { formatTel, clearE, sanitizeHtml } from './utils.js';
 import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
 import { loadSponsors, renderSponsorGrid } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
-import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveBettingFlag, renderAdminSettings } from './admin.js';
+import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveConfigFlag, renderAdminSettings } from './admin.js';
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
@@ -276,15 +276,17 @@ function applyVisibility() {
 // Hämtar flaggor från backend så de kan ändras utan ny deploy.
 // Degraderar tyst: vid fel/utebliven backend behålls senast kända värde.
 //
-// Källprioritet för visaBetting: server > localStorage > build-tidens värde.
-// localStorage gör att togglen överlever en refresh på din egen maskin redan
+// Källprioritet per flagga: server > localStorage > build-tidens värde.
+// localStorage gör att togglarna överlever en refresh på din egen maskin redan
 // innan backend är deployad — bra för lokal utveckling. När servern svarar
 // vinner den och speglas till localStorage så de hålls i synk.
-export const BETTING_LS_KEY = 'cfg_visaBetting';
+const LS_PREFIX = 'cfg_';
 
 function applyLocalConfig() {
-  const v = localStorage.getItem(BETTING_LS_KEY);
-  if (v === 'true' || v === 'false') CFG.visaBetting = v === 'true';
+  RUNTIME_FLAGS.forEach(({ key }) => {
+    const v = localStorage.getItem(LS_PREFIX + key);
+    if (v === 'true' || v === 'false') CFG[key] = v === 'true';
+  });
 }
 
 async function fetchRuntimeConfig() {
@@ -292,12 +294,16 @@ async function fetchRuntimeConfig() {
   try {
     const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=config');
     const d = await r.json();
-    if (d && typeof d.visaBetting === 'boolean') {
-      CFG.visaBetting = d.visaBetting;
-      try { localStorage.setItem(BETTING_LS_KEY, String(d.visaBetting)); } catch { /* storage full/blockerad */ }
-      applyVisibility();
-      renderAdminSettings();
-    }
+    if (!d || typeof d !== 'object') return;
+    let changed = false;
+    RUNTIME_FLAGS.forEach(({ key }) => {
+      if (typeof d[key] === 'boolean') {
+        CFG[key] = d[key];
+        try { localStorage.setItem(LS_PREFIX + key, String(d[key])); } catch { /* storage full/blockerad */ }
+        changed = true;
+      }
+    });
+    if (changed) { applyVisibility(); renderAdminSettings(); }
   } catch { /* backend saknas/ej deployad än — behåll senast kända värde */ }
 }
 
@@ -391,13 +397,15 @@ document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
   if (action === 'admin-refresh') adminLoadData();
 });
 
-// Admin — betting på/av-switch
-document.getElementById('set-betting-toggle')?.addEventListener('change', async (e) => {
-  const on = e.target.checked;
-  try { localStorage.setItem(BETTING_LS_KEY, String(on)); } catch { /* storage full/blockerad */ }
-  await saveBettingFlag(on);   // optimistisk: CFG uppdateras direkt + sparas i backend
-  applyVisibility();
-  renderAdminSettings();
+// Admin — realtidsflaggornas switchar (betting, anmälan, ...)
+RUNTIME_FLAGS.forEach(({ key, toggleId }) => {
+  document.getElementById(toggleId)?.addEventListener('change', async (e) => {
+    const on = e.target.checked;
+    try { localStorage.setItem(LS_PREFIX + key, String(on)); } catch { /* storage full/blockerad */ }
+    await saveConfigFlag(key, on);   // optimistisk: CFG uppdateras direkt + sparas i backend
+    applyVisibility();
+    renderAdminSettings();
+  });
 });
 
 // Admin tabs
