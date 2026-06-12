@@ -264,7 +264,7 @@ function applyVisibility() {
   if (pageBet && !visaBet) pageBet.style.display = 'none';
 
   const visaReg = CFG.visaAnmalan !== false;
-  ['nav-reg-btn','mm-reg-btn','bn-reg'].forEach(id => setVis(id, visaReg));
+  ['nav-reg-btn','mm-reg-btn','bn-reg','hero-reg-btn','pkg-sec'].forEach(id => setVis(id, visaReg));
   const navCta = document.querySelector('.nav-cta');
   if (navCta) { if (!visaReg) { navCta.style.display = 'none'; } else { navCta.style.removeProperty('display'); } }
 
