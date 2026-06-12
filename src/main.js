@@ -6,7 +6,7 @@ import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
 import { loadSponsors, renderSponsorGrid } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
-import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto } from './admin.js';
+import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveBettingFlag, renderAdminSettings } from './admin.js';
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 
@@ -272,6 +272,35 @@ function applyVisibility() {
   ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => setVis(id, visaList));
 }
 
+// -- RUNTIME CONFIG (server-styrda flaggor, t.ex. betting på/av) -----
+// Hämtar flaggor från backend så de kan ändras utan ny deploy.
+// Degraderar tyst: vid fel/utebliven backend behålls senast kända värde.
+//
+// Källprioritet för visaBetting: server > localStorage > build-tidens värde.
+// localStorage gör att togglen överlever en refresh på din egen maskin redan
+// innan backend är deployad — bra för lokal utveckling. När servern svarar
+// vinner den och speglas till localStorage så de hålls i synk.
+export const BETTING_LS_KEY = 'cfg_visaBetting';
+
+function applyLocalConfig() {
+  const v = localStorage.getItem(BETTING_LS_KEY);
+  if (v === 'true' || v === 'false') CFG.visaBetting = v === 'true';
+}
+
+async function fetchRuntimeConfig() {
+  if (!CFG.appsScriptUrl) return;
+  try {
+    const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=config');
+    const d = await r.json();
+    if (d && typeof d.visaBetting === 'boolean') {
+      CFG.visaBetting = d.visaBetting;
+      try { localStorage.setItem(BETTING_LS_KEY, String(d.visaBetting)); } catch { /* storage full/blockerad */ }
+      applyVisibility();
+      renderAdminSettings();
+    }
+  } catch { /* backend saknas/ej deployad än — behåll senast kända värde */ }
+}
+
 // -- EVENT LISTENERS ------------------------------------------
 
 // Förhindra att externa <a>-länkklick bubblar upp till SPA-navigering
@@ -362,6 +391,15 @@ document.querySelector('.admin-layout')?.addEventListener('click', (e) => {
   if (action === 'admin-refresh') adminLoadData();
 });
 
+// Admin — betting på/av-switch
+document.getElementById('set-betting-toggle')?.addEventListener('change', async (e) => {
+  const on = e.target.checked;
+  try { localStorage.setItem(BETTING_LS_KEY, String(on)); } catch { /* storage full/blockerad */ }
+  await saveBettingFlag(on);   // optimistisk: CFG uppdateras direkt + sparas i backend
+  applyVisibility();
+  renderAdminSettings();
+});
+
 // Admin tabs
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-admin-tab]');
@@ -425,7 +463,9 @@ buildStartlista();
 renderOmPage();
 renderInfoPage();
 renderSponringPage();
+applyLocalConfig();  // ← lokal override (localStorage) så togglen överlever refresh på din maskin
 applyVisibility();
+fetchRuntimeConfig(); // ← hämtar server-styrda flaggor (betting på/av); servern vinner när den svarar
 fetchData(); // ← anropar buildPkgs() + pkgChange() igen efter data laddats
 
 const loadSp = () => loadSponsors();

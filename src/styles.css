@@ -363,6 +363,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 .admin-subtitle{font-size:13px;color:var(--muted)}
 .admin-logout{background:none;border:1.5px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--sans)}
 .admin-logout:hover{border-color:var(--danger);color:var(--danger)}
+/* Inställningar — betting på/av */
+.admin-settings{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.5rem}
+.admin-set-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.admin-set-title{font-size:14px;font-weight:600;color:var(--ink)}
+.admin-set-desc{font-size:12.5px;color:var(--muted);margin-top:2px;max-width:46ch}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.switch-state{font-size:12px;font-weight:600;color:var(--muted);min-width:22px;text-align:right;font-family:var(--sans)}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch-track{position:relative;width:46px;height:26px;background:var(--sage);border-radius:999px;transition:background .2s}
+.switch-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.switch input:checked + .switch-track{background:var(--leaf)}
+.switch input:checked + .switch-track .switch-thumb{transform:translateX(20px)}
+.switch input:focus-visible + .switch-track{outline:2px solid var(--gold);outline-offset:2px}
 .admin-tabs{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:2rem;width:fit-content}
 .admin-tab{background:none;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;font-family:var(--sans)}
 .admin-tab.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1)}

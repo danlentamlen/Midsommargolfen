@@ -5,6 +5,7 @@ export const state = {
   selectedPlayers: new Set(),
   adminData: { anm: [], bet: [] },
   adminAuthed: false,
+  adminPw: '',            // typed admin-lösenord, hålls bara i minnet för server-auth
   golfCnt: 0,
   festCnt: 0,
 };

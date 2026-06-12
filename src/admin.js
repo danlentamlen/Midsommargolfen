@@ -15,6 +15,7 @@ export async function adminLogin(showFn, loadDataFn) {
   const hash = await sha256(pw);
   if (hash === CFG.adminLosenordHash) {
     state.adminAuthed = true;
+    state.adminPw = pw;   // behåll i minnet — skickas till servern för att verifiera skrivningar
     document.getElementById('admin-login-err').classList.remove('show');
     showFn('admin');
     loadDataFn();
@@ -23,7 +24,35 @@ export async function adminLogin(showFn, loadDataFn) {
   }
 }
 
-export function adminLogout(showFn) { state.adminAuthed=false; showFn('home'); }
+export function adminLogout(showFn) { state.adminAuthed=false; state.adminPw=''; showFn('home'); }
+
+// -- INSTÄLLNINGAR: betting på/av -----------------------------
+// Speglar nuvarande CFG.visaBetting på switchen i admin-panelen.
+export function renderAdminSettings() {
+  const toggle = document.getElementById('set-betting-toggle');
+  const label  = document.getElementById('set-betting-label');
+  if (!toggle) return;
+  const on = CFG.visaBetting !== false;
+  toggle.checked = on;
+  toggle.setAttribute('aria-checked', String(on));
+  if (label) label.textContent = on ? 'På' : 'Av';
+}
+
+// Sparar betting-flaggan i backend (Apps Script). Optimistisk: uppdaterar CFG
+// direkt; servern är källan vid nästa sidladdning via ?action=config.
+// Lösenordet skickas med så servern kan verifiera skrivningen.
+export async function saveBettingFlag(value) {
+  CFG.visaBetting = value;
+  if (CFG.appsScriptUrl) {
+    await postToAppsScript(CFG.appsScriptUrl, {
+      action: 'setConfig',
+      key: 'visaBetting',
+      value: value,
+      pw: state.adminPw,
+    });
+  }
+  return value;
+}
 
 export async function adminLoadData() {
   if (!CFG.appsScriptUrl) {
@@ -36,6 +65,7 @@ export async function adminLoadData() {
   } catch { /* network error — show cached data */ }
   renderAdminAnm();
   renderAdminBet();
+  renderAdminSettings();
 }
 
 export function renderAdminSample() {
@@ -49,7 +79,7 @@ export function renderAdminSample() {
       {id:0,namn:'Maria Ek',email:'maria@test.se',telefon:'070-999 00 11',spelare:'Spelare A, Spelare B',belopp:'40 kr',status:'Obetald'},
     ]
   };
-  renderAdminAnm(); renderAdminBet();
+  renderAdminAnm(); renderAdminBet(); renderAdminSettings();
 }
 
 export function renderAdminAnm() {
