@@ -91,7 +91,7 @@ document.getElementById('as-datum').textContent = CFG.eventDatum;
 document.getElementById('as-plats').textContent = CFG.eventPlats;
 document.getElementById('as-slag').textContent  = CFG.slagstart;
 document.getElementById('as-middag').textContent= CFG.middagStart;
-document.getElementById('bet-rule-pris').textContent = `💰 ${CFG.prisBetPerSpel} kr per vald spelare`;
+document.getElementById('bet-rule-pris').textContent = `💰 ${CFG.prisBetPerSpel} kr per bet`;
 
 // -- TEASER MODAL ---------------------------------------------
 function showTeaser() {

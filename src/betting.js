@@ -22,7 +22,7 @@ export function renderPlayers() {
 
 export function toggleP(idx) {
   if (state.selectedPlayers.has(idx)) state.selectedPlayers.delete(idx);
-  else { if (state.selectedPlayers.size>=5){alert('Max 5 spelare.');return;} state.selectedPlayers.add(idx); }
+  else { if (state.selectedPlayers.size>=5){alert('Max 5 bet per person.');return;} state.selectedPlayers.add(idx); }
   renderPlayers();
 }
 
@@ -108,6 +108,7 @@ export async function submitBet(showFn) {
         ${swishBetLank ? `<a href="${swishBetLank}" class="swish-btn"><span class="swish-btn-icon">💸</span>Öppna i Swish</a>` : ''}
       </div>
     </div>
+    <div class="alert-box warn"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Ditt bet gäller först när betalningen är erlagd.</strong> Swisha insatsen ovan så är du med i potten.</div></div>
     <div class="alert-box"><div class="alert-icon">📧</div><div class="alert-text">Bekräftelse skickas till din e-post.</div></div>`;
 
   btn.textContent='Bekräfta & visa betalning'; btn.disabled=false;

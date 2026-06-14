@@ -8,7 +8,7 @@ export const CFG = {
   prisGolf: 500,
   prisFest: 400,
   prisFull: 900,
-  prisBetPerSpel: 20,
+  prisBetPerSpel: 30,
 
   swishGolf: '073-401 99 32',
   swishFest: '073-401 99 32',

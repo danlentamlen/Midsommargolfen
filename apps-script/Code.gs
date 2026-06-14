@@ -12,7 +12,7 @@ const SWISH_BET    = '073-427 48 41';
 const PRIS_GOLF    = 500;
 const PRIS_FEST    = 400;
 const PRIS_FULL    = 900;
-const PRIS_BET_PER = 20;
+const PRIS_BET_PER = 30;
 const SHEET_ID     = '';
 const AVSANDARE    = 'Midsommardagsgolfen 2026';
 const F_ANM = 'Anmälningar';
@@ -674,14 +674,26 @@ function skickaBetMail(d, status) {
            </div>
          </div>`;
   } else {
-    subject = 'Bet registrerat — Midsommardagsgolfen 2026';
-    body = `<p style="color:#2a4a34;font-size:14px;margin:0 0 20px;line-height:1.7">
+    subject = 'Bet registrerat — betalning saknas — Midsommardagsgolfen 2026';
+    body = `<p style="color:#2a4a34;font-size:14px;margin:0 0 16px;line-height:1.7">
               Ditt bet är registrerat! Swisha insatsen nedan för att delta i potten.
-            </p>`
+            </p>
+            <div style="background:#fdecea;border:1px solid #e6a99f;border-radius:10px;padding:14px 16px;margin:0 0 20px">
+              <div style="font-weight:700;font-size:14px;color:#9c2c1e;margin-bottom:4px">&#9888;&#65039;&nbsp; Ditt bet gäller först när betalningen är erlagd</div>
+              <div style="font-size:13px;color:#9c2c1e;line-height:1.6">Swisha insatsen nedan så är du med i potten. Tills betalningen kommit in räknas inte ditt bet.</div>
+            </div>`
       + betalKort('&#127922;', 'Betting-insats', tot + ' kr', SWISH_BET, 'Bet ' + d.namn)
       + `<div style="background:#f0faf3;border-radius:10px;padding:16px;border:1px solid #c8e6c9;margin-top:12px">
            <div style="font-weight:700;font-size:14px;color:#1a5c32;margin-bottom:10px">Dina valda spelare</div>
            <table style="width:100%;border-collapse:collapse">${spelareLista}</table>
+         </div>`
+      + `<div style="background:#fff;border:1px solid #d4ead9;border-radius:10px;padding:16px;margin-top:12px">
+           <div style="font-weight:700;font-size:14px;color:#1a5c32;margin-bottom:8px">Så funkar potten</div>
+           <table style="width:100%;border-collapse:collapse;font-size:13px;color:#2a4a34">
+             <tr><td style="padding:4px 0"><span style="color:#c9a84c;margin-right:6px;font-weight:700">&#8250;</span>${PRIS_BET_PER} kr per bet (1 bet = 1 spelare)</td></tr>
+             <tr><td style="padding:4px 0"><span style="color:#c9a84c;margin-right:6px;font-weight:700">&#8250;</span>Max 5 bet per person</td></tr>
+             <tr><td style="padding:4px 0"><span style="color:#c9a84c;margin-right:6px;font-weight:700">&#8250;</span>30 % av potten går till vinnaren, 70 % delas bland bettarna</td></tr>
+           </table>
          </div>`;
   }
   mail(d.email, subject, mailSkal(d.namn, body));

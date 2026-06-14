@@ -264,6 +264,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 .alert-box{background:#fffbeb;border:1px solid rgba(201,168,76,.4);border-radius:12px;padding:.9rem 1.1rem;display:flex;gap:10px;margin-bottom:1rem}
 .alert-icon{font-size:17px;flex-shrink:0}.alert-text{font-size:13px;color:#7a5f1a;line-height:1.5}
 .alert-text strong{display:block;margin-bottom:2px}
+.alert-box.warn{background:#fdecea;border-color:rgba(192,57,43,.35)}
+.alert-box.warn .alert-text{color:#9c2c1e}
 .err-box{background:var(--danger-bg);border:1px solid rgba(192,57,43,.3);border-radius:12px;padding:.9rem 1.1rem;display:flex;gap:10px;margin-bottom:1rem;display:none}
 .err-box.show{display:flex}.err-text{font-size:13px;color:var(--danger);line-height:1.5}
 .confirm-btns{display:flex;flex-direction:column;gap:8px;margin-top:1.5rem}
