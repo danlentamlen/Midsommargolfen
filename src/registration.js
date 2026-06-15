@@ -158,6 +158,13 @@ export function buildPkgs() {
 }
 
 // -- STARTLISTA ------------------------------------------------
+// Lägger minuter på en "HH:MM"-tid och returnerar ny "HH:MM".
+function addMinutes(hhmm, mins) {
+  const [h, m] = String(hhmm || '10:00').split(':').map(Number);
+  const total = (h * 60 + m + mins + 1440) % 1440;
+  return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+}
+
 export async function buildStartlista() {
   if (!CFG.visaStartlista) { document.getElementById('startlista-sec').style.display='none'; return; }
   document.getElementById('startlista-sec').style.display = 'block';
@@ -172,11 +179,16 @@ export async function buildStartlista() {
   }
 
   const photos = getLocalPhotos();
-  document.getElementById('startlista-grid').innerHTML = groups.map(g => `
+  // Alla startar från hål 1 → vi visar starttid istället för hål. Första
+  // gruppen startar på slagstart-tiden, därefter +10 min per grupp.
+  const base = CFG.slagstart || '10:00';
+  document.getElementById('startlista-grid').innerHTML = groups.map((g, i) => {
+    const startTime = g.teeStart || addMinutes(base, i * 10);
+    return `
     <div class="sg-card">
       <div class="sg-head">
-        <span class="sg-name">${g.grupp}</span>
-        <span class="sg-time">⏱ Hål ${g.teeHal||1} · ${g.teeStart||''}</span>
+        <span class="sg-name">Startgrupp ${i + 1}</span>
+        <span class="sg-time">⏱ ${startTime}</span>
       </div>
       <div class="sg-body">${g.spelare.filter(n=>n).map(n => {
         const sN   = escapeHtml(n);
@@ -189,8 +201,8 @@ export async function buildStartlista() {
           <div class="sg-pname">${sN}</div>
         </div>`;
       }).join('')}</div>
-    </div>`
-  ).join('');
+    </div>`;
+  }).join('');
 }
 
 // -- GOLF GRID -------------------------------------------------

@@ -270,6 +270,13 @@ function applyVisibility() {
 
   const visaList = CFG.visaDeltagare !== false;
   ['nav-list-btn','mm-list-btn','bn-list'].forEach(id => setVis(id, visaList));
+
+  // Startlistan: buildStartlista() sköter både visning/döljning och hämtar
+  // grupperna. Körs här så togglen slår igenom direkt (server + localStorage).
+  const visaStart = CFG.visaStartlista === true;
+  setVis('startlista-link', visaStart);
+  setVis('startlista-link-meta', visaStart);
+  buildStartlista();
 }
 
 // -- RUNTIME CONFIG (server-styrda flaggor, t.ex. betting på/av) -----
@@ -392,6 +399,15 @@ document.querySelector('.bet-panel-body')?.addEventListener('click', (e) => {
 
 document.getElementById('bet-sub-btn')?.addEventListener('click', () => submitBet(show));
 
+// Länkar till startlistan (i hero) — gå till startsidan och scrolla mjukt dit
+['startlista-link', 'startlista-link-meta'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', (e) => {
+    e.preventDefault();
+    show('home');
+    document.getElementById('startlista-sec')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
 // Admin login
 document.querySelector('.admin-login-body')?.addEventListener('click', (e) => {
   if (e.target.closest('.full-btn')) adminLogin(show, adminLoadData);
@@ -477,7 +493,6 @@ updateCap(state.allParts);
 renderGolfGrid();
 renderPlayers();
 renderOdds();
-buildStartlista();
 renderOmPage();
 renderInfoPage();
 renderSponringPage();

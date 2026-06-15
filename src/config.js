@@ -76,4 +76,5 @@ export const BN_IDS = ['bn-home','bn-om','bn-info','bn-sponsring','bn-reg','bn-l
 export const RUNTIME_FLAGS = [
   { key: 'visaBetting', toggleId: 'set-betting-toggle', labelId: 'set-betting-label' },
   { key: 'visaAnmalan', toggleId: 'set-anmalan-toggle', labelId: 'set-anmalan-label' },
+  { key: 'visaStartlista', toggleId: 'set-startlista-toggle', labelId: 'set-startlista-label' },
 ];
