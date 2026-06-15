@@ -40,12 +40,12 @@ export const infoInnehall = `
 <h3>Regler</h3>
 <ul>
   <li><b>Max 5 över par per hål</b> — sätts in på scorekortet som max. Ingen behöver pinas på ett svårt hål!</li>
-  <li><b>Minst par</b> krävs för att ett hål ska räknas mot specialpriserna (närmast hål & längsta drive).</li>
+  <li><b>Minst par</b> krävs för att ett hål ska räknas mot specialpriserna - närmast hål.</li>
 </ul>
 <h3>Specialpriser</h3>
 <ul>
   <li>🎯 <b>Närmast hål</b> — gäller alla par 3-hål. Bollen måste ligga på greenen efter utslaget och spelaren ska ha spelat minst par på hålet.</li>
-  <li>💨 <b>Längsta drive</b> — mäts på <b>hål 7</b> och <b>hål 18</b>. Bollen måste ligga i fairway och spelaren ska ha spelat minst par på hålet.</li>
+  <li>💨 <b>Längsta drive</b> — mäts på <b>hål 7</b> och <b>hål 18</b>. Bollen måste ligga i fairway.</li>
 </ul>
 <h3>Priser</h3>
 <p>I slagtävlingen delar vi ut priser till de tre bästa nettoresultaten:</p>
