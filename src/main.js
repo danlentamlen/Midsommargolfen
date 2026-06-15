@@ -282,6 +282,11 @@ function applyVisibility() {
 // vinner den och speglas till localStorage så de hålls i synk.
 const LS_PREFIX = 'cfg_';
 
+// Sida som användaren ville till men som blockerades av en ännu ej laddad
+// flagga (t.ex. #bet innan servern hunnit svara att betting är på). Försöks igen
+// när fetchRuntimeConfig() landat.
+let pendingHashNav = null;
+
 function applyLocalConfig() {
   RUNTIME_FLAGS.forEach(({ key }) => {
     const v = localStorage.getItem(LS_PREFIX + key);
@@ -303,7 +308,12 @@ async function fetchRuntimeConfig() {
         changed = true;
       }
     });
-    if (changed) { applyVisibility(); renderAdminSettings(); }
+    if (changed) {
+      applyVisibility();
+      renderAdminSettings();
+      // Servern har nu sagt sitt — försök den blockerade navigeringen igen.
+      if (pendingHashNav) { const target = pendingHashNav; pendingHashNav = null; navTo(target); }
+    }
   } catch { /* backend saknas/ej deployad än — behåll senast kända värde */ }
 }
 
@@ -487,5 +497,7 @@ if ('requestIdleCallback' in window) {
 const validPages = Object.keys(PAGE_IDX).filter(k => PAGE_IDX[k] !== null && k !== 'confirm' && k !== 'bet-confirm');
 const hashPage   = window.location.hash.replace('#','');
 if (hashPage && validPages.includes(hashPage)) {
-  navTo(hashPage);
+  // navTo() returnerar false om sidan gatats av en flagga (t.ex. betting av).
+  // Spara då målet och försök igen när serverns config landat.
+  if (!navTo(hashPage)) pendingHashNav = hashPage;
 }
