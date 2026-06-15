@@ -39,7 +39,8 @@ export const CFG = {
     { namn: 'mickaeltannus', logoUrl: '/images/sponsors/mickaeltannus.png',  webbUrl: 'https://www.mickaeltannus.com' },
     { namn: 'Optimera',      logoUrl: '/images/sponsors/optimera.png',       webbUrl: 'https://www.optimera.se' },
     { namn: 'Job Meal',      logoUrl: '/images/sponsors/jobmeal.png',        webbUrl: 'https://www.jobmeal.se' },
-    { namn: 'Glasklart',     logoUrl: '/images/sponsors/glasklart.png',      webbUrl: 'https://glasklart.eu' }
+    { namn: 'Glasklart',     logoUrl: '/images/sponsors/glasklart.png',      webbUrl: 'https://glasklart.eu' },
+    { namn: 'Kraftwurst Entertainment', logoUrl: '/images/sponsors/kwe.png', webbUrl: 'https://www.facebook.com/Kraftwurst/' },
   ],
 
   omHistoria: '',
