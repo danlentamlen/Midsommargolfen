@@ -320,10 +320,94 @@ export async function deletePhoto(key, renderGolfGridFn, renderPlayersFn) {
 export function adminTab(tab, btn, renderAdminFotoFn) {
   document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('admin-anm-view').style.display  = tab==='anm'  ? 'block' : 'none';
-  document.getElementById('admin-bet-view').style.display  = tab==='bet'  ? 'block' : 'none';
-  document.getElementById('admin-foto-view').style.display = tab==='foto' ? 'block' : 'none';
-  if (tab==='foto' && renderAdminFotoFn) renderAdminFotoFn();
+  document.getElementById('admin-anm-view').style.display     = tab==='anm'     ? 'block' : 'none';
+  document.getElementById('admin-bet-view').style.display     = tab==='bet'     ? 'block' : 'none';
+  document.getElementById('admin-foto-view').style.display    = tab==='foto'    ? 'block' : 'none';
+  document.getElementById('admin-tavling-view').style.display = tab==='tavling' ? 'block' : 'none';
+  if (tab==='foto'    && renderAdminFotoFn) renderAdminFotoFn();
+  if (tab==='tavling') laddaTavlingAdmin();
+}
+
+// -- TÄVLING ADMIN -----------------------------------------------
+const NTP_HAL = [2, 4, 6, 14, 16];
+const LD_HAL  = [7, 17];
+
+function tavlingInputRow(hal, vinnare, extra, extraLabel) {
+  return `
+    <div style="display:grid;grid-template-columns:60px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px">
+      <div style="font-weight:600;font-size:14px;color:var(--ink)">Hål ${hal}</div>
+      <input type="text" placeholder="Vinnare" value="${escapeHtml(vinnare||'')}"
+             data-tavl-vinnare="${hal}"
+             style="padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:13px">
+      <input type="text" placeholder="${escapeHtml(extraLabel)}" value="${escapeHtml(extra||'')}"
+             data-tavl-extra="${hal}"
+             style="padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:13px">
+    </div>`;
+}
+
+export async function laddaTavlingAdmin() {
+  // Fetch existing data from Apps Script to pre-fill fields
+  let tavling = { ntp: {}, ld: {} };
+  if (CFG.appsScriptUrl) {
+    try {
+      const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=hamtaTavling', {}, 6000);
+      const d = await r.json();
+      tavling = d || tavling;
+    } catch { /* use empty */ }
+  }
+
+  const ntpRows = document.getElementById('ntp-rows');
+  const ldRows  = document.getElementById('ld-rows');
+  if (!ntpRows || !ldRows) return;
+
+  ntpRows.innerHTML = NTP_HAL.map(h => {
+    const v = tavling.ntp?.[h] || {};
+    return tavlingInputRow(h, v.vinnare, v.avstand, 'Avstånd (t.ex. 1,2 m)');
+  }).join('');
+
+  ldRows.innerHTML = LD_HAL.map(h => {
+    const v = tavling.ld?.[h] || {};
+    return tavlingInputRow(h, v.vinnare, v.langd, 'Längd (t.ex. 287 m)');
+  }).join('');
+}
+
+export async function saveTavlingData() {
+  if (!CFG.appsScriptUrl) { alert('Konfigurera Apps Script URL först.'); return; }
+  const btn = document.getElementById('save-tavling-btn');
+  const msg = document.getElementById('tavling-save-msg');
+  btn.disabled = true; btn.textContent = 'Sparar…';
+  msg.textContent = '';
+
+  const reqs = [];
+
+  NTP_HAL.forEach(h => {
+    const vinnare = document.querySelector(`[data-tavl-vinnare="${h}"]`)?.value?.trim() ?? '';
+    const avstand = document.querySelector(`[data-tavl-extra="${h}"]`)?.value?.trim() ?? '';
+    reqs.push(postToAppsScript(CFG.appsScriptUrl, {
+      action: 'setTavling', pw: state.adminPw, typ: 'ntp', hal: h, vinnare, avstand
+    }));
+  });
+
+  LD_HAL.forEach(h => {
+    const vinnare = document.querySelector(`[data-tavl-vinnare="${h}"]`)?.value?.trim() ?? '';
+    const langd   = document.querySelector(`[data-tavl-extra="${h}"]`)?.value?.trim() ?? '';
+    reqs.push(postToAppsScript(CFG.appsScriptUrl, {
+      action: 'setTavling', pw: state.adminPw, typ: 'ld', hal: h, vinnare, langd
+    }));
+  });
+
+  try {
+    await Promise.all(reqs);
+    msg.style.color = '#2e7d32';
+    msg.textContent = '✓ Tävlingsresultat sparat!';
+  } catch {
+    msg.style.color = '#c62828';
+    msg.textContent = '⚠ Fel vid sparning – försök igen';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Spara tävlingsresultat';
+  setTimeout(() => { msg.textContent = ''; }, 4000);
 }
 
 export async function updateStatus(type, id, status) {

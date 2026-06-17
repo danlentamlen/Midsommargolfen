@@ -74,7 +74,8 @@ export const BN_IDS = ['bn-home','bn-om','bn-info','bn-sponsring','bn-reg','bn-l
 // Flaggor som kan styras i realtid från admin-panelen (utan ny deploy).
 // Lägg till en rad här + en switch-rad i index.html för att göra fler togglebara.
 export const RUNTIME_FLAGS = [
-  { key: 'visaBetting', toggleId: 'set-betting-toggle', labelId: 'set-betting-label' },
-  { key: 'visaAnmalan', toggleId: 'set-anmalan-toggle', labelId: 'set-anmalan-label' },
-  { key: 'visaStartlista', toggleId: 'set-startlista-toggle', labelId: 'set-startlista-label' },
+  { key: 'visaBetting',   toggleId: 'set-betting-toggle',   labelId: 'set-betting-label'   },
+  { key: 'visaAnmalan',   toggleId: 'set-anmalan-toggle',   labelId: 'set-anmalan-label'   },
+  { key: 'visaStartlista',toggleId: 'set-startlista-toggle',labelId: 'set-startlista-label'},
+  { key: 'visaResultat',  toggleId: 'set-resultat-toggle',  labelId: 'set-resultat-label'  },
 ];

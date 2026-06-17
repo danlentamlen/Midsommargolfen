@@ -103,6 +103,18 @@
 
   <div class="sec-div"></div>
 
+  <section class="section" id="resultat-sec" style="display:none">
+    <div class="sec-in">
+      <div class="sec-lbl">Stableford</div>
+      <div class="sec-title">Resultat 🏆</div>
+      <div id="resultat-content" style="margin-top:1.5rem">
+        <p style="color:var(--muted);font-size:15px">Laddar resultat…</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-div"></div>
+
   <!-- PROGRAMMET -->
   <section class="section">
     <div class="sec-in">
@@ -441,16 +453,44 @@
           <span class="switch-track"><span class="switch-thumb"></span></span>
         </label>
       </div>
+      <div class="admin-set-row">
+        <div class="admin-set-text">
+          <div class="admin-set-title">🏆 Resultat</div>
+          <div class="admin-set-desc">Visa eller dölj resultattavlan. Slå på efter att alla lag har skickat in sina scorer.</div>
+        </div>
+        <label class="switch" for="set-resultat-toggle">
+          <span class="switch-state" id="set-resultat-label">Av</span>
+          <input type="checkbox" id="set-resultat-toggle" role="switch" aria-checked="false" aria-label="Slå på eller av resultat">
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+        </label>
+      </div>
     </div>
     <div class="admin-tabs">
       <button class="admin-tab on" data-admin-tab="anm">Anmälningar <span class="admin-badge-cnt" id="adm-anm-cnt">0</span></button>
       <button class="admin-tab" data-admin-tab="bet">Bets <span class="admin-badge-cnt" id="adm-bet-cnt">0</span></button>
       <button class="admin-tab" data-admin-tab="foto">Foton</button>
+      <button class="admin-tab" data-admin-tab="tavling">🏆 Tävling</button>
     </div>
     <div class="admin-table-wrap">
       <div id="admin-anm-view"><table class="admin-table" id="admin-anm-table"><thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Paket</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead><tbody id="admin-anm-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody></table></div>
       <div id="admin-bet-view" style="display:none"><table class="admin-table" id="admin-bet-table"><thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Spelare</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead><tbody id="admin-bet-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody></table></div>
       <div id="admin-foto-view" style="display:none;padding:1.5rem"><p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem">Ta bort ett foto för att låta spelaren ladda upp ett nytt.</p><div id="admin-foto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px"></div></div>
+
+      <!-- Tävling admin panel -->
+      <div id="admin-tavling-view" style="display:none;padding:1.5rem;max-width:600px">
+        <div style="margin-bottom:2rem">
+          <div class="admin-set-title" style="margin-bottom:.25rem">🎯 Närmast hål — Par 3</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Hål 2, 4, 6, 14, 16 — ange vinnare och avstånd till flaggan</div>
+          <div id="ntp-rows"></div>
+        </div>
+        <div style="margin-bottom:2rem">
+          <div class="admin-set-title" style="margin-bottom:.25rem">💨 Längst drive</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Hål 7 och 17 — ange vinnare och längd på driven</div>
+          <div id="ld-rows"></div>
+        </div>
+        <button id="save-tavling-btn" style="padding:13px 28px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--sans);width:100%">Spara tävlingsresultat</button>
+        <div id="tavling-save-msg" style="margin-top:.75rem;font-size:13px;text-align:center;min-height:1.2em"></div>
+      </div>
     </div>
   </div>
 </div>

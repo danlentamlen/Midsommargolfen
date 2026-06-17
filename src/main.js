@@ -6,9 +6,10 @@ import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
 import { loadSponsors, renderSponsorGrid } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
-import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveConfigFlag, renderAdminSettings } from './admin.js';
+import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveConfigFlag, renderAdminSettings, saveTavlingData } from './admin.js';
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
+import { laddaResultat } from './results.js';
 
 setRenderPlayers(renderPlayers);
 
@@ -277,6 +278,11 @@ function applyVisibility() {
   setVis('startlista-link', visaStart);
   setVis('startlista-link-meta', visaStart);
   buildStartlista();
+
+  // Resultat: visa/dölj sektionen och hämta data vid aktivering
+  const visaRes = CFG.visaResultat === true;
+  setVis('resultat-sec', visaRes);
+  if (visaRes) laddaResultat();
 }
 
 // -- RUNTIME CONFIG (server-styrda flaggor, t.ex. betting på/av) -----
@@ -439,6 +445,9 @@ document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-admin-tab]');
   if (btn) adminTab(btn.dataset.adminTab, btn, () => renderAdminFoto(renderGolfGrid, renderPlayers));
 });
+
+// Tävling save button
+document.getElementById('save-tavling-btn')?.addEventListener('click', saveTavlingData);
 
 // Golf grid photo uploads
 document.getElementById('golf-grid')?.addEventListener('change', (e) => {
