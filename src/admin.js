@@ -414,15 +414,22 @@ export async function saveTavlingData() {
 }
 
 // -- LAG ADMIN --------------------------------------------------
+let _gruppSpelareNamn = {}; // cache: { grupp: [namn] }
+
 export async function laddaAdminLag() {
   const list = document.getElementById('lag-list');
   if (!list) return;
   list.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.75rem 0">Laddar lag…</div>';
   if (!CFG.appsScriptUrl) { renderAdminLag([]); return; }
   try {
-    const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=hamtaLag', {}, 8000);
-    const d = await r.json();
-    renderAdminLag(Array.isArray(d) ? d : []);
+    const [rLag, rSpelare] = await Promise.all([
+      fetchWithTimeout(CFG.appsScriptUrl + '?action=hamtaLag', {}, 8000),
+      fetchWithTimeout(CFG.appsScriptUrl + '?action=hamtaGruppSpelareNamn', {}, 8000),
+    ]);
+    const lag     = await rLag.json();
+    const spelare = await rSpelare.json();
+    _gruppSpelareNamn = (spelare && typeof spelare === 'object') ? spelare : {};
+    renderAdminLag(Array.isArray(lag) ? lag : []);
   } catch {
     list.innerHTML = '<div style="color:var(--danger,#c62828);font-size:13px;padding:.5rem 0">⚠ Kunde inte ladda lag.</div>';
   }
@@ -449,7 +456,12 @@ function renderAdminLag(lagar) {
       <tbody>
         ${lagar.map(l => `
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:9px 10px;font-weight:600;color:var(--ink)">${escapeHtml(l.lagnamn)}</td>
+            <td style="padding:9px 10px">
+              <div style="font-weight:600;color:var(--ink)">${escapeHtml(l.lagnamn)}</div>
+              <div style="font-size:11px;margin-top:2px;color:${l.lagledare ? 'var(--pine)' : '#c62828'}">
+                ${l.lagledare ? '👤 ' + escapeHtml(l.lagledare) : '⚠ Ingen lagledare vald'}
+              </div>
+            </td>
             <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--pine)">${escapeHtml(l.losenord)}</td>
             <td style="padding:9px 10px;color:var(--muted)">${escapeHtml(l.grupp)}</td>
             <td style="padding:9px 10px">
@@ -461,11 +473,20 @@ function renderAdminLag(lagar) {
               </button>
             </td>
             <td style="padding:9px 10px;text-align:right;white-space:nowrap">
+              <button class="lag-mail-btn"
+                data-lag-namn="${escapeHtml(l.lagnamn)}"
+                data-lag-kod="${escapeHtml(l.losenord)}"
+                data-lag-lagledare="${escapeHtml(l.lagledare || '')}"
+                ${!l.lagledare ? 'disabled title="Välj lagledare via Redigera innan du skickar"' : ''}
+                style="padding:5px 11px;border:1.5px solid ${l.lagledare ? '#1565c0' : 'var(--border)'};border-radius:7px;background:transparent;color:${l.lagledare ? '#1565c0' : 'var(--muted)'};font-size:12px;font-weight:600;cursor:${l.lagledare ? 'pointer' : 'not-allowed'};font-family:var(--sans);margin-right:4px;opacity:${l.lagledare ? '1' : '0.5'}">
+                ✉ Skicka
+              </button>
               <button class="lag-edit-btn"
                 data-lag-rad="${l.rad}"
                 data-lag-namn="${escapeHtml(l.lagnamn)}"
                 data-lag-kod="${escapeHtml(l.losenord)}"
                 data-lag-grupp="${escapeHtml(l.grupp)}"
+                data-lag-lagledare="${escapeHtml(l.lagledare || '')}"
                 style="padding:5px 11px;border:1.5px solid var(--pine);border-radius:7px;background:transparent;color:var(--pine);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);margin-right:4px">
                 ✏ Redigera
               </button>
@@ -481,13 +502,23 @@ function renderAdminLag(lagar) {
     </table>`;
 }
 
-export function visaLagForm(rad, lagnamn, losenord, grupp) {
+export function visaLagForm(rad, lagnamn, losenord, grupp, lagledare) {
   document.getElementById('lag-f-namn').value  = lagnamn  || '';
   document.getElementById('lag-f-kod').value   = losenord || '';
   document.getElementById('lag-f-grupp').value = grupp    || '';
   document.getElementById('lag-f-rad').value   = rad      || '';
   document.getElementById('lag-form-title').textContent = rad ? 'Redigera lag' : 'Lägg till lag';
   document.getElementById('lag-form-msg').textContent   = '';
+
+  // Fyll dropdown med spelare för den valda gruppen
+  const sel = document.getElementById('lag-f-lagledare');
+  const spelare = (grupp && _gruppSpelareNamn[grupp]) || [];
+  sel.innerHTML = '<option value="">– Välj lagledare –</option>' +
+    spelare.map(n => `<option value="${escapeHtml(n)}" ${n === lagledare ? 'selected' : ''}>${escapeHtml(n)}</option>`).join('');
+  if (!spelare.length && grupp) {
+    sel.innerHTML += `<option disabled>Inga spelare i grupp ${escapeHtml(grupp)} ännu</option>`;
+  }
+
   document.getElementById('lag-form').style.display = 'block';
   document.getElementById('lag-f-namn').focus();
 }
@@ -518,8 +549,10 @@ export async function sparaLag() {
   btn.disabled = true; btn.textContent = 'Sparar…';
   msg.textContent = '';
 
+  const lagledare = document.getElementById('lag-f-lagledare')?.value?.trim() || '';
+
   try {
-    const payload = { action: 'sparaLag', pw: state.adminPw, lagnamn, losenord, grupp };
+    const payload = { action: 'sparaLag', pw: state.adminPw, lagnamn, losenord, grupp, lagledare };
     if (rad) payload.rad = Number(rad);
     await postToAppsScript(CFG.appsScriptUrl, payload);
     // no-cors — can't read response; wait briefly then reload
@@ -562,6 +595,68 @@ export async function sattSignerad(rad, nyttVarde, btn) {
   } catch { /* fire-and-forget, state already flipped */ }
 
   btn.disabled = false;
+}
+
+export async function skickaLagMail(lagnamn, losenord) {
+  // Visa förhandsvisningsmodal
+  const url = 'https://midsommardagsgolfen.netlify.app/score';
+  const preview =
+    `Hej [Spelares namn]!\n\n` +
+    `Du spelar i ${lagnamn} på Midsommardagsgolfen 2026.\n\n` +
+    `Så här matar ni in era scores på tävlingsdagen:\n\n` +
+    `  Länk:    ${url}\n` +
+    `  Lagkod:  ${losenord}\n\n` +
+    `En person i laget loggar in med lagkoden och matar in alla fyra spelares slag hål för hål. ` +
+    `Glöm inte att klicka Granska och sedan Signera när ni är klara!\n\n` +
+    `/Tävlingsledningen`;
+
+  const skicka = await new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:1.75rem;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:var(--sans)">
+        <div style="font-family:Georgia,serif;font-size:1.2rem;font-weight:700;color:var(--pine);margin-bottom:.25rem">✉ Skicka instruktioner</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Till alla spelare i <strong>${escapeHtml(lagnamn)}</strong> (hämtas från Anmälningar-fliken)</div>
+        <div style="background:#f5f5f5;border-radius:8px;padding:.85rem 1rem;font-size:12px;color:#444;white-space:pre-wrap;line-height:1.6;max-height:260px;overflow-y:auto;margin-bottom:1.25rem">${escapeHtml(preview)}</div>
+        <div style="display:flex;gap:10px">
+          <button id="lm-cancel" style="flex:1;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-size:14px;cursor:pointer;font-family:var(--sans)">Avbryt</button>
+          <button id="lm-send" style="flex:2;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--sans)">Skicka till laget →</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#lm-cancel').onclick = () => { document.body.removeChild(overlay); resolve(false); };
+    overlay.querySelector('#lm-send').onclick   = () => { document.body.removeChild(overlay); resolve(true); };
+  });
+
+  if (!skicka || !CFG.appsScriptUrl) return;
+
+  // Visa spinner-toast under sändning
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:.75rem 1.5rem;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2)';
+  toast.textContent = '⏳ Skickar mail…';
+  document.body.appendChild(toast);
+
+  try {
+    const url = CFG.appsScriptUrl
+      + '?action=skickaLagMail'
+      + '&pw='      + encodeURIComponent(state.adminPw)
+      + '&lagnamn=' + encodeURIComponent(lagnamn);
+    const r = await fetchWithTimeout(url, {}, 15000);
+    const d = await r.json();
+
+    if (d.ok) {
+      toast.style.background = '#1565c0';
+      toast.textContent = `✓ Mail skickat till ${escapeHtml(d.mottagare || lagnamn)}`;
+    } else {
+      toast.style.background = '#c62828';
+      toast.textContent = '⚠ ' + (d.fel || 'Okänt fel');
+    }
+  } catch (e) {
+    toast.style.background = '#c62828';
+    toast.textContent = '⚠ Nätverksfel – försök igen';
+  }
+
+  setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 5000);
 }
 
 export async function updateStatus(type, id, status) {

@@ -6,7 +6,7 @@ import { omHistoria, infoInnehall, sponsringInnehall } from './content.js';
 import { loadSponsors, renderSponsorGrid } from './sponsors.js';
 import { buildPkgs, buildStartlista, updateCap, renderGolfGrid, handlePhoto, pkgChange, submitReg, setRenderPlayers } from './registration.js';
 import { renderPlayers, toggleP, renderOdds, submitBet } from './betting.js';
-import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveConfigFlag, renderAdminSettings, saveTavlingData, laddaAdminLag, sparaLag, raderaLag, sattSignerad, visaLagForm, doljLagForm } from './admin.js';
+import { adminLogin, adminLogout, adminLoadData, adminTab, updateStatus, updatePaket, sendConfirmMail, promoteReservist, renderAdminFoto, deletePhoto, saveConfigFlag, renderAdminSettings, saveTavlingData, laddaAdminLag, sparaLag, raderaLag, sattSignerad, skickaLagMail, visaLagForm, doljLagForm } from './admin.js';
 import { fetchWithTimeout } from './fetch.js';
 import { fetchDrivePhotos } from './photos.js';
 import { laddaResultat } from './results.js';
@@ -458,14 +458,17 @@ document.getElementById('lag-form-save')?.addEventListener('click', sparaLag);
 document.getElementById('admin-lag-view')?.addEventListener('click', (e) => {
   const editBtn = e.target.closest('.lag-edit-btn');
   if (editBtn) {
-    visaLagForm(editBtn.dataset.lagRad, editBtn.dataset.lagNamn, editBtn.dataset.lagKod, editBtn.dataset.lagGrupp);
+    visaLagForm(editBtn.dataset.lagRad, editBtn.dataset.lagNamn, editBtn.dataset.lagKod, editBtn.dataset.lagGrupp, editBtn.dataset.lagLagledare);
     return;
   }
   const delBtn = e.target.closest('.lag-delete-btn');
   if (delBtn) { raderaLag(delBtn.dataset.lagRad, delBtn.dataset.lagNamn); return; }
 
   const signBtn = e.target.closest('.lag-sign-btn');
-  if (signBtn) sattSignerad(signBtn.dataset.lagRad, signBtn.dataset.lagSignerad === 'true', signBtn);
+  if (signBtn) { sattSignerad(signBtn.dataset.lagRad, signBtn.dataset.lagSignerad === 'true', signBtn); return; }
+
+  const mailBtn = e.target.closest('.lag-mail-btn');
+  if (mailBtn) skickaLagMail(mailBtn.dataset.lagNamn, mailBtn.dataset.lagKod);
 });
 
 // Golf grid photo uploads

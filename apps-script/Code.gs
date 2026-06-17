@@ -78,7 +78,13 @@ function doGet(e) {
   if (a==='lagLogin')      return json(handleLagLogin(e.parameter));
   if (a==='hamtaResultat') return json(hamtaResultat());
   if (a==='hamtaTavling')  return json(hamtaTavling());
-  if (a==='hamtaLag')      return json(hamtaLagAdmin());
+  if (a==='hamtaLag')               return json(hamtaLagAdmin());
+  if (a==='hamtaGruppSpelareNamn') return json(hamtaGruppSpelareNamn());
+  if (a==='skickaLagMail') {
+    const pw = e.parameter.pw || '';
+    if (!authAdmin({ pw })) return json({ ok: false, fel: 'unauthorized' });
+    return handleSkickaLagMail({ pw, lagnamn: e.parameter.lagnamn || '' });
+  }
   if (a==='checkDuplikat') return json(checkDupAnm(e.parameter.golfid||'',e.parameter.email||'',e.parameter.namn||''));
   if (a==='checkBet')      return json(checkDupBet(e.parameter.email||'',e.parameter.namn||''));
   if (a==='spelare')       return json(hamtaSpelare());
@@ -889,31 +895,45 @@ function hamtaLagAdmin() {
     const lagnamn  = String(rows[i][0] || '').trim();
     if (!lagnamn) continue;
     result.push({
-      rad:      i + 1,   // 1-based sheet row
-      lagnamn:  lagnamn,
-      losenord: String(rows[i][1] || '').trim(),
-      grupp:    String(rows[i][2] || '').trim(),
-      signerad: rows[i][3] === true || String(rows[i][3] || '').toLowerCase() === 'true',
+      rad:       i + 1,
+      lagnamn:   lagnamn,
+      losenord:  String(rows[i][1] || '').trim(),
+      grupp:     String(rows[i][2] || '').trim(),
+      signerad:  rows[i][3] === true || String(rows[i][3] || '').toLowerCase() === 'true',
+      lagledare: String(rows[i][4] || '').trim(),
     });
   }
   return result;
 }
 
+function hamtaGruppSpelareNamn() {
+  const flik = ss().getSheetByName(F_SP);
+  if (!flik) return {};
+  const result = {};
+  flik.getDataRange().getValues().slice(1).forEach(r => {
+    const namn  = String(r[CS.namn]  || '').trim();
+    const grupp = String(r[CS.grupp] || '').trim();
+    if (!namn || !grupp) return;
+    if (!result[grupp]) result[grupp] = [];
+    result[grupp].push(namn);
+  });
+  return result;
+}
+
 function handleSparaLag(d) {
   if (!authAdmin(d)) return json({ ok: false, fel: 'unauthorized' });
-  const flik = getOrCreate(ss(), F_LAG, ['Lagnamn', 'Losenord', 'Grupp', 'Signerad'], 0, 0);
-  const lagnamn  = String(d.lagnamn  || '').trim();
-  const losenord = String(d.losenord || '').trim();
-  const grupp    = String(d.grupp    || '').trim();
+  const flik = getOrCreate(ss(), F_LAG, ['Lagnamn', 'Losenord', 'Grupp', 'Signerad', 'Lagledare'], 0, 0);
+  const lagnamn   = String(d.lagnamn   || '').trim();
+  const losenord  = String(d.losenord  || '').trim();
+  const grupp     = String(d.grupp     || '').trim();
+  const lagledare = String(d.lagledare || '').trim();
   if (!lagnamn || !losenord || !grupp) return json({ ok: false, fel: 'Fält saknas' });
 
   if (d.rad) {
-    // Uppdatera befintlig rad
     const rad = Number(d.rad);
-    flik.getRange(rad, 1, 1, 3).setValues([[lagnamn, losenord, grupp]]);
+    flik.getRange(rad, 1, 1, 5).setValues([[lagnamn, losenord, grupp, flik.getRange(rad, 4).getValue(), lagledare]]);
   } else {
-    // Lägg till ny rad
-    flik.appendRow([lagnamn, losenord, grupp, false]);
+    flik.appendRow([lagnamn, losenord, grupp, false, lagledare]);
   }
   return json({ ok: true });
 }
@@ -939,8 +959,78 @@ function handleSattSignerad(d) {
   return json({ ok: true });
 }
 
+function handleSkickaLagMail(d) {
+  if (!authAdmin(d)) return json({ ok: false, fel: 'unauthorized' });
+
+  const lagnamn = String(d.lagnamn || '').trim();
+  if (!lagnamn) return json({ ok: false, fel: 'lagnamn saknas' });
+
+  // Hämta lagdata
+  const fLag = ss().getSheetByName(F_LAG);
+  if (!fLag) return json({ ok: false, fel: 'Lag-sheet saknas' });
+  const lagRad = fLag.getDataRange().getValues().find(r => String(r[CL.lagnamn]||'').trim() === lagnamn);
+  if (!lagRad) return json({ ok: false, fel: 'Lag ej hittat' });
+
+  const losenord  = String(lagRad[CL.losenord]  || '').trim();
+  const lagledare = String(lagRad[CL.lagledare] || '').trim();
+
+  if (!lagledare) return json({ ok: false, fel: 'Ingen lagledare vald för laget' });
+
+  // Hitta lagledares email i Anmälningar
+  const fAnm = ss().getSheetByName(F_ANM);
+  if (!fAnm) return json({ ok: false, fel: 'Anmälningar-sheet saknas' });
+  const anmRad = fAnm.getDataRange().getValues().slice(1)
+    .find(r => String(r[CA.namn]||'').trim().toLowerCase() === lagledare.toLowerCase());
+  const email = anmRad ? String(anmRad[CA.email]||'').trim() : '';
+
+  if (!email) return json({ ok: false, fel: `Ingen mailadress hittad för ${lagledare}` });
+
+  const subject  = 'Midsommardagsgolfen 2026 – instruktioner för scorekortet';
+  const url      = 'https://midsommardagsgolfen.netlify.app/score';
+
+  const plainBody =
+    `Hej ${lagledare}!\n\n` +
+    `Du är lagledare för ${lagnamn} på Midsommardagsgolfen 2026.\n\n` +
+    `Så här matar ni in era scores på tävlingsdagen:\n\n` +
+    `  Länk:    ${url}\n\n` +
+    `  Lagkod:  ${losenord}\n\n` +
+    `Logga in med lagkoden och mata in alla fyra spelares slag hål för hål. ` +
+    `Glöm inte att klicka Granska och sedan Signera när ni är klara!\n\n` +
+    `Vid frågor – hör av er till tävlingsledningen.\n\n` +
+    `Välkommen och lycka till! ⛳\n\n` +
+    `/Tävlingsledningen`;
+
+  const htmlBody =
+    `<div style="font-family:Arial,sans-serif;font-size:15px;color:#222;max-width:520px">` +
+    `<p>Hej ${lagledare}!</p>` +
+    `<p>Du är lagledare för <strong>${lagnamn}</strong> på Midsommardagsgolfen 2026.</p>` +
+    `<p>Så här matar ni in era scores på tävlingsdagen:</p>` +
+    `<table style="border-collapse:collapse;margin:4px 0 16px">` +
+      `<tr><td style="color:#666;padding:4px 16px 4px 0;vertical-align:top">Länk</td>` +
+           `<td style="padding:4px 0"><a href="${url}" style="color:#1a73e8">${url}</a></td></tr>` +
+    `</table>` +
+    `<table style="border-collapse:collapse;margin:0 0 16px">` +
+      `<tr><td style="color:#666;padding:4px 16px 4px 0;vertical-align:top">Lagkod</td>` +
+           `<td style="padding:4px 0"><span style="font-size:22px;font-weight:bold;letter-spacing:2px;color:#0c3318">${losenord}</span></td></tr>` +
+    `</table>` +
+    `<p>Logga in med lagkoden och mata in alla fyra spelares slag hål för hål. ` +
+    `Glöm inte att klicka <strong>Granska</strong> och sedan <strong>Signera</strong> när ni är klara!</p>` +
+    `<p>Vid frågor – hör av er till tävlingsledningen.</p>` +
+    `<p>Välkommen och lycka till! ⛳</p>` +
+    `<p style="color:#888">/Tävlingsledningen</p>` +
+    `</div>`;
+
+  try {
+    MailApp.sendEmail({ to: email, subject, body: plainBody, htmlBody });
+    return json({ ok: true, skickade: 1, mottagare: lagledare });
+  } catch(e) {
+    Logger.log('Mailfel %s: %s', email, String(e));
+    return json({ ok: false, fel: 'Mailutskick misslyckades: ' + String(e) });
+  }
+}
+
 // Lag-sheet kolumnindex
-const CL = { lagnamn: 0, losenord: 1, grupp: 2, signerad: 3 };
+const CL = { lagnamn: 0, losenord: 1, grupp: 2, signerad: 3, lagledare: 4 };
 
 function handleLagLogin(params) {
   const pw = String(params.pw || '').trim();
