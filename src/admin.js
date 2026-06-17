@@ -323,9 +323,12 @@ export function adminTab(tab, btn, renderAdminFotoFn) {
   document.getElementById('admin-anm-view').style.display     = tab==='anm'     ? 'block' : 'none';
   document.getElementById('admin-bet-view').style.display     = tab==='bet'     ? 'block' : 'none';
   document.getElementById('admin-foto-view').style.display    = tab==='foto'    ? 'block' : 'none';
+  document.getElementById('admin-lag-view').style.display     = tab==='lag'     ? 'block' : 'none';
   document.getElementById('admin-tavling-view').style.display = tab==='tavling' ? 'block' : 'none';
+  document.getElementById('admin-guide-view').style.display   = tab==='guide'   ? 'block' : 'none';
   if (tab==='foto'    && renderAdminFotoFn) renderAdminFotoFn();
   if (tab==='tavling') laddaTavlingAdmin();
+  if (tab==='lag')     laddaAdminLag();
 }
 
 // -- TÄVLING ADMIN -----------------------------------------------
@@ -408,6 +411,157 @@ export async function saveTavlingData() {
   btn.disabled = false;
   btn.textContent = 'Spara tävlingsresultat';
   setTimeout(() => { msg.textContent = ''; }, 4000);
+}
+
+// -- LAG ADMIN --------------------------------------------------
+export async function laddaAdminLag() {
+  const list = document.getElementById('lag-list');
+  if (!list) return;
+  list.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.75rem 0">Laddar lag…</div>';
+  if (!CFG.appsScriptUrl) { renderAdminLag([]); return; }
+  try {
+    const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=hamtaLag', {}, 8000);
+    const d = await r.json();
+    renderAdminLag(Array.isArray(d) ? d : []);
+  } catch {
+    list.innerHTML = '<div style="color:var(--danger,#c62828);font-size:13px;padding:.5rem 0">⚠ Kunde inte ladda lag.</div>';
+  }
+}
+
+function renderAdminLag(lagar) {
+  const list = document.getElementById('lag-list');
+  if (!list) return;
+  if (!lagar.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:13px;font-style:italic;padding:.5rem 0">Inga lag registrerade ännu. Klicka "+ Lägg till lag" för att börja.</div>';
+    return;
+  }
+  list.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-family:var(--sans);font-size:13px">
+      <thead>
+        <tr style="border-bottom:2px solid var(--border)">
+          <th style="text-align:left;padding:8px 10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Lagnamn</th>
+          <th style="text-align:left;padding:8px 10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Lagkod</th>
+          <th style="text-align:left;padding:8px 10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Grupp</th>
+          <th style="text-align:left;padding:8px 10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Signerat</th>
+          <th style="padding:8px 10px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lagar.map(l => `
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:9px 10px;font-weight:600;color:var(--ink)">${escapeHtml(l.lagnamn)}</td>
+            <td style="padding:9px 10px;font-family:monospace;font-size:12px;color:var(--pine)">${escapeHtml(l.losenord)}</td>
+            <td style="padding:9px 10px;color:var(--muted)">${escapeHtml(l.grupp)}</td>
+            <td style="padding:9px 10px">
+              <button class="lag-sign-btn"
+                data-lag-rad="${l.rad}"
+                data-lag-signerad="${l.signerad}"
+                style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);border:1.5px solid ${l.signerad ? '#2e7d32' : 'var(--border)'};background:${l.signerad ? '#e8f5e9' : 'transparent'};color:${l.signerad ? '#2e7d32' : 'var(--muted)'}">
+                ${l.signerad ? '✓ Signerat' : '○ Ej signerat'}
+              </button>
+            </td>
+            <td style="padding:9px 10px;text-align:right;white-space:nowrap">
+              <button class="lag-edit-btn"
+                data-lag-rad="${l.rad}"
+                data-lag-namn="${escapeHtml(l.lagnamn)}"
+                data-lag-kod="${escapeHtml(l.losenord)}"
+                data-lag-grupp="${escapeHtml(l.grupp)}"
+                style="padding:5px 11px;border:1.5px solid var(--pine);border-radius:7px;background:transparent;color:var(--pine);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);margin-right:4px">
+                ✏ Redigera
+              </button>
+              <button class="lag-delete-btn"
+                data-lag-rad="${l.rad}"
+                data-lag-namn="${escapeHtml(l.lagnamn)}"
+                style="padding:5px 11px;border:1.5px solid #c62828;border-radius:7px;background:transparent;color:#c62828;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)">
+                🗑 Ta bort
+              </button>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+export function visaLagForm(rad, lagnamn, losenord, grupp) {
+  document.getElementById('lag-f-namn').value  = lagnamn  || '';
+  document.getElementById('lag-f-kod').value   = losenord || '';
+  document.getElementById('lag-f-grupp').value = grupp    || '';
+  document.getElementById('lag-f-rad').value   = rad      || '';
+  document.getElementById('lag-form-title').textContent = rad ? 'Redigera lag' : 'Lägg till lag';
+  document.getElementById('lag-form-msg').textContent   = '';
+  document.getElementById('lag-form').style.display = 'block';
+  document.getElementById('lag-f-namn').focus();
+}
+
+export function doljLagForm() {
+  document.getElementById('lag-form').style.display = 'none';
+}
+
+export async function sparaLag() {
+  const lagnamn  = document.getElementById('lag-f-namn')?.value?.trim();
+  const losenord = document.getElementById('lag-f-kod')?.value?.trim();
+  const grupp    = document.getElementById('lag-f-grupp')?.value?.trim();
+  const rad      = document.getElementById('lag-f-rad')?.value?.trim();
+  const msg      = document.getElementById('lag-form-msg');
+
+  if (!lagnamn || !losenord || !grupp) {
+    msg.style.color = '#c62828';
+    msg.textContent = 'Fyll i alla fält.';
+    return;
+  }
+  if (!CFG.appsScriptUrl) {
+    msg.style.color = '#c62828';
+    msg.textContent = 'Ingen Apps Script URL konfigurerad.';
+    return;
+  }
+
+  const btn = document.getElementById('lag-form-save');
+  btn.disabled = true; btn.textContent = 'Sparar…';
+  msg.textContent = '';
+
+  try {
+    const payload = { action: 'sparaLag', pw: state.adminPw, lagnamn, losenord, grupp };
+    if (rad) payload.rad = Number(rad);
+    await postToAppsScript(CFG.appsScriptUrl, payload);
+    // no-cors — can't read response; wait briefly then reload
+    await new Promise(r => setTimeout(r, 700));
+    document.getElementById('lag-form').style.display = 'none';
+    await laddaAdminLag();
+  } catch {
+    msg.style.color = '#c62828';
+    msg.textContent = '⚠ Nätverksfel – försök igen';
+  }
+  btn.disabled = false; btn.textContent = 'Spara';
+}
+
+export async function raderaLag(rad, lagnamn) {
+  if (!confirm(`Ta bort laget "${lagnamn}"? Det går inte att ångra.`)) return;
+  if (!CFG.appsScriptUrl) return;
+  try {
+    await postToAppsScript(CFG.appsScriptUrl, { action: 'raderaLag', pw: state.adminPw, rad: Number(rad) });
+    await new Promise(r => setTimeout(r, 700));
+    await laddaAdminLag();
+  } catch {
+    alert('Nätverksfel – försök igen');
+  }
+}
+
+export async function sattSignerad(rad, nyttVarde, btn) {
+  if (!CFG.appsScriptUrl) return;
+  // Optimistic UI: flip immediately
+  const ny = !nyttVarde;
+  btn.dataset.lagSignerad = String(ny);
+  btn.textContent = ny ? '✓ Signerat' : '○ Ej signerat';
+  btn.style.borderColor  = ny ? '#2e7d32' : 'var(--border)';
+  btn.style.background   = ny ? '#e8f5e9' : 'transparent';
+  btn.style.color        = ny ? '#2e7d32' : 'var(--muted)';
+  btn.disabled = true;
+
+  try {
+    await postToAppsScript(CFG.appsScriptUrl, { action: 'sattSignerad', pw: state.adminPw, rad: Number(rad), signerad: ny });
+    await new Promise(r => setTimeout(r, 600));
+  } catch { /* fire-and-forget, state already flipped */ }
+
+  btn.disabled = false;
 }
 
 export async function updateStatus(type, id, status) {

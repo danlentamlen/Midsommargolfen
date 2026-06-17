@@ -469,12 +469,49 @@
       <button class="admin-tab on" data-admin-tab="anm">Anmälningar <span class="admin-badge-cnt" id="adm-anm-cnt">0</span></button>
       <button class="admin-tab" data-admin-tab="bet">Bets <span class="admin-badge-cnt" id="adm-bet-cnt">0</span></button>
       <button class="admin-tab" data-admin-tab="foto">Foton</button>
+      <button class="admin-tab" data-admin-tab="lag">🏌️ Lag</button>
       <button class="admin-tab" data-admin-tab="tavling">🏆 Tävling</button>
+      <button class="admin-tab" data-admin-tab="guide">📖 Guide</button>
     </div>
     <div class="admin-table-wrap">
       <div id="admin-anm-view"><table class="admin-table" id="admin-anm-table"><thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Paket</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead><tbody id="admin-anm-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody></table></div>
       <div id="admin-bet-view" style="display:none"><table class="admin-table" id="admin-bet-table"><thead><tr><th>Namn</th><th>Telefon</th><th>E-post</th><th>Spelare</th><th>Belopp</th><th>Betalstatus</th><th>Mail</th></tr></thead><tbody id="admin-bet-body"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Laddar...</td></tr></tbody></table></div>
       <div id="admin-foto-view" style="display:none;padding:1.5rem"><p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem">Ta bort ett foto för att låta spelaren ladda upp ett nytt.</p><div id="admin-foto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px"></div></div>
+
+      <!-- Lag admin panel -->
+      <div id="admin-lag-view" style="display:none;padding:1.5rem;max-width:700px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+          <div class="admin-set-title" style="margin:0">Lag</div>
+          <button id="lag-add-btn" style="padding:8px 18px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)">+ Lägg till lag</button>
+        </div>
+
+        <!-- Add/edit form (hidden by default) -->
+        <div id="lag-form" style="display:none;background:#f1f8f1;border:1.5px solid #a5d6a7;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem">
+          <div style="font-weight:700;font-size:13px;color:var(--pine);margin-bottom:.75rem" id="lag-form-title">Lägg till lag</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:.75rem" class="lag-form-grid">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px">Lagnamn</div>
+              <input id="lag-f-namn" type="text" placeholder="t.ex. Lag Örnen" style="width:100%;box-sizing:border-box;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--sans);font-size:13px">
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px">Lagkod</div>
+              <input id="lag-f-kod" type="text" placeholder="t.ex. ORNEN2026" style="width:100%;box-sizing:border-box;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--sans);font-size:13px">
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px">Grupp</div>
+              <input id="lag-f-grupp" type="text" placeholder="t.ex. G1" style="width:100%;box-sizing:border-box;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--sans);font-size:13px">
+            </div>
+          </div>
+          <input type="hidden" id="lag-f-rad" value="">
+          <div style="display:flex;gap:8px">
+            <button id="lag-form-save" style="padding:8px 20px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)">Spara</button>
+            <button id="lag-form-cancel" style="padding:8px 16px;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-family:var(--sans)">Avbryt</button>
+          </div>
+          <div id="lag-form-msg" style="font-size:12px;margin-top:.5rem;min-height:1em"></div>
+        </div>
+
+        <div id="lag-list"></div>
+      </div>
 
       <!-- Tävling admin panel -->
       <div id="admin-tavling-view" style="display:none;padding:1.5rem;max-width:600px">
@@ -490,6 +527,161 @@
         </div>
         <button id="save-tavling-btn" style="padding:13px 28px;background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--sans);width:100%">Spara tävlingsresultat</button>
         <div id="tavling-save-msg" style="margin-top:.75rem;font-size:13px;text-align:center;min-height:1.2em"></div>
+      </div>
+
+      <!-- Admin guide -->
+      <div id="admin-guide-view" style="display:none;padding:1.5rem 2rem;max-width:740px;line-height:1.75">
+
+        <style>
+          .ag-h1 { font-family:Georgia,serif; font-size:1.4rem; font-weight:700; color:var(--pine); margin:2rem 0 .4rem; border-bottom:2px solid var(--mint); padding-bottom:.4rem; }
+          .ag-h2 { font-size:1rem; font-weight:700; color:var(--pine); margin:1.5rem 0 .4rem; }
+          .ag-p  { font-size:14px; color:var(--body); margin:.3rem 0 .8rem; }
+          .ag-table { width:100%; border-collapse:collapse; font-size:13px; margin:.6rem 0 1.2rem; }
+          .ag-table th { background:var(--pine); color:#fff; padding:7px 10px; text-align:left; font-weight:600; }
+          .ag-table td { padding:6px 10px; border-bottom:1px solid var(--mint); vertical-align:top; }
+          .ag-table tr:nth-child(even) td { background:#f7faf7; }
+          .ag-box  { background:#eaf4ea; border-left:4px solid #66bb6a; border-radius:0 8px 8px 0; padding:.7rem 1rem; font-size:13px; color:#1b5e20; margin:.6rem 0 1rem; }
+          .ag-warn { background:#fff8e1; border-left:4px solid #f9a825; border-radius:0 8px 8px 0; padding:.7rem 1rem; font-size:13px; color:#5d4037; margin:.6rem 0 1rem; }
+          .ag-steps { display:flex; flex-direction:column; gap:4px; margin:.6rem 0 1.2rem; }
+          .ag-step  { display:grid; grid-template-columns:32px 1fr; align-items:start; background:#eaf4ea; border-radius:8px; padding:.55rem .8rem; font-size:13px; color:var(--body); }
+          .ag-step:nth-child(even) { background:#fff; border:1px solid var(--mint); }
+          .ag-step-num { font-weight:700; color:var(--pine); font-size:15px; }
+          .ag-code { font-family:monospace; background:#e8f5e9; color:#1565c0; padding:1px 6px; border-radius:4px; font-size:13px; }
+        </style>
+
+        <div style="background:var(--pine);color:#fff;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#c9a84c;margin-bottom:.3rem">Admin Guide</div>
+          <div style="font-family:Georgia,serif;font-size:1.5rem;font-weight:700">Midsommardagsgolfen 2026</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:.3rem">1. Sheets &nbsp;·&nbsp; 2. Admin-panelen &nbsp;·&nbsp; 3. Skicka till lagen &nbsp;·&nbsp; 4. Tävlingsdagen &nbsp;·&nbsp; 5. Felsökning</div>
+        </div>
+
+        <!-- 1. Sheets -->
+        <div class="ag-h1">1. Förberedelser i Google Sheets</div>
+        <p class="ag-p">Allt data lever i ett Google Spreadsheet kopplat till Apps Script. Fem flikar är relevanta.</p>
+        <div class="ag-box" style="margin-bottom:1.2rem">
+          <strong>📊 Google Sheet:</strong><br>
+          <a href="https://docs.google.com/spreadsheets/d/1UVXv65Mm_bCZ421QCXgDKKqrKcPUkcoONCDVFuUPX7o/edit?usp=sharing" target="_blank" rel="noopener" style="color:#1565c0;font-size:13px;word-break:break-all">docs.google.com/spreadsheets/d/1UVXv65Mm_bCZ421QCXgDKKqrKcPUkcoONCDVFuUPX7o/edit</a>
+        </div>
+
+        <div class="ag-h2">Fliken "Lag"</div>
+        <p class="ag-p">Registrera varje lag. Varje lag får en unik kod att logga in med på scorekortet.</p>
+        <table class="ag-table">
+          <thead><tr><th>Kolumn</th><th>Vad du fyller i</th><th>Exempel</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Lagnamn</strong></td><td>Lagets visningsnamn (syns i resultat)</td><td>Lag Örnen</td></tr>
+            <tr><td><strong>Losenord</strong></td><td>Unik lagkod — bara versaler &amp; siffror</td><td>ORNEN2026</td></tr>
+            <tr><td><strong>Grupp</strong></td><td>Kopplar laget till spelare i Spelare-fliken</td><td>G1</td></tr>
+            <tr><td><strong>Signerad</strong></td><td>Lämna tomt — sätts automatiskt</td><td><em style="color:var(--muted)">automatisk</em></td></tr>
+          </tbody>
+        </table>
+        <div class="ag-warn"><strong>OBS:</strong> Koden i Losenord-kolumnen är precis den du skickar till laget. Inga mellanslag, inga åäö.</div>
+
+        <div class="ag-h2">Fliken "Spelare"</div>
+        <p class="ag-p">Fylls via anmälan. Kontrollera att alla golfare har rätt grupp och erhållna slag innan tävlingen.</p>
+        <table class="ag-table">
+          <thead><tr><th>Kolumn</th><th>Beskrivning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>namn</strong></td><td>Spelarens fullständiga namn</td></tr>
+            <tr><td><strong>hcp</strong></td><td>Exakt handicap</td></tr>
+            <tr><td><strong>grupp</strong></td><td>Måste matcha Grupp i Lag-fliken — kritiskt!</td></tr>
+            <tr><td><strong>erhallna</strong></td><td>Erhållna slag — används i resultatberäkning</td></tr>
+          </tbody>
+        </table>
+        <div class="ag-box">Alla fyra spelare i ett lag ska ha samma grupp-värde, och det ska matcha exakt med Grupp i Lag-fliken.</div>
+
+        <div class="ag-h2">Fliken "Scorecard"</div>
+        <p class="ag-p">Skapas automatiskt — rör den inte manuellt. Data skrivs hit direkt från score-sidan.</p>
+
+        <div class="ag-h2">Fliken "Tävling"</div>
+        <p class="ag-p">Skapas automatiskt första gången du sparar NTP/LD via admin-panelens Tävling-flik.</p>
+        <table class="ag-table">
+          <thead><tr><th>Kolumn</th><th>Värden</th></tr></thead>
+          <tbody>
+            <tr><td>Typ</td><td>ntp eller ld</td></tr>
+            <tr><td>Hål</td><td>2, 4, 6, 14, 16 (NTP) — 7, 17 (LD)</td></tr>
+            <tr><td>Vinnare</td><td>Spelarens namn</td></tr>
+            <tr><td>Extra</td><td>Avstånd (t.ex. 1,2 m) eller längd (t.ex. 287 m)</td></tr>
+          </tbody>
+        </table>
+
+        <!-- 2. Admin-panelen -->
+        <div class="ag-h1">2. Admin-panelen</div>
+        <div class="ag-h2">Inställningar — realtidsflaggor</div>
+        <table class="ag-table">
+          <thead><tr><th>Toggle</th><th>Styr</th><th>Slå på när</th></tr></thead>
+          <tbody>
+            <tr><td>Betting</td><td>Visar/döljer bettingsektionen</td><td>Under anmälningsperioden</td></tr>
+            <tr><td>Anmälan</td><td>Visar/döljer anmälningsformuläret</td><td>Stäng när listan är full</td></tr>
+            <tr><td>Startlista</td><td>Visar/döljer startlistan</td><td>Lottningen klar — dagen/morgonen innan</td></tr>
+            <tr><td>Resultat</td><td>Visar/döljer resultatsektionen</td><td>Alla lag har signerat — INTE innan dess</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ag-h2">Lag-fliken — hantera lag direkt i admin</div>
+        <p class="ag-p">Här kan du lägga till, redigera och ta bort lag utan att öppna Google Sheets. Du kan också markera om ett lag har signerat sitt scorekort.</p>
+        <table class="ag-table">
+          <thead><tr><th>Åtgärd</th><th>Hur</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Lägg till lag</strong></td><td>Klicka "+ Lägg till lag", fyll i Lagnamn, Lagkod och Grupp, klicka Spara</td></tr>
+            <tr><td><strong>Redigera lag</strong></td><td>Klicka ✏ Redigera på raden — formuläret öppnas förifyllt</td></tr>
+            <tr><td><strong>Ta bort lag</strong></td><td>Klicka 🗑 Ta bort — bekräfta i dialogen. Kan inte ångras</td></tr>
+            <tr><td><strong>Signerat-toggle</strong></td><td>Klicka pill-knappen på raden för att växla mellan "○ Ej signerat" och "✓ Signerat". Uppdateras direkt i Sheets</td></tr>
+          </tbody>
+        </table>
+        <div class="ag-warn">Lagkoden (Losenord) är det laget använder för att logga in på scorekortet. Välj något enkelt och unikt per lag — t.ex. ORNEN2026.</div>
+
+        <div class="ag-h2">Tävling-fliken — NTP och längst drive</div>
+        <p class="ag-p">Mata in vinnare och avstånd/längd för NTP (hål 2, 4, 6, 14, 16) och LD (hål 7, 17) efter rundan. Klicka "Spara tävlingsresultat" — visas direkt på hemsidan när Resultat är påslaget.</p>
+
+        <!-- 3. Vad du skickar till lagen -->
+        <div class="ag-h1">3. Vad du skickar till lagen</div>
+        <table class="ag-table">
+          <thead><tr><th>Vad</th><th>Värde</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Länk till scorekortet</strong></td><td><span class="ag-code">https://midsommardagsgolfen.netlify.app/score</span></td></tr>
+            <tr><td><strong>Lagkod</strong></td><td>Värdet i Losenord-kolumnen i Lag-fliken</td></tr>
+          </tbody>
+        </table>
+        <div class="ag-box">
+          <strong>Exempelmeddelande:</strong><br>
+          Hej! Ni scorar via: <span class="ag-code">https://midsommardagsgolfen.netlify.app/score</span><br>
+          Lagkod: <span class="ag-code">ORNEN2026</span><br>
+          <em>En person matar in alla fyra spelares slag. Glöm inte Granska och Signera när ni är klara!</em>
+        </div>
+        <div class="ag-warn">Påminn lagen: ange <strong>0</strong> på alla hål för en spelare som inte fullföljer. Alla 18 hål måste vara ifyllda innan man kan signera.</div>
+
+        <!-- 4. Tävlingsdagens flöde -->
+        <div class="ag-h1">4. Tävlingsdagens flöde</div>
+        <div class="ag-h2">Kvällen/morgonen innan</div>
+        <div class="ag-steps">
+          <div class="ag-step"><span class="ag-step-num">1</span><span>Slå på <strong>Startlista</strong>-toggle — spelarna ser nu sina starttider</span></div>
+          <div class="ag-step"><span class="ag-step-num">2</span><span>Skicka lagkod + länk till respektive lag</span></div>
+          <div class="ag-step"><span class="ag-step-num">3</span><span>Dubbelkolla att Grupp i Lag-fliken matchar Grupp i Spelare-fliken för alla lag</span></div>
+        </div>
+
+        <div class="ag-h2">Efter rundan — vid 19:e hålet</div>
+        <div class="ag-steps">
+          <div class="ag-step"><span class="ag-step-num">1</span><span>Vänta tills alla lag signerat (Signerad = TRUE i Lag-fliken)</span></div>
+          <div class="ag-step"><span class="ag-step-num">2</span><span>Gå till Tävling-fliken här i admin → mata in NTP och LD</span></div>
+          <div class="ag-step"><span class="ag-step-num">3</span><span>Klicka <strong>Spara tävlingsresultat</strong></span></div>
+          <div class="ag-step"><span class="ag-step-num">4</span><span>Slå på <strong>Resultat</strong>-toggle — klart!</span></div>
+        </div>
+        <div class="ag-warn"><strong>Slå inte på Resultat förrän:</strong> alla lag signerat OCH NTP/LD är inmatade.</div>
+
+        <!-- 5. Felsökning -->
+<div class="ag-h1">5. Felsökning</div>
+        <table class="ag-table">
+          <thead><tr><th>Problem</th><th>Lösning</th></tr></thead>
+          <tbody>
+            <tr><td>"Fel lagkod" vid inloggning</td><td>Kontrollera Lag-fliken — koden exakt rätt? Inga mellanslag?</td></tr>
+            <tr><td>Scorer sparas inte till Sheets</td><td>Distribuera ny version av Code.gs</td></tr>
+            <tr><td>Spelare saknas i scorekortet</td><td>Grupp måste vara identisk i Lag- och Spelare-fliken</td></tr>
+            <tr><td>Laget kan inte signera</td><td>Inte alla 18 hål ifyllda — fyll i 0 för spelare som inte fullföljt</td></tr>
+            <tr><td>Resultat visas inte</td><td>Slå på Resultat-toggle i admin-panelen</td></tr>
+            <tr><td>Gammal data visas</td><td>Ctrl+Shift+R (PC) / Cmd+Shift+R (Mac)</td></tr>
+          </tbody>
+        </table>
+
       </div>
     </div>
   </div>

@@ -50,6 +50,9 @@ function doPost(e) {
     if (d.action === 'updatePaket')  return handleUpdatePaket(d);
     if (d.action === 'setConfig')    return handleSetConfig(d);
     if (d.action === 'setTavling')   return handleSetTavling(d);
+    if (d.action === 'sparaLag')     return handleSparaLag(d);
+    if (d.action === 'raderaLag')    return handleRaderaLag(d);
+    if (d.action === 'sattSignerad') return handleSattSignerad(d);
     if (d.action === 'sparaScore')   return handleSparaScore(d);
     if (d.action === 'signeraScore') return handleSigneraScore(d);
     return json({ok:true, msg:'Okänd action'});
@@ -75,6 +78,7 @@ function doGet(e) {
   if (a==='lagLogin')      return json(handleLagLogin(e.parameter));
   if (a==='hamtaResultat') return json(hamtaResultat());
   if (a==='hamtaTavling')  return json(hamtaTavling());
+  if (a==='hamtaLag')      return json(hamtaLagAdmin());
   if (a==='checkDuplikat') return json(checkDupAnm(e.parameter.golfid||'',e.parameter.email||'',e.parameter.namn||''));
   if (a==='checkBet')      return json(checkDupBet(e.parameter.email||'',e.parameter.namn||''));
   if (a==='spelare')       return json(hamtaSpelare());
@@ -869,6 +873,71 @@ function handleUpdatePaket(d) {
 //
 // Lag-sheetet används BARA för lösenord + gruppreferens.
 // Spelarna hämtas från Spelare-sheetet via Grupp-kolumnen.
+
+// ── LAG ADMIN: läsa, spara, radera ──────────────────────────────
+function authAdmin(d) {
+  const pw = PropertiesService.getScriptProperties().getProperty('ADMIN_PW');
+  return pw && d.pw === pw;
+}
+
+function hamtaLagAdmin() {
+  const flik = ss().getSheetByName(F_LAG);
+  if (!flik) return [];
+  const rows = flik.getDataRange().getValues();
+  const result = [];
+  for (let i = 1; i < rows.length; i++) {
+    const lagnamn  = String(rows[i][0] || '').trim();
+    if (!lagnamn) continue;
+    result.push({
+      rad:      i + 1,   // 1-based sheet row
+      lagnamn:  lagnamn,
+      losenord: String(rows[i][1] || '').trim(),
+      grupp:    String(rows[i][2] || '').trim(),
+      signerad: rows[i][3] === true || String(rows[i][3] || '').toLowerCase() === 'true',
+    });
+  }
+  return result;
+}
+
+function handleSparaLag(d) {
+  if (!authAdmin(d)) return json({ ok: false, fel: 'unauthorized' });
+  const flik = getOrCreate(ss(), F_LAG, ['Lagnamn', 'Losenord', 'Grupp', 'Signerad'], 0, 0);
+  const lagnamn  = String(d.lagnamn  || '').trim();
+  const losenord = String(d.losenord || '').trim();
+  const grupp    = String(d.grupp    || '').trim();
+  if (!lagnamn || !losenord || !grupp) return json({ ok: false, fel: 'Fält saknas' });
+
+  if (d.rad) {
+    // Uppdatera befintlig rad
+    const rad = Number(d.rad);
+    flik.getRange(rad, 1, 1, 3).setValues([[lagnamn, losenord, grupp]]);
+  } else {
+    // Lägg till ny rad
+    flik.appendRow([lagnamn, losenord, grupp, false]);
+  }
+  return json({ ok: true });
+}
+
+function handleRaderaLag(d) {
+  if (!authAdmin(d)) return json({ ok: false, fel: 'unauthorized' });
+  const flik = ss().getSheetByName(F_LAG);
+  if (!flik) return json({ ok: false, fel: 'Lag-sheet saknas' });
+  const rad = Number(d.rad);
+  if (!rad || rad < 2) return json({ ok: false, fel: 'Ogiltig rad' });
+  flik.deleteRow(rad);
+  return json({ ok: true });
+}
+
+function handleSattSignerad(d) {
+  if (!authAdmin(d)) return json({ ok: false, fel: 'unauthorized' });
+  const flik = ss().getSheetByName(F_LAG);
+  if (!flik) return json({ ok: false, fel: 'Lag-sheet saknas' });
+  const rad = Number(d.rad);
+  if (!rad || rad < 2) return json({ ok: false, fel: 'Ogiltig rad' });
+  const val = d.signerad === true || d.signerad === 'true';
+  flik.getRange(rad, 4).setValue(val);
+  return json({ ok: true });
+}
 
 // Lag-sheet kolumnindex
 const CL = { lagnamn: 0, losenord: 1, grupp: 2, signerad: 3 };

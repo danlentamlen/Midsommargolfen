@@ -750,3 +750,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
   transition: background .15s, color .15s;
 }
 .res-expand-btn:hover { background: var(--pine); color: #fff; }
+
+/* Lag admin form — collapse to 1 col on narrow screens */
+@media (max-width: 520px) {
+  .lag-form-grid { grid-template-columns: 1fr !important; }
+}
