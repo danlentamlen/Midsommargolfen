@@ -42,7 +42,7 @@ export const CFG = {
     { namn: 'Glasklart',     logoUrl: '/images/sponsors/glasklart.png',      webbUrl: 'https://glasklart.eu' },
     { namn: 'Kraftwurst Entertainment', logoUrl: '/images/sponsors/kwe.png', webbUrl: 'https://www.facebook.com/Kraftwurst/' },
     { namn: 'Rakt Av', logoUrl: '/images/sponsors/raktav.png',  webbUrl: 'https://rakt-av.se/#' },
-    { namn: 'Mellow Yellow', logoUrl: '/images/sponsors/Mellow_Yellow_Logo.png',  webbUrl: 'https://www.melloyello.se' },
+    { namn: 'Mello Yello', logoUrl: '/images/sponsors/Mellow_Yellow_Logo.png',  webbUrl: 'https://www.melloyello.se' },
   ],
 
   omHistoria: '',
