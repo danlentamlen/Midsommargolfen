@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bettingöversikt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --forest:#0c3318;--pine:#1b5e34;--leaf:#2d8a4e;--mint:#e4f5eb;
+      --gold:#c9a84c;--gold-lt:#e8d49a;--gold-dk:#8a6a20;--gold-bg:#fdf8ee;
+      --ink:#0a1f10;--body:#2a4a34;--muted:#6a917a;--border:#d4e8da;
+      --bg:#f5f2ec;--surface:#fff;--danger:#c0392b;--danger-bg:#fdecea;
+      --serif:'Cormorant Garamond',Georgia,serif;
+      --sans:'Inter',system-ui,sans-serif;
+      --r:12px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+    }
+    body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+    /* ── LOGIN ── */
+    #login-screen{
+      display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem;
+    }
+    .login-card{
+      background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);
+      padding:2.5rem 2rem;width:100%;max-width:380px;text-align:center;
+    }
+    .login-icon{font-size:2.5rem;margin-bottom:1rem}
+    .login-card h1{font-family:var(--serif);font-size:1.6rem;color:var(--forest);margin-bottom:.4rem}
+    .login-card p{color:var(--muted);font-size:13px;margin-bottom:1.8rem}
+    .login-card input{
+      width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:8px;
+      font-family:var(--sans);font-size:15px;color:var(--ink);background:var(--bg);
+      outline:none;transition:border-color .2s;margin-bottom:1rem;
+    }
+    .login-card input:focus{border-color:var(--leaf)}
+    .login-btn{
+      width:100%;padding:.8rem;background:var(--forest);color:#fff;border:none;
+      border-radius:8px;font-family:var(--sans);font-size:15px;font-weight:600;
+      cursor:pointer;transition:background .2s;
+    }
+    .login-btn:hover{background:var(--pine)}
+    .login-err{
+      margin-top:.8rem;padding:.6rem 1rem;background:var(--danger-bg);
+      color:var(--danger);border-radius:6px;font-size:13px;display:none;
+    }
+
+    /* ── MAIN ── */
+    #main-screen{display:none;padding:2rem 1.5rem 4rem;max-width:1100px;margin:0 auto}
+    .page-head{margin-bottom:2rem}
+    .page-head h1{font-family:var(--serif);font-size:2rem;color:var(--forest);margin-bottom:.25rem}
+    .page-head p{color:var(--muted);font-size:13px}
+    .refresh-btn{
+      margin-top:.8rem;padding:.45rem .9rem;background:var(--mint);color:var(--forest);
+      border:1.5px solid var(--sage);border-radius:6px;font-size:13px;font-weight:600;
+      cursor:pointer;transition:background .2s;
+    }
+    .refresh-btn:hover{background:var(--sage)}
+
+    /* ── SUMMARY CARDS ── */
+    .summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+    .s-card{
+      background:var(--surface);border-radius:var(--r);padding:1rem 1.2rem;
+      box-shadow:var(--shadow);border-left:4px solid var(--gold);
+      cursor:pointer;transition:transform .15s, box-shadow .15s;
+    }
+    .s-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.12)}
+    .s-card.active{border-left-color:var(--leaf);background:var(--mint)}
+    .s-card-name{font-weight:600;font-size:14px;color:var(--forest);margin-bottom:.2rem}
+    .s-card-bets{font-size:22px;font-weight:700;color:var(--leaf)}
+    .s-card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .s-card-hint{font-size:11px;color:var(--muted);margin-top:.4rem}
+    .s-bar-wrap{margin-top:.5rem;height:5px;background:var(--mint);border-radius:3px}
+    .s-bar{height:5px;background:var(--leaf);border-radius:3px;transition:width .5s}
+
+    /* ── DRAWER ── */
+    #drawer{
+      display:none;background:var(--surface);border-radius:var(--r);
+      box-shadow:var(--shadow);border:1.5px solid var(--sage);
+      padding:1.5rem;margin-bottom:2rem;animation:fadeIn .2s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+    #drawer h3{font-family:var(--serif);font-size:1.2rem;color:var(--forest);margin-bottom:1rem}
+    .bettare-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.6rem 0;border-bottom:1px solid var(--border);
+    }
+    .bettare-row:last-child{border-bottom:none}
+    .bettare-name{font-weight:600;font-size:14px}
+    .bettare-email{font-size:12px;color:var(--muted)}
+
+    /* ── TABLE ── */
+    .section-title{font-family:var(--serif);font-size:1.3rem;color:var(--forest);margin-bottom:1rem}
+    .table-wrap{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th{
+      text-align:left;padding:.7rem 1rem;font-size:11px;font-weight:600;
+      letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+      border-bottom:2px solid var(--border);background:var(--bg);position:sticky;top:0;
+    }
+    td{padding:.75rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#f9fdf9}
+    .tag{
+      display:inline-block;padding:.2rem .55rem;border-radius:20px;
+      font-size:12px;font-weight:500;margin:.15rem .15rem .15rem 0;
+      background:var(--mint);color:var(--forest);border:1px solid var(--sage);
+    }
+    .status-badge{
+      display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:12px;font-weight:600;
+    }
+    .status-betald{background:#e8f5e9;color:#2e7d32}
+    .status-obetald{background:#fff3e0;color:#e65100}
+    .status-other{background:var(--mint);color:var(--muted)}
+    .empty{padding:2rem;text-align:center;color:var(--muted);font-size:14px}
+    .loader{text-align:center;padding:3rem;color:var(--muted);font-size:14px}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">🎲</div>
+    <h1>Bettingöversikt</h1>
+    <p>Ange lösenord för att se vem som har bettat på vem</p>
+    <input type="password" id="pw-input" placeholder="Lösenord" autocomplete="current-password">
+    <button class="login-btn" id="login-btn">Logga in →</button>
+    <div class="login-err" id="login-err">Fel lösenord</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main-screen">
+  <div class="page-head">
+    <h1>Bettingöversikt 🎯</h1>
+    <p id="meta-txt">Laddar data…</p>
+    <button class="refresh-btn" id="refresh-btn">↻ Uppdatera</button>
+  </div>
+
+  <div id="summary-section" style="margin-bottom:2rem">
+    <div class="section-title">Mest bettade spelare</div>
+    <div class="summary-grid" id="summary-grid"><div class="loader">Laddar…</div></div>
+    <div id="drawer">
+      <h3 id="drawer-title"></h3>
+      <div id="drawer-body"></div>
+    </div>
+  </div>
+
+  <div class="section-title">Alla bets — vem bettade på vem</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Bettare</th>
+          <th>Bettade på</th>
+          <th>Belopp</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="bets-body"><tr><td colspan="4" class="loader">Laddar…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module">
+  // ── CONFIG (hämtas från Apps Script) ──────────────────────────
+  const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL || '';
+
+  async function sha256(msg) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  const LOSENORD_HASH = '4e5f24f681ef318f60b7b194d974287f7c28d042b52c76c33b43a6879ead0925';
+
+  // ── LOGIN ─────────────────────────────────────────────────────
+  const pwInput   = document.getElementById('pw-input');
+  const loginBtn  = document.getElementById('login-btn');
+  const loginErr  = document.getElementById('login-err');
+
+  async function tryLogin() {
+    const hash = await sha256(pwInput.value);
+    if (hash === LOSENORD_HASH) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('main-screen').style.display  = 'block';
+      loadData();
+    } else {
+      loginErr.style.display = 'block';
+      pwInput.select();
+    }
+  }
+
+  loginBtn.addEventListener('click', tryLogin);
+  pwInput.addEventListener('keydown', e => { if (e.key==='Enter') tryLogin(); });
+
+  // ── DATA ──────────────────────────────────────────────────────
+  async function loadData() {
+    if (!APPS_SCRIPT_URL) { renderSample(); return; }
+    try {
+      const r = await fetch(APPS_SCRIPT_URL + '?action=adminData');
+      const d = await r.json();
+      render(d.bet || []);
+    } catch {
+      document.getElementById('bets-body').innerHTML =
+        '<tr><td colspan="4" class="empty">Kunde inte hämta data. Kontrollera nätverket.</td></tr>';
+    }
+  }
+
+  document.getElementById('refresh-btn').addEventListener('click', loadData);
+
+  // ── RENDER ────────────────────────────────────────────────────
+  function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+  let allBets = [];
+  let activeSpelare = null;
+
+  function render(bets) {
+    allBets = bets;
+    const meta = document.getElementById('meta-txt');
+    meta.textContent = `${bets.length} bet totalt • Uppdaterat ${new Date().toLocaleTimeString('sv-SE')}`;
+
+    // Bygg karta: spelare → lista av bettare
+    const spelareMap = {};
+    bets.forEach(b => {
+      const spelare = String(b.spelare||'').split(',').map(s=>s.trim()).filter(Boolean);
+      spelare.forEach(sp => {
+        if (!spelareMap[sp]) spelareMap[sp] = [];
+        spelareMap[sp].push(b);
+      });
+    });
+
+    const sorted = Object.entries(spelareMap).sort((a,b)=>b[1].length-a[1].length);
+    const maxBets = sorted[0]?.[1].length || 1;
+
+    // Summary cards
+    const grid = document.getElementById('summary-grid');
+    grid.innerHTML = sorted.length
+      ? sorted.map(([namn, betters]) => `
+          <div class="s-card" data-spelare="${esc(namn)}">
+            <div class="s-card-name">${esc(namn)}</div>
+            <div class="s-card-bets">${betters.length}</div>
+            <div class="s-card-label">bet</div>
+            <div class="s-bar-wrap"><div class="s-bar" style="width:${Math.round(betters.length/maxBets*100)}%"></div></div>
+            <div class="s-card-hint">Klicka för att se vem →</div>
+          </div>`).join('')
+      : '<div class="empty">Inga bet ännu</div>';
+
+    // Klick på kort
+    grid.querySelectorAll('.s-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const spelare = card.dataset.spelare;
+        if (activeSpelare === spelare) {
+          // Stäng drawer om samma kort klickas igen
+          activeSpelare = null;
+          document.getElementById('drawer').style.display = 'none';
+          card.classList.remove('active');
+        } else {
+          grid.querySelectorAll('.s-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          activeSpelare = spelare;
+          showDrawer(spelare, spelareMap[spelare] || []);
+        }
+      });
+    });
+
+    // Tabell
+    document.getElementById('bets-body').innerHTML = bets.length
+      ? bets.map(b => {
+          const spelare = String(b.spelare||'').split(',').map(s=>s.trim()).filter(Boolean);
+          const status  = String(b.status||'').trim();
+          const badgeCls = status==='Betald' ? 'status-betald' : status==='Obetald' ? 'status-obetald' : 'status-other';
+          return `<tr>
+            <td><strong>${esc(b.namn||'—')}</strong><br><span style="color:var(--muted);font-size:12px">${esc(b.email||'')}</span></td>
+            <td>${spelare.map(s=>`<span class="tag">${esc(s)}</span>`).join('')}</td>
+            <td>${esc(b.belopp||'—')}</td>
+            <td><span class="status-badge ${badgeCls}">${esc(status||'—')}</span></td>
+          </tr>`;
+        }).join('')
+      : '<tr><td colspan="4" class="empty">Inga bet lagda ännu 🎯</td></tr>';
+  }
+
+  function showDrawer(spelare, betters) {
+    const drawer = document.getElementById('drawer');
+    document.getElementById('drawer-title').textContent = `🎯 ${spelare} — ${betters.length} bettare`;
+    document.getElementById('drawer-body').innerHTML = betters.map(b => {
+      const status  = String(b.status||'').trim();
+      const badgeCls = status==='Betald' ? 'status-betald' : status==='Obetald' ? 'status-obetald' : 'status-other';
+      return `<div class="bettare-row">
+        <div>
+          <div class="bettare-name">${esc(b.namn||'—')}</div>
+          <div class="bettare-email">${esc(b.email||'')}</div>
+        </div>
+        <span class="status-badge ${badgeCls}">${esc(status||'—')}</span>
+      </div>`;
+    }).join('');
+    drawer.style.display = 'block';
+    drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function renderSample() {
+    render([
+      {namn:'Anna Svensson', email:'anna@test.se', spelare:'Anders Lindqvist, Sara Bergström', belopp:'60 kr', status:'Betald'},
+      {namn:'Per Johansson', email:'per@test.se',  spelare:'Mikael Holmgren', belopp:'30 kr', status:'Obetald'},
+    ]);
+    document.getElementById('meta-txt').textContent = 'Exempeldata — ingen Apps Script-URL konfigurerad';
+  }
+</script>
+</body>
+</html>

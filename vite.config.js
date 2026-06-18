@@ -7,8 +7,9 @@ export default defineConfig({
     outDir: 'dist',
     rollupOptions: {
       input: {
-        main:  './index.html',
-        score: './score.html',
+        main:             './index.html',
+        score:            './score.html',
+        bettingoversikt:  './betting-oversikt.html',
       },
     },
   },
