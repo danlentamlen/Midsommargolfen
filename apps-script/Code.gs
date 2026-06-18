@@ -478,14 +478,40 @@ function hamtaBettarePerSpelare() {
 function hamtaDeltagare() {
   const flik = ss().getSheetByName(F_ANM);
   if (!flik) return [];
+
+  // Bygg en uppslagstabell från Spelare-fliken: golfid → hcp och namn → hcp
+  // Används som fallback när HCP saknas i Anmälningar.
+  const hcpByGolfid = {};
+  const hcpByNamn   = {};
+  try {
+    const fSp = ss().getSheetByName(F_SP);
+    if (fSp) {
+      fSp.getDataRange().getValues().slice(1).forEach(r => {
+        const gid  = String(r[CS.gid] ||'').trim();
+        const namn = String(r[CS.namn]||'').trim();
+        const hcp  = r[CS.hcp];
+        if (hcp !== '' && hcp !== null && hcp !== undefined) {
+          if (gid  && gid  !== '—') hcpByGolfid[gid]  = hcp;
+          if (namn && namn !== '—') hcpByNamn[namn]    = hcp;
+        }
+      });
+    }
+  } catch(e) {}
+
   return flik.getDataRange().getValues().slice(1)
     .filter(r => !aterbetald(r[CA.status]) && r[CA.status] !== 'GolfReserv')
-    .map(r => ({
-      name:   String(r[CA.namn]),
-      pkg:    pkgKod(String(r[CA.paket])),
-      golfid: String(r[CA.gid]||'—'),
-      hcp:    String(r[CA.hcp]||'—')
-    }))
+    .map(r => {
+      const golfid = String(r[CA.gid] ||'—').trim();
+      const namn   = String(r[CA.namn]||'').trim();
+      // Prioritet: Spelare-flik (mest uppdaterad) → Anmälningar
+      const hcp = hcpByGolfid[golfid] ?? hcpByNamn[namn] ?? r[CA.hcp] ?? '—';
+      return {
+        name:   namn,
+        pkg:    pkgKod(String(r[CA.paket])),
+        golfid: golfid,
+        hcp:    String(hcp)
+      };
+    })
     .filter(p => p.name);
 }
 
