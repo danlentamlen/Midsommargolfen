@@ -137,6 +137,11 @@
   <div class="page-head">
     <h1>Bettingöversikt 🎯</h1>
     <p id="meta-txt">Laddar data…</p>
+    <div id="pott-banner" style="display:none;margin-top:.8rem;padding:.7rem 1.2rem;background:var(--forest);color:#fff;border-radius:8px;display:inline-flex;align-items:center;gap:.6rem;font-size:15px">
+      <span>🏆</span>
+      <span>Pott (bekräftade bet): <strong id="pott-value">—</strong></span>
+    </div>
+    <br>
     <button class="refresh-btn" id="refresh-btn">↻ Uppdatera</button>
   </div>
 
@@ -221,6 +226,13 @@
     allBets = bets;
     const meta = document.getElementById('meta-txt');
     meta.textContent = `${bets.length} bet totalt • Uppdaterat ${new Date().toLocaleTimeString('sv-SE')}`;
+
+    // Pott — summera belopp för status Betald
+    const pott = bets
+      .filter(b => String(b.status||'').trim() === 'Betald')
+      .reduce((sum, b) => sum + (parseInt(String(b.belopp||'0'))||0), 0);
+    document.getElementById('pott-value').textContent = pott + ' kr';
+    document.getElementById('pott-banner').style.display = 'inline-flex';
 
     // Bygg karta: spelare → lista av bettare
     const spelareMap = {};

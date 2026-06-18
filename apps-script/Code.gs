@@ -23,7 +23,7 @@ const CS = {sid:0,namn:1,gid:2,hcp:3,grupp:4,anmald:5,erhallna:6,slagBrutto:7,sl
 const CB = {tid:0,namn:1,email:2,tel:3,spel:4,spelarid:5,antal:6,tot:7,status:8};
 
 // Konfig-flaggor som kan togglas i realtid från admin-panelen.
-const CONFIG_KEYS = ['visaBetting', 'visaAnmalan', 'visaStartlista', 'visaResultat'];
+const CONFIG_KEYS = ['visaBetting', 'visaAnmalan', 'visaStartlista', 'visaResultat', 'visaBetNames'];
 
 // Sheet-namn för score-funktionen
 const F_LAG    = 'Lag';
@@ -87,7 +87,8 @@ function doGet(e) {
   }
   if (a==='checkDuplikat') return json(checkDupAnm(e.parameter.golfid||'',e.parameter.email||'',e.parameter.namn||''));
   if (a==='checkBet')      return json(checkDupBet(e.parameter.email||'',e.parameter.namn||''));
-  if (a==='spelare')       return json(hamtaSpelare());
+  if (a==='spelare')              return json(hamtaSpelare());
+  if (a==='bettarePerSpelare')   return json(hamtaBettarePerSpelare());
   if (a==='deltagare')     return json(hamtaDeltagare());
   if (a==='startlista')    return json(hamtaStartlista());
   if (a==='adminData')     return json(hamtaAdminData());
@@ -448,6 +449,29 @@ function hamtaSpelare() {
       bets:     betById[String(r[CS.sid]||'')] || 0
     }))
     .filter(p => p.name && p.name !== 'Namn');
+}
+
+// ── BETTARE PER SPELARE ──────────────────────────────────────
+// Returnerar { spelarid: ['Namn1', 'Namn2', ...], ... }
+// Används av frontend när visaBetNames är true.
+function hamtaBettarePerSpelare() {
+  const result = {};
+  try {
+    const fBet = ss().getSheetByName(F_BET);
+    if (!fBet) return result;
+    fBet.getDataRange().getValues().slice(1).forEach(r => {
+      if (aterbetald(r[CB.status])) return;
+      const bettarNamn = String(r[CB.namn]||'').trim();
+      if (!bettarNamn) return;
+      String(r[CB.spelarid]||'').split(',').forEach(sid => {
+        const s = sid.trim();
+        if (!s) return;
+        if (!result[s]) result[s] = [];
+        result[s].push(bettarNamn);
+      });
+    });
+  } catch(e) {}
+  return result;
 }
 
 // ── HÄMTA DELTAGARE ──────────────────────────────────────────

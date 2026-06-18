@@ -42,9 +42,9 @@ export function updateBetPanel() {
   }).join('');
 }
 
-export function renderOdds() {
+export async function renderOdds() {
   const entries = state.betPlayers
-    .map((p, i) => ({idx: i, id: p.spelarid || ('idx_'+i), bets: p.bets||0}))
+    .map((p, i) => ({idx: i, id: p.spelarid || ('idx_'+i), name: p.name, bets: p.bets||0}))
     .filter(e => e.bets > 0);
 
   const totalBets = entries.reduce((s, e) => s + e.bets, 0);
@@ -54,15 +54,29 @@ export function renderOdds() {
     return;
   }
 
+  // Hämta bettarnamn om flaggan är på
+  let bettareMap = {};
+  if (CFG.visaBetNames && CFG.appsScriptUrl) {
+    try {
+      const r = await fetchWithTimeout(CFG.appsScriptUrl + '?action=bettarePerSpelare');
+      bettareMap = await r.json();
+    } catch { /* visa utan namn om anropet misslyckas */ }
+  }
+
   const sorted = [...entries].sort((a,b) => b.bets - a.bets);
 
   document.getElementById('odds-list').innerHTML = sorted.map((e, rank) => {
     const pct = Math.round(e.bets / totalBets * 100);
+    const names = CFG.visaBetNames ? (bettareMap[e.id] || []) : [];
+    const nameHtml = names.length
+      ? `<div class="odds-betters">${names.map(n => `<span class="odds-better-tag">${escapeHtml(n)}</span>`).join('')}</div>`
+      : '';
     return `<div class="odds-row">
-      <div class="odds-name">${rank + 1}.</div>
+      <div class="odds-name">${rank + 1}. ${escapeHtml(e.name||'')}</div>
       <div class="odds-bw"><div class="odds-b" style="width:${pct}%"></div></div>
       <div class="odds-pct">${pct}%</div>
       <div class="odds-cnt">${e.bets} bet</div>
+      ${nameHtml}
     </div>`;
   }).join('');
 }

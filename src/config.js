@@ -57,6 +57,7 @@ export const CFG = {
   // Site configuration → Environment variables → VITE_VISA_BETTING = true
   // OBS: kräver ny deploy efter ändring (Vite läser env-variabler vid build-tid).
   visaBetting: import.meta.env.VITE_VISA_BETTING === 'true',
+  visaBetNames: false,
 
   teaserMeddelande: 'Vi öppnar snart för anmälan — håll utkik! 🏌️',
 
@@ -80,4 +81,5 @@ export const RUNTIME_FLAGS = [
   { key: 'visaAnmalan',   toggleId: 'set-anmalan-toggle',   labelId: 'set-anmalan-label'   },
   { key: 'visaStartlista',toggleId: 'set-startlista-toggle',labelId: 'set-startlista-label'},
   { key: 'visaResultat',  toggleId: 'set-resultat-toggle',  labelId: 'set-resultat-label'  },
+  { key: 'visaBetNames',  toggleId: 'set-betnames-toggle',  labelId: 'set-betnames-label'  },
 ];
