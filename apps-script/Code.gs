@@ -176,13 +176,16 @@ function checkDupAnm(golfid, email, namn) {
 
 function checkDupBet(email, namn) {
   const flik = ss().getSheetByName(F_BET);
-  if (!flik) return {exists:false};
+  if (!flik) return {exists:false, antalBetade:0, kvar:5};
+  let antalBetade = 0;
   for (const r of flik.getDataRange().getValues().slice(1)) {
     if (aterbetald(r[CB.status])) continue;
     if (eq(r[CB.email],email) && eq(r[CB.namn],namn))
-      return {exists:true, meddelande:`${namn} har redan lagt ett bet.`};
+      antalBetade += parseInt(r[CB.antal]||0);
   }
-  return {exists:false};
+  const kvar = Math.max(0, 5 - antalBetade);
+  if (kvar === 0) return {exists:true, meddelande:`${namn} har redan bettat på 5 spelare — det är max.`};
+  return {exists:false, antalBetade, kvar};
 }
 
 // ── SPELAR-ID ────────────────────────────────────────────────

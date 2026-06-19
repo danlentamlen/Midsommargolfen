@@ -4,12 +4,16 @@ import { formatTel, showErr, escapeHtml } from './utils.js';
 import { photoKey, getLocalPhotos } from './photos.js';
 import { fetchWithTimeout, postToAppsScript } from './fetch.js';
 
+// Antal spelare bettaren redan bettat på (hämtas vid checkBet)
+state.betKvar = 5;
+
 export function renderPlayers() {
   const photos = getLocalPhotos();
+  const max = state.betKvar;
   document.getElementById('players-grid').innerHTML = state.betPlayers.map((p,i) => {
     const init = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
     const isSel = state.selectedPlayers.has(i);
-    const isDis = !isSel && state.selectedPlayers.size >= 5;
+    const isDis = !isSel && state.selectedPlayers.size >= max;
     const ph = photos[photoKey(p)]||'';
     return `<div class="p-card ${isSel?'sel':''} ${isDis?'dis':''}" data-player-idx="${i}">
       <div class="p-av">${ph?`<img src="${ph}" decoding="async">`:'<span>'+escapeHtml(init)+'</span>'}</div>
@@ -21,15 +25,17 @@ export function renderPlayers() {
 }
 
 export function toggleP(idx) {
+  const max = state.betKvar;
   if (state.selectedPlayers.has(idx)) state.selectedPlayers.delete(idx);
-  else { if (state.selectedPlayers.size>=5){alert('Max 5 bet per person.');return;} state.selectedPlayers.add(idx); }
+  else { if (state.selectedPlayers.size >= max){ alert(`Du har ${5 - max} spelare sedan tidigare — du kan välja max ${max} till.`); return; } state.selectedPlayers.add(idx); }
   renderPlayers();
 }
 
 export function updateBetPanel() {
+  const max = state.betKvar;
   const cnt = state.selectedPlayers.size, tot = cnt * CFG.prisBetPerSpel;
-  document.getElementById('bet-cnt-lbl').textContent = cnt+' / 5';
-  document.getElementById('bet-prog').style.width = (cnt/5*100)+'%';
+  document.getElementById('bet-cnt-lbl').textContent = cnt+' / '+max;
+  document.getElementById('bet-prog').style.width = (cnt/max*100)+'%';
   document.getElementById('bet-pris-lbl').textContent = tot+' kr';
   document.getElementById('bet-tot-val').textContent = tot ? tot+' kr' : '0 kr';
   document.getElementById('bet-tot-sub').textContent = cnt ? `${cnt} × ${CFG.prisBetPerSpel} kr = ${tot} kr` : 'Välj minst 1 spelare';
@@ -100,7 +106,15 @@ export async function submitBet(showFn) {
     try {
       const r = await fetchWithTimeout(CFG.appsScriptUrl+'?action=checkBet&email='+encodeURIComponent(email)+'&namn='+encodeURIComponent(name));
       const d = await r.json();
-      if (d.exists) { showErr('bet-err',d.meddelande||'Du har redan lagt ett bet.'); btn.textContent='Bekräfta & visa betalning'; btn.disabled=false; return; }
+      if (d.exists) { showErr('bet-err', d.meddelande||'Du har redan bettat på 5 spelare.'); btn.textContent='Bekräfta & visa betalning'; btn.disabled=false; return; }
+      // Uppdatera kvarvarande slots och validera urvalet
+      const kvar = typeof d.kvar === 'number' ? d.kvar : 5;
+      state.betKvar = kvar;
+      if (state.selectedPlayers.size > kvar) {
+        showErr('bet-err', `Du har redan ${5-kvar} spelare — välj max ${kvar} till.`);
+        btn.textContent='Bekräfta & visa betalning'; btn.disabled=false;
+        renderPlayers(); return;
+      }
     } catch { /* network error — continue */ }
   }
 
