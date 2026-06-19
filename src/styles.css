@@ -203,6 +203,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15p
 .sg-av{width:30px;height:30px;border-radius:50%;background:var(--mint);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--pine);flex-shrink:0;overflow:hidden}
 .sg-av img{width:100%;height:100%;object-fit:cover}
 .sg-pname{font-size:13px;font-weight:500;color:var(--ink)}
+.sg-hcp{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
 
 /* --- FORM PAGE ------------------------------------------------ */
 .form-layout{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 350px;gap:3.5rem;align-items:start;padding:4rem 5rem}

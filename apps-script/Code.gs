@@ -526,7 +526,7 @@ function hamtaStartlista() {
   rows.forEach(r => {
     const g = String(r[CS.grupp]).trim();
     if (!groups[g]) groups[g] = {grupp:g, teeStart:'', teeHal:'1', spelare:[]};
-    groups[g].spelare.push(String(r[CS.namn]));
+    groups[g].spelare.push({ namn: String(r[CS.namn]), hcp: r[CS.hcp] !== '' ? r[CS.hcp] : null });
   });
   return Object.values(groups);
 }

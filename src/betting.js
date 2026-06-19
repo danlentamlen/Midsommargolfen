@@ -71,8 +71,9 @@ export async function renderOdds() {
     const nameHtml = names.length
       ? `<div class="odds-betters">${names.map(n => `<span class="odds-better-tag">${escapeHtml(n)}</span>`).join('')}</div>`
       : '';
+    const visibleName = CFG.visaBetNames ? escapeHtml(e.name||'') : `Spelare ${rank + 1}`;
     return `<div class="odds-row">
-      <div class="odds-name">${rank + 1}. ${escapeHtml(e.name||'')}</div>
+      <div class="odds-name">${rank + 1}. ${visibleName}</div>
       <div class="odds-bw"><div class="odds-b" style="width:${pct}%"></div></div>
       <div class="odds-pct">${pct}%</div>
       <div class="odds-cnt">${e.bets} bet</div>

@@ -190,15 +190,19 @@ export async function buildStartlista() {
         <span class="sg-name">Startgrupp ${i + 1}</span>
         <span class="sg-time">⏱ ${startTime}</span>
       </div>
-      <div class="sg-body">${g.spelare.filter(n=>n).map(n => {
+      <div class="sg-body">${g.spelare.filter(p=>p).map(p => {
+        const n    = typeof p === 'object' ? (p.namn||'') : p;
+        const hcp  = typeof p === 'object' ? p.hcp : null;
         const sN   = escapeHtml(n);
         const init = n.split(' ').map(w=>w[0]).join('').slice(0,2);
-        const match = (state.betPlayers||[]).find(p=>p.name===n) || (state.allParts||[]).find(p=>p.name===n);
+        const match = (state.betPlayers||[]).find(q=>q.name===n) || (state.allParts||[]).find(q=>q.name===n);
         const key   = match ? photoKey(match) : n.toLowerCase();
         const ph    = photos[key] || '';
+        const hcpHtml = (hcp !== null && hcp !== undefined && hcp !== '') ? `<div class="sg-hcp">HCP ${escapeHtml(String(hcp))}</div>` : '';
         return `<div class="sg-player">
           <div class="sg-av">${ph ? `<img src="${ph}" decoding="async">` : '<span>'+escapeHtml(init)+'</span>'}</div>
           <div class="sg-pname">${sN}</div>
+          ${hcpHtml}
         </div>`;
       }).join('')}</div>
     </div>`;
